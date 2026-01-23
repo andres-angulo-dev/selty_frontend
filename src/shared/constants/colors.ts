@@ -1,4 +1,4 @@
-export const colors = {
+export const Colors = {
     // ------------------------------                                                                                               
     // Primary colors (brand identity)                                                                                              
     // ------------------------------                                                                                               
@@ -49,4 +49,4 @@ export const colors = {
     },     
 } as const;
 
-export type ColorKeys = keyof typeof colors;
+export type ColorKeys = keyof typeof Colors;
