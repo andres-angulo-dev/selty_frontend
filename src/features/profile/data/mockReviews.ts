@@ -1,0 +1,37 @@
+import { Review } from "../types/index";
+
+export const mockReviews: Review[] = [
+    {                                                                                                                                           
+      id: 'review_001',                                                                                                                         
+      userId: 'user_001',                                                                                                                       
+      professionalId: 'pro_001',                                                                                                                
+      professionalName: 'Marie Martin',                                                                                                         
+      professionalAvatar: null,                                                                                                                 
+      rating: 5,                                                                                                                                
+      comment: 'Excellent travail, rapide et efficace !',                                                                                       
+      createdAt: new Date('2025-01-20'),                                                                                                        
+      updatedAt: null,                                                                                                                          
+    },                                                                                                                                          
+    {                                                                                                                                           
+      id: 'review_002',                                                                                                                         
+      userId: 'user_001',                                                                                                                       
+      professionalId: 'pro_002',                                                                                                                
+      professionalName: 'Pierre Durand',                                                                                                        
+      professionalAvatar: null,                                                                                                                 
+      rating: 4,                                                                                                                                
+      comment: 'Bon service, je recommande.',                                                                                                   
+      createdAt: new Date('2025-01-18'),                                                                                                        
+      updatedAt: null,                                                                                                                          
+    },                                                                                                                                          
+    {                                                                                                                                           
+      id: 'review_003',                                                                                                                         
+      userId: 'user_001',                                                                                                                       
+      professionalId: 'pro_003',                                                                                                                
+      professionalName: 'Sophie Bernard',                                                                                                       
+      professionalAvatar: null,                                                                                                                 
+      rating: 5,                                                                                                                                
+      comment: 'Très professionnelle, à l\'écoute et ponctuelle.',                                                                              
+      createdAt: new Date('2025-01-10'),                                                                                                        
+      updatedAt: null,                                                                                                                          
+    },      
+]
