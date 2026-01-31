@@ -15,7 +15,7 @@ import { Strings } from '@/shared/constants/strings';
 import { AnimatedTabBarButton } from '@/shared/components/AnimatedTabBarButton';                                                                                                                 
                                                                                                                                   
 // Import Constants                                                                                                               
-import { Colors } from '@/shared/constants';                                                                                      
+import { Colors, Typography } from '@/shared/constants';                                                                                      
 const Tab = createBottomTabNavigator();                                                                                           
 
 export const TabNavigator: React.FC = () => {                                                                                     
@@ -60,7 +60,7 @@ export const TabNavigator: React.FC = () => {
             <Tab.Screen name={Strings.tabs.search} component={SearchScreen} />
             <Tab.Screen name={Strings.tabs.favorites} component={FavoritesScreen} />
             <Tab.Screen name={Strings.tabs.messages} component={MessagingScreen} />
-            <Tab.Screen name={Strings.tabs.profile} component={ProfileScreen} />
+            <Tab.Screen name={Strings.tabs.profile} component={ProfileScreen}  options={{headerShown: true, headerTitle: Strings.tabs.profile, headerStyle: {backgroundColor: Colors.neutral.background}, headerTitleAlign: 'left', headerTitleStyle: {...Typography.h3, color: Colors.text.primary}}} />
 
         </Tab.Navigator>                                                                                                              
     );                                                                                                                              
