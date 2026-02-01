@@ -1,7 +1,12 @@
 import React from "react";
-import { ScrollView, View, Pressable, Text, StyleSheet } from 'react-native';
-import { Colors, Typography, Spacing } from '@/shared/constants';
 import Constants from "expo-constants";
+import { ScrollView, View, Text, StyleSheet } from 'react-native';
+import { Colors, Typography, Spacing } from '@/shared/constants';
+
+// Navigation
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { ProfileStackParamList } from "@/app/navigation/types";
 
 import { ProfileHeader } from "../components/ProfileHeader";
 import { ProfileSection } from "../components/ProfileSection";
@@ -11,9 +16,13 @@ import { Button } from "@/shared/components/button";
 
 import { mockUser } from "../data/mockUser";
 
+
 export const ProfileScreen: React.FC = () => {
+    const navigation = useNavigation<NativeStackNavigationProp<ProfileStackParamList>>();   
+    
     // Handlers for menu items (empty for now, will implement later)
-    const handleNotifications = () => console.log('Notifications pressed');                                                                     
+    const handleNotifications = () => console.log('Notifications pressed');   
+    const handleEditProfile = () => navigation.navigate('EditProfile');                                                                     
     const handleLanguage = () => console.log('Language pressed');                                                                               
     const handleTheme = () => console.log('Theme pressed');                                                                                     
     const handleHelp = () => console.log('Help pressed');                                                                                       
@@ -39,6 +48,10 @@ export const ProfileScreen: React.FC = () => {
                 <ProfileInfoItem label="Nom" value={`${mockUser.firstName} ${mockUser.lastName}`} />
                 <ProfileInfoItem label="Email" value={`${mockUser.email}`} />
                 <ProfileInfoItem label="Téléphone" value={`${mockUser.phone}`} isLast/>
+
+                <View style={{ padding: Spacing.md }}>
+                    <Button label="Modifier le profil" onPress={handleEditProfile} variant="secondary" size="medium" />
+                </View>
             </ProfileSection>
 
             {/* Settings section */}
