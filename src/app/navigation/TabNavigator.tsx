@@ -8,7 +8,7 @@ import { HomeScreen } from "@/features/home/screens/HomeScreen";
 import { SearchScreen } from "@/features/search/screens/SearchScreen";                                                            
 import { FavoritesScreen } from "@/features/favorites/screens/FavoritesScreens";                                                  
 import { MessagingScreen } from "@/features/messaging/screens/MessagingScreens";                                                  
-import { ProfileScreen } from "@/features/profile/screens/ProfileScreens";                                                        
+import { ProfileStackNavigator } from "@/features/profile/navigation/ProfileStackNavigator";
                                                                                                                                   
 // Import shared components                                                        
 import { Strings } from '@/shared/constants/strings';                                               
@@ -59,8 +59,8 @@ export const TabNavigator: React.FC = () => {
             <Tab.Screen name={Strings.tabs.home} component={HomeScreen} />
             <Tab.Screen name={Strings.tabs.search} component={SearchScreen} />
             <Tab.Screen name={Strings.tabs.favorites} component={FavoritesScreen} />
-            <Tab.Screen name={Strings.tabs.messages} component={MessagingScreen} />
-            <Tab.Screen name={Strings.tabs.profile} component={ProfileScreen}  options={{headerShown: true, headerTitle: Strings.tabs.profile, headerStyle: {backgroundColor: Colors.neutral.background}, headerTitleAlign: 'left', headerTitleStyle: {...Typography.h3, color: Colors.text.primary}}} />
+            <Tab.Screen name={Strings.tabs.messages} component={MessagingScreen} options={{headerShown: true, headerTitle: Strings.tabs.messages, headerStyle: {backgroundColor: Colors.neutral.background}, headerTitleAlign: 'left', headerTitleStyle: {...Typography.h3, color: Colors.text.primary}}}/>
+            <Tab.Screen name={Strings.tabs.profile} component={ProfileStackNavigator} />
 
         </Tab.Navigator>                                                                                                              
     );                                                                                                                              
