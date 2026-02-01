@@ -7,6 +7,7 @@ import { ProfileHeader } from "../components/ProfileHeader";
 import { ProfileSection } from "../components/ProfileSection";
 import { ProfileInfoItem } from "../components/ProfileInfoItem";
 import { ProfileMenuItem } from "../components/ProfileMenuItem";
+import { Button } from "@/shared/components/button";
 
 import { mockUser } from "../data/mockUser";
 
@@ -58,13 +59,15 @@ export const ProfileScreen: React.FC = () => {
             {/* Account Section - Buttons */}
             <ProfileSection title="Compte">
                 <View style={styles.buttonContainer}>
-                    <Pressable onPress={handleLogout} style={({ pressed }) => [styles.button, styles.logoutButton, pressed && styles.buttonPressed]}>
+                    <Button label="Déconnexion" onPress={handleLogout} variant="secondary" size="medium" />
+                    {/* <Pressable onPress={handleLogout} style={({ pressed }) => [styles.button, styles.logoutButton, pressed && styles.buttonPressed]}>
                         <Text style={styles.logoutText}>Déconnexion</Text>
-                    </Pressable>
+                    </Pressable> */}
 
-                    <Pressable onPress={handleDeleteAccount} style={({ pressed }) => [styles.button, styles.deleteButton, pressed && styles.buttonPressed]}>
+                    <Button label="Supprimer mon compte" onPress={handleDeleteAccount} variant='danger' size="medium" />
+                    {/* <Pressable onPress={handleDeleteAccount} style={({ pressed }) => [styles.button, styles.deleteButton, pressed && styles.buttonPressed]}>
                         <Text style={styles.deleteText}>Supprimer mon compte</Text>
-                    </Pressable>
+                    </Pressable> */}
                 </View>
             </ProfileSection>
 
