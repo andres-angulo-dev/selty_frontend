@@ -1,25 +1,120 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Colors, Typography } from '@/shared/constants'
+import React, { useState } from 'react';
+import { View, ScrollView, StyleSheet, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ProfileStackParamList } from '@/app/navigation/types';
+import { Colors, Spacing } from '@/shared/constants'
+import { FormInput } from '@/shared/components/FormInput';
+import { Button } from '@/shared/components/button';
+import { mockUser } from '../data/mockUser';
 
 export const EditProfileScreen: React.FC = () => {
+    const navigation = useNavigation<NativeStackNavigationProp<ProfileStackParamList>>();
+
+    // Form State - initialized with current user data
+    const [userName, setUserName] = useState(mockUser.userName);
+    const [firstName, setFirstName] = useState(mockUser.firstName);
+    const [lastName, setLastName] = useState(mockUser.lastName);
+    const [email, setEmail] = useState(mockUser.email);
+    const [phone, setPhone] = useState(mockUser.phone);
+    const [editableFields, setEditableFields] = useState({ // Edit mode state for each field (all locked by default)
+        userName: false,
+        firstName: false,
+        lastName: false,
+        email: false,
+        phone: false,
+    })
+    const [errors, setErrors] = useState({ // Error state for each field 
+        userName: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+    })
+
+    // Toggle edit mode for a spécific field
+    const toggleEdit = (field: keyof typeof editableFields) => {    // TypeScript restricts to existing keys ('firstName' | 'lastName' | ...)   
+        setEditableFields(prev => ({                                // Function that receives previous state to compute the new one
+            ...prev,                                                // Copies all existing properties  
+            [field]: !prev[field],                                  // Inverts the boolean (false → true, true → false)
+        }))
+    }
+
+    // Validate form before saving
+    const validateForm = (): boolean => {
+        const errorMessage = 'Ce champ est obligatoire'
+        
+        const newErrors = {
+            userName: !userName.trim() ? errorMessage : '',
+            firstName: !firstName.trim() ? errorMessage : '',
+            lastName: !lastName.trim() ? errorMessage : '',
+            email: !email.trim() ? errorMessage : '',
+            phone: !phone.trim() ? errorMessage : '',
+        };
+
+        setErrors(newErrors); // Update UI with errors (re-renders)  
+
+        // Check if any error existe
+        const hasErrors = Object.values(newErrors).some(error => error !== ''); // True if at least one error exists 
+        return !hasErrors; // Invert: hasErrors=true → invalid (false)  
+    }
+
+    // Handle save
+    const handleSave = () => {
+        // Validate before saving
+        if (!validateForm()) { // If validateForm return False, we exit the function
+            return;
+        }
+
+        // Just log the data (backend will come later)
+        console.log('Saving profile', { userName, firstName, lastName, email, phone });
+
+        Alert.alert(
+            'Profile mis à jour',
+            'Vos modifications on été enregistrées.',
+            [{ text: 'OK', onPress: () => navigation.goBack() }]
+        )
+    }
+
     return (
-        <View style={styles.container}>
-            <Text style={styles.text}>Edit Profile Screen</Text>
-        </View>
+        <ScrollView style={styles.container}>
+            <View style={styles.form}>
+                {/* Username */}
+                <FormInput label="Nom d'utilisateur" value={userName} onChangeText={setUserName} placeholder="Votre nom d'utilisateur" autoCapitalize='none' editable={editableFields.userName} showEditButton onEditPress={() => toggleEdit('userName')} error={errors.userName} />
+                
+                {/* First name */}
+                <FormInput label='Prénom' value={firstName} onChangeText={setFirstName} placeholder='Votre prénom' autoCapitalize='words' editable={editableFields.firstName} showEditButton onEditPress={() => toggleEdit('firstName')} error={errors.firstName} />
+
+                {/* Last name */}
+                <FormInput label='Nom' value={lastName} onChangeText={setLastName} placeholder='Votre nom' autoCapitalize='words'  editable={editableFields.lastName} showEditButton onEditPress={() => toggleEdit('lastName')} error={errors.lastName} />
+
+                {/* Email */}
+                <FormInput label="Email" value={email} onChangeText={setEmail} keyboardType='email-address' autoCorrect={false}  editable={editableFields.email} showEditButton onEditPress={() => toggleEdit('email')} error={errors.email} />
+
+                {/* Phone */}
+                <FormInput label='Téléphone' value={phone} onChangeText={setPhone} keyboardType='phone-pad'  editable={editableFields.phone} showEditButton onEditPress={() => toggleEdit('phone')} error={errors.phone} />
+
+                {/* Save button */}
+                <View style={styles.buttonContainer}>
+                    <Button label='Enregistrer' onPress={handleSave} variant='primary' size="large" fullWidth />
+                </View>
+            </View>
+
+        </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
         backgroundColor: Colors.neutral.background,
     },
 
-    text: {
-        ...Typography.h2,
-        color: Colors.text.primary,
+    form: {
+        padding: Spacing.lg,
+    },
+
+    buttonContainer: {
+        marginTop: Spacing.lg,
     }
 })
