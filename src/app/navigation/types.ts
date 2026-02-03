@@ -13,5 +13,6 @@ export type RootTabParamList = {
 export type ProfileStackParamList = {
     Profile: undefined;
     EditProfile: undefined;
+    ChangePassword: undefined;
 };
 

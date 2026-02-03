@@ -11,7 +11,7 @@ import { mockUser } from '../data/mockUser';
 export const EditProfileScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<ProfileStackParamList>>();
 
-    // Form State - initialized with current user data
+    // Form state - initialized with current user data
     const [userName, setUserName] = useState(mockUser.userName);
     const [firstName, setFirstName] = useState(mockUser.firstName);
     const [lastName, setLastName] = useState(mockUser.lastName);

@@ -22,7 +22,8 @@ export const ProfileScreen: React.FC = () => {
     
     // Handlers for menu items (empty for now, will implement later)
     const handleNotifications = () => console.log('Notifications pressed');   
-    const handleEditProfile = () => navigation.navigate('EditProfile');                                                                     
+    const handleEditProfile = () => navigation.navigate('EditProfile');
+    const handleChangePassword = () => navigation.navigate('ChangePassword');                                                                     
     const handleLanguage = () => console.log('Language pressed');                                                                               
     const handleTheme = () => console.log('Theme pressed');                                                                                     
     const handleHelp = () => console.log('Help pressed');                                                                                       
@@ -56,6 +57,7 @@ export const ProfileScreen: React.FC = () => {
 
             {/* Settings section */}
             <ProfileSection title='Paramètres'>
+                <ProfileMenuItem icon="lock-closed-outline" label="Mot de passe" onPress={handleChangePassword} />
                 <ProfileMenuItem icon="notifications-outline" label="Notifications" onPress={handleNotifications} />
                 <ProfileMenuItem icon="language-outline" label="Langue" onPress={handleLanguage} />
                 <ProfileMenuItem icon="moon-outline" label="Thème" onPress={handleTheme} isLast/>
@@ -70,7 +72,6 @@ export const ProfileScreen: React.FC = () => {
             </ProfileSection>
 
             {/* Account Section - Buttons */}
-            <ProfileSection title="Compte">
                 <View style={styles.buttonContainer}>
                     <Button label="Déconnexion" onPress={handleLogout} variant="secondary" size="medium" />
                     {/* <Pressable onPress={handleLogout} style={({ pressed }) => [styles.button, styles.logoutButton, pressed && styles.buttonPressed]}>
@@ -82,7 +83,6 @@ export const ProfileScreen: React.FC = () => {
                         <Text style={styles.deleteText}>Supprimer mon compte</Text>
                     </Pressable> */}
                 </View>
-            </ProfileSection>
 
             {/* Button spacing */}
             <View style={styles.bottomSpacer} />
