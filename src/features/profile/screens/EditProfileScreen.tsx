@@ -3,7 +3,7 @@ import { View, ScrollView, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ProfileStackParamList } from '@/app/navigation/types';
-import { Colors, Spacing } from '@/shared/constants'
+import { Colors, Spacing, Strings } from '@/shared/constants'
 import { FormInput } from '@/shared/components/FormInput';
 import { Button } from '@/shared/components/button';
 import { mockUser } from '../data/mockUser';
@@ -42,7 +42,7 @@ export const EditProfileScreen: React.FC = () => {
 
     // Validate form before saving
     const validateForm = (): boolean => {
-        const errorMessage = 'Ce champ est obligatoire'
+        const errorMessage = Strings.validation.required;
         
         const newErrors = {
             userName: !userName.trim() ? errorMessage : '',
@@ -70,8 +70,8 @@ export const EditProfileScreen: React.FC = () => {
         console.log('Saving profile', { userName, firstName, lastName, email, phone });
 
         Alert.alert(
-            'Profile mis à jour',
-            'Vos modifications on été enregistrées.',
+            Strings.profile.alerts.profileUpdated.title,
+            Strings.profile.alerts.profileUpdated.message,
             [{ text: 'OK', onPress: () => navigation.goBack() }]
         )
     }
@@ -80,23 +80,23 @@ export const EditProfileScreen: React.FC = () => {
         <ScrollView style={styles.container}>
             <View style={styles.form}>
                 {/* Username */}
-                <FormInput label="Nom d'utilisateur" value={userName} onChangeText={setUserName} placeholder="Votre nom d'utilisateur" autoCapitalize='none' editable={editableFields.userName} showEditButton onEditPress={() => toggleEdit('userName')} error={errors.userName} />
+                <FormInput label={Strings.profile.labels.userName} value={userName} onChangeText={setUserName} placeholder={Strings.profile.placeholders.userName} autoCapitalize='none' editable={editableFields.userName} showEditButton onEditPress={() => toggleEdit('userName')} error={errors.userName} />
                 
                 {/* First name */}
-                <FormInput label='Prénom' value={firstName} onChangeText={setFirstName} placeholder='Votre prénom' autoCapitalize='words' editable={editableFields.firstName} showEditButton onEditPress={() => toggleEdit('firstName')} error={errors.firstName} />
+                <FormInput label={Strings.profile.labels.firstName} value={firstName} onChangeText={setFirstName} placeholder={Strings.profile.placeholders.firstName} autoCapitalize='words' editable={editableFields.firstName} showEditButton onEditPress={() => toggleEdit('firstName')} error={errors.firstName} />
 
                 {/* Last name */}
-                <FormInput label='Nom' value={lastName} onChangeText={setLastName} placeholder='Votre nom' autoCapitalize='words'  editable={editableFields.lastName} showEditButton onEditPress={() => toggleEdit('lastName')} error={errors.lastName} />
+                <FormInput label={Strings.profile.labels.lastName} value={lastName} onChangeText={setLastName} placeholder={Strings.profile.placeholders.lastName} autoCapitalize='words'  editable={editableFields.lastName} showEditButton onEditPress={() => toggleEdit('lastName')} error={errors.lastName} />
 
                 {/* Email */}
-                <FormInput label="Email" value={email} onChangeText={setEmail} keyboardType='email-address' autoCorrect={false}  editable={editableFields.email} showEditButton onEditPress={() => toggleEdit('email')} error={errors.email} />
+                <FormInput label={Strings.profile.labels.email} value={email} onChangeText={setEmail} placeholder={Strings.profile.placeholders.email} keyboardType='email-address' autoCorrect={false}  editable={editableFields.email} showEditButton onEditPress={() => toggleEdit('email')} error={errors.email} />
 
                 {/* Phone */}
-                <FormInput label='Téléphone' value={phone} onChangeText={setPhone} keyboardType='phone-pad'  editable={editableFields.phone} showEditButton onEditPress={() => toggleEdit('phone')} error={errors.phone} />
+                <FormInput label={Strings.profile.labels.phone} value={phone} onChangeText={setPhone} placeholder={Strings.profile.placeholders.phone} keyboardType='phone-pad' editable={editableFields.phone} showEditButton onEditPress={() => toggleEdit('phone')} error={errors.phone} />
 
                 {/* Save button */}
                 <View style={styles.buttonContainer}>
-                    <Button label='Enregistrer' onPress={handleSave} variant='primary' size="large" fullWidth />
+                    <Button label={Strings.buttons.save} onPress={handleSave} variant='primary' size="large" fullWidth />
                 </View>
             </View>
 

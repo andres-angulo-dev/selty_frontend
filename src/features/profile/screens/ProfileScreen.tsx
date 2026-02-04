@@ -1,7 +1,7 @@
 import React from "react";
 import Constants from "expo-constants";
 import { ScrollView, View, Text, StyleSheet } from 'react-native';
-import { Colors, Typography, Spacing } from '@/shared/constants';
+import { Colors, Typography, Spacing, Strings } from '@/shared/constants';
 
 // Navigation
 import { useNavigation } from "@react-navigation/native";
@@ -45,40 +45,40 @@ export const ProfileScreen: React.FC = () => {
             />
 
             {/* Personal information section */}
-            <ProfileSection title='Informations Personnelles' paddingIsActive={false}>
-                <ProfileInfoItem label="Nom" value={`${mockUser.firstName} ${mockUser.lastName}`} />
-                <ProfileInfoItem label="Email" value={`${mockUser.email}`} />
-                <ProfileInfoItem label="Téléphone" value={`${mockUser.phone}`} isLast/>
+            <ProfileSection title={Strings.profile.sections.personalInfo} paddingIsActive={false}>
+                <ProfileInfoItem label={Strings.profile.labels.lastName} value={`${mockUser.firstName} ${mockUser.lastName}`} />
+                <ProfileInfoItem label={Strings.profile.labels.email} value={`${mockUser.email}`} />
+                <ProfileInfoItem label={Strings.profile.labels.phone} value={`${mockUser.phone}`} isLast/>
 
                 <View style={{ padding: Spacing.md }}>
-                    <Button label="Modifier le profil" onPress={handleEditProfile} variant="secondary" size="medium" />
+                    <Button label={Strings.profile.menu.editProfile} onPress={handleEditProfile} variant="secondary" size="medium" />
                 </View>
             </ProfileSection>
 
             {/* Settings section */}
-            <ProfileSection title='Paramètres'>
-                <ProfileMenuItem icon="lock-closed-outline" label="Mot de passe" onPress={handleChangePassword} />
-                <ProfileMenuItem icon="notifications-outline" label="Notifications" onPress={handleNotifications} />
-                <ProfileMenuItem icon="language-outline" label="Langue" onPress={handleLanguage} />
-                <ProfileMenuItem icon="moon-outline" label="Thème" onPress={handleTheme} isLast/>
+            <ProfileSection title={Strings.profile.sections.settings}>
+                <ProfileMenuItem icon="lock-closed-outline" label={Strings.profile.menu.password} onPress={handleChangePassword} />
+                <ProfileMenuItem icon="notifications-outline" label={Strings.profile.menu.notifications}  onPress={handleNotifications} />
+                <ProfileMenuItem icon="language-outline" label={Strings.profile.menu.language}  onPress={handleLanguage} />
+                <ProfileMenuItem icon="moon-outline" label={Strings.profile.menu.theme}  onPress={handleTheme} isLast/>
             </ProfileSection>
 
             {/* Support section */}
-            <ProfileSection title="Support">
-                <ProfileMenuItem icon="help-circle-outline" label="Centre d'aide" onPress={handleHelp} />
-                <ProfileMenuItem icon="document-text-outline" label="Conditions d'utilisation" onPress={handleTerms} />
-                <ProfileMenuItem icon="shield-checkmark-outline" label="Politique de confidentialité" onPress={handlePrivacy} />
-                <ProfileMenuItem icon="mail-outline" label="Nous contacter" onPress={handleContact} isLast/>
+            <ProfileSection title={Strings.profile.sections.support}>
+                <ProfileMenuItem icon="help-circle-outline" label={Strings.profile.menu.helpCenter} onPress={handleHelp} />
+                <ProfileMenuItem icon="document-text-outline" label={Strings.profile.menu.terms} onPress={handleTerms} />
+                <ProfileMenuItem icon="shield-checkmark-outline" label={Strings.profile.menu.privacy} onPress={handlePrivacy} />
+                <ProfileMenuItem icon="mail-outline" label={Strings.profile.menu.contact} onPress={handleContact} isLast/>
             </ProfileSection>
 
             {/* Account Section - Buttons */}
                 <View style={styles.buttonContainer}>
-                    <Button label="Déconnexion" onPress={handleLogout} variant="secondary" size="medium" />
+                    <Button label={Strings.profile.menu.logout} onPress={handleLogout} variant="secondary" size="medium" />
                     {/* <Pressable onPress={handleLogout} style={({ pressed }) => [styles.button, styles.logoutButton, pressed && styles.buttonPressed]}>
                         <Text style={styles.logoutText}>Déconnexion</Text>
                     </Pressable> */}
 
-                    <Button label="Supprimer mon compte" onPress={handleDeleteAccount} variant='danger' size="medium" />
+                    <Button label={Strings.profile.menu.deleteAccount}onPress={handleDeleteAccount} variant='danger' size="medium" />
                     {/* <Pressable onPress={handleDeleteAccount} style={({ pressed }) => [styles.button, styles.deleteButton, pressed && styles.buttonPressed]}>
                         <Text style={styles.deleteText}>Supprimer mon compte</Text>
                     </Pressable> */}
@@ -88,7 +88,7 @@ export const ProfileScreen: React.FC = () => {
             <View style={styles.bottomSpacer} />
 
             {/* App version */}
-            <Text style={styles.version}>Version {Constants.expoConfig?.version ?? '1.0.0'}</Text>
+            <Text style={styles.version}>{Strings.profile.version} {Constants.expoConfig?.version ?? '1.0.0'}</Text>
         </ScrollView>                                                                                                                  
     );                                                                                                                              
   };                                                                                                                                
