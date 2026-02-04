@@ -27,9 +27,9 @@ export const TabNavigator: React.FC = () => {
                 tabBarActiveTintColor: Colors.primary.main,                                                                               
                 tabBarInactiveTintColor: Colors.text.tertiary,                                                                            
                 tabBarStyle: { 
-                  height: 60,
-                  paddingBottom: 6,
-                  paddingTop: 6,                                                                                                           
+                  height: 84,
+                //   paddingBottom: 6,
+                //   paddingTop: 6,                                                                                                           
                   backgroundColor: Colors.neutral.white,                                                                                  
                   borderTopColor: Colors.neutral.border,                                                                                  
                   borderTopWidth: 1, // Top border                                                                                                       
@@ -79,10 +79,11 @@ export const TabNavigator: React.FC = () => {
 // import { SearchScreen } from "@/features/search/screens/SearchScreen";
 // import { FavoritesScreen } from "@/features/favorites/screens/FavoritesScreens";
 // import { MessagingScreen } from "@/features/messaging/screens/MessagingScreens";
-// import { ProfileScreen } from "@/features/profile/screens/ProfileScreens";
+// import { ProfileScreen } from "@/features/profile/screens/ProfileScreen";
 
 // // Import Constants
 // import { Colors } from '@/shared/constants';
+// import { Strings } from "@/shared/constants/strings";
 
 // const Tab = createBottomTabNavigator();
 
@@ -127,7 +128,7 @@ export const TabNavigator: React.FC = () => {
 //                 name="Favorites"
 //                 component={FavoritesScreen}
 //                 options={{
-//                     tabBarLabel: Strings.tabs.favoris,
+//                     tabBarLabel: Strings.tabs.favorites,
 //                     tabBarIcon: ({ color, size }) => (
 //                         // <Feather name="bookmark" color={color} size={size} /> // For users 
 //                         <Ionicons name="add-circle-outline" color={color} size={size} /> // For professionals
