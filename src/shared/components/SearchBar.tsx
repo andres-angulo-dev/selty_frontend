@@ -5,7 +5,7 @@ import { Colors, Typography, Spacing } from '@/shared/constants';
 
 interface SearchBarProps extends TextInputProps {
     onClear?: () => void;       // Callback when clear button is pressed
-    onBackPress?: () => void;   // Callbackk when back arrow is pressed
+    onBackPress?: () => void;   // Callback when back arrow is pressed
 }
 
 export const SearchBar: React.FC<SearchBarProps> = ({
@@ -19,7 +19,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
     return (
         <View style={styles.container}>
-            {/* Search icon (visible when inactve) / Back arrow (visible when active) */}
+            {/* Search icon (visible when inactive) / Back arrow (visible when active) */}
             {isActive ? (
                 <Pressable onPress={onBackPress} style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}>
                     <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
