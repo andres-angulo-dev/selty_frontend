@@ -8,6 +8,8 @@ import { CategoryCard } from '@/shared/components/CategoryCard';
 import { mockCategories } from '../data/mockCategories';
 import { ProfessionalCard } from '@/shared/components/ProfessionalCard';
 import { mockProfessionals } from '@/features/professional/data/mockProfessionals';
+import { OfferCard } from '@/shared/components/OfferCard';
+import { mockOffers } from '@/features/offer/data/mockOffers';
 
 export const HomeScreen: React.FC = () => {
     // Temporary state to test SearchBar
@@ -15,6 +17,8 @@ export const HomeScreen: React.FC = () => {
 
     return (
         <View style={styles.container}>
+            <Text style={styles.title}>Sialty</Text>
+            
             {/* Test SearchBar */}
             <SearchBar placeholder='Rechercher un professionnel...' value={searchText} onChangeText={setSearchText} onClear={() => setSearchText('')} onBackPress={() => setSearchText('')} /> 
 
@@ -26,14 +30,19 @@ export const HomeScreen: React.FC = () => {
             </ScrollView>
 
             {/* Test ProfessionalCards */}
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={{ paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm}}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={{ paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm }}>
                 {mockProfessionals.map((pro) => (
                     <ProfessionalCard key={pro.id} professional={pro} onPress={(pro) => console.log('Pressed:', pro.firstName)} />
                 ))}
             </ScrollView>
         
+            {/* Test OfferCard */}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0}} contentContainerStyle={{ paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm }}>
+                {mockOffers.map((offer) => (
+                    <OfferCard key={offer.id} offer={offer} onPress={(offer) => console.log('Pressed:', offer.title)} />
+                ))}
+            </ScrollView>
 
-            <Text style={styles.title}>Accueil</Text>
             <Text style={styles.subtitle}>Feed des professionels</Text>
         </View>
     )
@@ -42,7 +51,7 @@ export const HomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: Spacing.xl,
+        paddingTop: Spacing.xxxl,
         alignItems: 'center',
         backgroundColor: Colors.neutral.background,
     },
@@ -51,6 +60,7 @@ const styles = StyleSheet.create({
         ...Typography.h2,
         color: Colors.text.primary,
         marginTop: Spacing.sm,
+        marginBottom: Spacing.sm
     },
 
     subtitle: {
