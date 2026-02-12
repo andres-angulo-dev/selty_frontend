@@ -6,6 +6,8 @@ import { Colors, Typography, Spacing } from '@/shared/constants';
 import { SearchBar } from '@/shared/components/SearchBar';
 import { CategoryCard } from '@/shared/components/CategoryCard';
 import { mockCategories } from '../data/mockCategories';
+import { ProfessionalCard } from '@/shared/components/ProfessionalCard';
+import { mockProfessionals } from '@/features/professional/data/mockProfessionals';
 
 export const HomeScreen: React.FC = () => {
     // Temporary state to test SearchBar
@@ -22,6 +24,14 @@ export const HomeScreen: React.FC = () => {
                     <CategoryCard key={category.id} category={category} onPress={(cat) => console.log('Pressed:', cat.name)} />
                 ))}
             </ScrollView>
+
+            {/* Test ProfessionalCards */}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={{ paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm}}>
+                {mockProfessionals.map((pro) => (
+                    <ProfessionalCard key={pro.id} professional={pro} onPress={(pro) => console.log('Pressed:', pro.firstName)} />
+                ))}
+            </ScrollView>
+        
 
             <Text style={styles.title}>Accueil</Text>
             <Text style={styles.subtitle}>Feed des professionels</Text>
