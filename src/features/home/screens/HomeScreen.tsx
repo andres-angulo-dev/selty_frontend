@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Colors, Typography, Spacing } from '@/shared/constants';
 
 // Components
 import { SearchBar } from '@/shared/components/SearchBar';
+import { CategoryCard } from '@/shared/components/CategoryCard';
+import { mockCategories } from '../data/mockCategories';
 
 export const HomeScreen: React.FC = () => {
     // Temporary state to test SearchBar
@@ -14,6 +16,13 @@ export const HomeScreen: React.FC = () => {
             {/* Test SearchBar */}
             <SearchBar placeholder='Rechercher un professionnel...' value={searchText} onChangeText={setSearchText} onClear={() => setSearchText('')} onBackPress={() => setSearchText('')} /> 
 
+            {/* Test CategoryCards */}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={{ paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm }}>
+                {mockCategories.map((category) => (
+                    <CategoryCard key={category.id} category={category} onPress={(cat) => console.log('Pressed:', cat.name)} />
+                ))}
+            </ScrollView>
+
             <Text style={styles.title}>Accueil</Text>
             <Text style={styles.subtitle}>Feed des professionels</Text>
         </View>
@@ -23,7 +32,7 @@ export const HomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
+        paddingTop: Spacing.xl,
         alignItems: 'center',
         backgroundColor: Colors.neutral.background,
     },
