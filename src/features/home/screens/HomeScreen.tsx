@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Colors, Typography, Spacing } from '@/shared/constants';
 
 // Components
+import { HomeHeader } from '../components/HomeHeader';
 import { SearchBar } from '@/shared/components/SearchBar';
 import { CategoryCard } from '@/shared/components/CategoryCard';
 import { mockCategories } from '../data/mockCategories';
@@ -20,7 +21,8 @@ export const HomeScreen: React.FC = () => {
     return (
         <ScrollView>
         <View style={styles.container}>
-            <Text style={styles.title}>Sialty</Text>
+            <HomeHeader onNotificationPress={() => console.log('Notification')} notificationCount={1}/>
+            {/* <Text style={styles.title}>Sialty</Text> */}
             
             {/* Test SearchBar */}
             <SearchBar placeholder='Rechercher un professionnel...' value={searchText} onChangeText={setSearchText} onClear={() => setSearchText('')} onBackPress={() => setSearchText('')} /> 
@@ -80,7 +82,7 @@ const styles = StyleSheet.create({
         marginTop: Spacing.sm,
         marginBottom: Spacing.sm,
         paddingLeft: Spacing.md,
-        fontWeight: 600,
+        fontWeight: '600',
         alignSelf: 'flex-start',
     }
 })
