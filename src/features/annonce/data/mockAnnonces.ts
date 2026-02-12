@@ -82,7 +82,7 @@ export const mockAnnonces: Annonce[] = [
       city: 'Lagny-sur-Marne',
       department: '77',
       likesCount: 8,
-      commentsCount: 2,
+      commentsCount: 0,
       isLiked: false,
       isFavorite: false,
       professionalId: 'pro-5',
