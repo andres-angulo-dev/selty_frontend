@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
 
     iconButton: {
         marginRight: Spacing.sm,
+        width: 24,
     },
 
     input: {
@@ -64,6 +65,7 @@ const styles = StyleSheet.create({
         flex: 1,
         color: Colors.text.primary,
         paddingVertical: 0,             // Remove default padding on Android
+        lineHeight: undefined,
     },
 
     clearButton: {
