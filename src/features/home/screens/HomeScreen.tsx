@@ -13,6 +13,8 @@ import { OfferCard } from '@/shared/components/OfferCard';
 import { mockOffers } from '@/features/offer/data/mockOffers';
 import { AnnonceCard } from '@/shared/components/AnnonceCard';
 import { mockAnnonces } from '@/features/annonce/data/mockAnnonces';
+import { PromoBanner } from '../components/PromoBanner';
+import { mockBanners } from '../data/mockBanners';
 
 export const HomeScreen: React.FC = () => {
     // Temporary state to test SearchBar
@@ -22,10 +24,13 @@ export const HomeScreen: React.FC = () => {
         <ScrollView>
         <View style={styles.container}>
             <HomeHeader onNotificationPress={() => console.log('Notification')} notificationCount={1}/>
-            {/* <Text style={styles.title}>Sialty</Text> */}
             
             {/* Test SearchBar */}
             <SearchBar placeholder='Rechercher un professionnel...' value={searchText} onChangeText={setSearchText} onClear={() => setSearchText('')} onBackPress={() => setSearchText('')} /> 
+
+            {/* Test PromoBanner */}
+            <PromoBanner banners={mockBanners} onBannerPress={(Banner) => console.log('Banner', Banner.title)} /> 
+
 
             {/* Test CategoryCards */}
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0, marginBottom: 15, }} contentContainerStyle={{ paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm }}>
