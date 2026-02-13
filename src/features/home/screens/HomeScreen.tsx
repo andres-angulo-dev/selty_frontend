@@ -4,6 +4,7 @@ import { Colors, Typography, Spacing } from '@/shared/constants';
 
 // Components
 import { HomeHeader } from '../components/HomeHeader';
+import { SectionHeader } from '../components/SectionHeader';
 import { SearchBar } from '@/shared/components/SearchBar';
 import { CategoryCard } from '@/shared/components/CategoryCard';
 import { mockCategories } from '../data/mockCategories';
@@ -28,10 +29,6 @@ export const HomeScreen: React.FC = () => {
             {/* Test SearchBar */}
             <SearchBar placeholder='Rechercher un professionnel...' value={searchText} onChangeText={setSearchText} onClear={() => setSearchText('')} onBackPress={() => setSearchText('')} /> 
 
-            {/* Test PromoBanner */}
-            <PromoBanner banners={mockBanners} onBannerPress={(Banner) => console.log('Banner', Banner.title)} /> 
-
-
             {/* Test CategoryCards */}
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0, marginBottom: 15, }} contentContainerStyle={{ paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm }}>
                 {mockCategories.map((category) => (
@@ -39,7 +36,10 @@ export const HomeScreen: React.FC = () => {
                 ))}
             </ScrollView>
 
-            <Text style={styles.titleSection}>Professionels populaires</Text>
+            {/* Test PromoBanner */}
+            <PromoBanner banners={mockBanners} onBannerPress={(Banner) => console.log('Banner', Banner.title)} /> 
+
+            <SectionHeader title='Professionels populaires' onSeeAllPress={() => console.log('SeeAll')} />
             {/* Test ProfessionalCards */}
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={{ paddingHorizontal: Spacing.md, marginBottom: 15, }}>
                 {mockProfessionals.map((pro) => (
@@ -47,7 +47,7 @@ export const HomeScreen: React.FC = () => {
                 ))}
             </ScrollView>
         
-            <Text style={styles.titleSection}>Les offres du moment</Text>
+            <SectionHeader title='Les offres du moment' onSeeAllPress={() => console.log('SeeAll')} />
             {/* Test OfferCards */}
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0}} contentContainerStyle={{ paddingHorizontal: Spacing.md, marginBottom: 15, }}>
                 {mockOffers.map((offer) => (
@@ -55,7 +55,7 @@ export const HomeScreen: React.FC = () => {
                 ))}
             </ScrollView>
 
-            <Text style={styles.titleSection}>Près de chez vous</Text>
+            <SectionHeader title='Près de chez vous' />
             {/* Test AnnoncesCard */}
             {mockAnnonces.map((annonce) => (
                 <AnnonceCard key={annonce.id} onCommentPress={(annonce) => console.log('Comments.', annonce.title)} annonce={annonce} onPress={(annonce) => console.log('Pressed:', annonce.title)} onLikePress={(annonce) => console.log('Liked:', annonce.title)} onFavoritePress={(annonce) => console.log('Favorited:', annonce.title)} />
