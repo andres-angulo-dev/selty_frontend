@@ -15,3 +15,11 @@ export interface Category {
     // Stats
     professionalsCount: number;     // Number of professionals in this category
 } 
+
+export interface Banner {
+    id: string;
+    title: string;
+    subtitle: string;
+    backgroundColor: string;        // Placeholder color (will be replaced by image)
+    professionalId: string | null;  // null = external ad (Google Ads, etc.)
+}
