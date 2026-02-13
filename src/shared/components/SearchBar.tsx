@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { View, TextInput, StyleSheet, Pressable, TextInputProps } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Typography, Spacing } from '@/shared/constants';
@@ -6,22 +6,30 @@ import { Colors, Typography, Spacing } from '@/shared/constants';
 interface SearchBarProps extends TextInputProps {
     onClear?: () => void;       // Callback when clear button is pressed
     onBackPress?: () => void;   // Callback when back arrow is pressed
+    isActive?: boolean;         // Override: force back arrow visible
 }
 
 export const SearchBar: React.FC<SearchBarProps> = ({
     value,
     onClear,
     onBackPress,
+    isActive: isActiveProp,
     ...textInputProps
 }) => {
-    // Check if search is active (text entered)
-    const isActive = value !== undefined && value?.length > 0;
+    
+    const inputRef = useRef<TextInput>(null); // Ref to control the TextInput (blur on back press)
+    const hasText = value !== undefined && value?.length > 0 // Check if search is active (text entered)
+    const isActive = isActiveProp ?? hasText;
+    const handleBackPress = () => {
+        inputRef.current?.blur();
+        onBackPress?.();
+    }
 
     return (
         <View style={styles.container}>
             {/* Search icon (visible when inactive) / Back arrow (visible when active) */}
             {isActive ? (
-                <Pressable onPress={onBackPress} style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}>
+                <Pressable onPress={handleBackPress} style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}>
                     <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
                 </Pressable>
             ) : (
@@ -29,7 +37,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             )}
 
             {/* Text input */}
-            <TextInput style={styles.input} placeholderTextColor={Colors.text.tertiary} autoCapitalize='none' autoCorrect={false} returnKeyType='search' value={value} {...textInputProps} />
+            <TextInput ref={inputRef} style={styles.input} placeholderTextColor={Colors.text.tertiary} autoCapitalize='none' autoCorrect={false} returnKeyType='search' value={value} {...textInputProps} />
         
             {/* Clear button (visible when text is entered) */}
             {value && value.length > 0 && (
