@@ -1,5 +1,5 @@
 // NOT USED IN THIS PROJECT - Allows to automatically calculate the keyboard height 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Keyboard, Platform } from "react-native";
 
 export const useKeyboardHeight = () => {
