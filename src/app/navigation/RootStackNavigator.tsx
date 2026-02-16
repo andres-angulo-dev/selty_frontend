@@ -1,5 +1,5 @@
 import React from 'react';
-import { Colors } from '@/shared/constants';
+import { Colors, Strings } from '@/shared/constants';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from './types';
 import { TabNavigator }  from './TabNavigator';
@@ -21,7 +21,7 @@ export const RootStackNavigator: React.FC = () => {
                 options={{
                     headerShown: true,
                     headerTitle: '',
-                    headerBackTitle: 'retour',
+                    headerBackTitle: Strings.buttons.back,
                     headerShadowVisible: false,
                     headerStyle: { backgroundColor: Colors.neutral.background },
                 }}

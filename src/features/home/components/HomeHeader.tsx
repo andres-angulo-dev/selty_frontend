@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet ,Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Typography, Spacing } from '@/shared/constants';
+import { Colors, Typography, Spacing, Strings } from '@/shared/constants';
 
 interface HomeHeaderProps {
     onNotificationPress: () => void;
@@ -15,7 +15,7 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({
     return (
         <View style={styles.container}>
             {/* App logo / name */}
-            <Text style={styles.logo}>Sialty</Text>
+            <Text style={styles.logo}>{Strings.app.name}</Text>
 
             {/* Notification bell */}
             <Pressable onPress={onNotificationPress} style={({ pressed }) => [styles.bellButton, pressed && styles.pressed]}>

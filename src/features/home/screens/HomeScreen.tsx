@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/navigation/types';
 import { View, StyleSheet, FlatList, ScrollView, Animated, KeyboardAvoidingView, Platform } from 'react-native';
-import { Colors, Spacing } from '@/shared/constants';
+import { Colors, Spacing, Strings } from '@/shared/constants';
 
 // Home components
 import { HomeHeader } from '../components/HomeHeader';
@@ -124,7 +124,7 @@ export const HomeScreen: React.FC = () => {
             <PromoBanner banners={mockBanners} onBannerPress={(Banner) => console.log('Banner', Banner.title)} /> 
         
             {/* Popular professionals - Horizontal scroll */}
-            <SectionHeader title='Professionnels populaires' onSeeAllPress={() => console.log('SeeAll')} />
+            <SectionHeader title={Strings.home.popularProfessionals} onSeeAllPress={() => console.log('SeeAll')} />
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={{ paddingHorizontal: Spacing.md, marginBottom: 15, }}>
                 {professionalsWithDistance.map((pro) => (
                     <ProfessionalCard key={pro.id} professional={pro} onPress={(pro) => navigation.navigate('ProfessionalDetail', { professionalId: pro.id })} />
@@ -132,7 +132,7 @@ export const HomeScreen: React.FC = () => {
             </ScrollView>
 
             {/* Current offers - Horizontal scroll */}
-            <SectionHeader title='Les offres du moment' onSeeAllPress={() => console.log('SeeAll')} />
+            <SectionHeader title={Strings.home.currentOffers} onSeeAllPress={() => console.log('SeeAll')} />
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalList} contentContainerStyle={styles.horizontalListContent}>
                 {mockOffers.map((offer) => (
                     <OfferCard key={offer.id} offer={offer} onPress={(offer) => console.log('Pressed:', offer.title)} />
@@ -140,7 +140,7 @@ export const HomeScreen: React.FC = () => {
             </ScrollView>
 
             {/* Feed section title */}
-            <SectionHeader title='Près de chez vous' />
+            <SectionHeader title={Strings.home.nearYou} />
         </View>
     )
 
@@ -180,7 +180,7 @@ export const HomeScreen: React.FC = () => {
             
             {/* Search bar */}
             <SearchBar 
-                placeholder='Rechercher un professionnel...' 
+                placeholder={Strings.home.searchPlaceholder}
                 value={searchText} 
                 onChangeText={setSearchText} 
                 onClear={() => setSearchText('')} 

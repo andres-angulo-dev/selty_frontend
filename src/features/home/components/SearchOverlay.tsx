@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Typography, Spacing } from '@/shared/constants';
+import { Colors, Typography, Spacing, Strings } from '@/shared/constants';
 import { Category } from '../types';
 import { Professional } from '@/features/professional/types';
 
@@ -37,9 +37,9 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({
             <View style={styles.container}>
                 {/* Header with clear button */}
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>Recherches récentes</Text>
+                    <Text style={styles.sectionTitle}>{Strings.search.recentSearches}</Text>
                     <Pressable onPress={onClearHistory} style={({ pressed }) => [pressed && styles.pressed]}>
-                        <Text style={styles.clearText}>Effacer</Text>
+                        <Text style={styles.clearText}>{Strings.search.clear}</Text>
                     </Pressable>
                 </View>
 
@@ -64,7 +64,7 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({
             <View style={styles.container}>
                 <View style={styles.noResults}>
                     <Ionicons name='search-outline' size={40} color={Colors.text.tertiary} />
-                    <Text style={styles.noResultsText}>Aucun Résultat pour "{searchText}"</Text>
+                    <Text style={styles.noResultsText}>{Strings.search.noResults} "{searchText}"</Text>
                 </View>
             </View>
         )
@@ -78,7 +78,7 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({
             {/* Catégory suggestions */}
             {categoryResults.length > 0 && (
                 <>
-                    <Text style={styles.sectionTitle}>Catégories</Text>
+                    <Text style={styles.sectionTitle}>{Strings.search.categories}</Text>
                     {categoryResults.map((category) => (
                         <Pressable key={category.id} onPress={() => onCategoryPress(category)} style={({ pressed }) => [styles.resultRow, pressed && styles.pressed]}>
                             <Ionicons name={category.icon as any} size={18} color={Colors.primary.main} />
@@ -91,7 +91,7 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({
             {/* Professional suggestions */}
             {professionalResults.length > 0 && (
                 <>
-                    <Text style={styles.sectionTitle}>Professionnels</Text>
+                    <Text style={styles.sectionTitle}>{Strings.search.professionals}</Text>
                     {professionalResults.map((pro) => (
                         <Pressable key={pro.id} onPress={() => onProfessionalPress(pro)} style={({ pressed }) => [styles.resultRow, pressed && styles.pressed]}>
                             <View style={styles.profilContainer}>
