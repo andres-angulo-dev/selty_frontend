@@ -136,5 +136,34 @@ export const Strings = {
       required: 'Ce champ est obligatoire',
       passwordMinLength: 'Le mot de passe doit contenir au moins 6 caractères',
       passwordMismatch: 'Les mots de passe ne correspondent pas',
-    }
+    },
+
+    // ------------------------------                                                                                                       
+    // Home screen                                                                                                                            
+    // ------------------------------                                                                                                         
+    home: {
+        searchPlaceholder: 'Rechercher un professionnel...',
+        popularProfessionals: 'Professionnels populaires',
+        currentOffers: 'Les offres du moment',
+        nearYou: 'Près de chez vous',
+    },
+
+    // ------------------------------
+    // Search overlay
+    // ------------------------------
+    search: {
+        recentSearches: 'Recherches récentes',
+        clear: 'Effacer',
+        categories: 'Catégories',
+        professionals: 'Professionnels',
+        noResults: 'Aucun Résultat pour',
+    },
+    
+    // ------------------------------
+    // Professional detail
+    // ------------------------------
+    professional: {
+        notFound: 'Professionnel non trouvé',
+    },
+
   } as const;   

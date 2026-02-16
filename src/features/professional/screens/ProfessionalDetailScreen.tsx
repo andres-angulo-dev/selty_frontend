@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/navigation/types';
-import { Colors, Typography, Spacing } from '@/shared/constants';
+import { Colors, Typography, Spacing, Strings } from '@/shared/constants';
 import { getProfessionalDetail } from '../data/mockProfessionalDetails';
 
 // Type for the route props of this screen
@@ -19,7 +19,7 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route })=> {
     if (!professional) {
         return (
             <View style={styles.container}>
-                <Text style={styles.errorText}>Professionnel non trouvé</Text>
+                <Text style={styles.errorText}>{Strings.professional.notFound}</Text>
             </View>
         );
     }
