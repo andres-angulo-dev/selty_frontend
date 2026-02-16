@@ -65,6 +65,8 @@ export interface User {
 export interface Review {
     id: string;
     userId: string;
+    userName: string;
+    userAvatar: string | null;
     professionalId: string;
     professionalName: string;
     professionalAvatar: string | null;
