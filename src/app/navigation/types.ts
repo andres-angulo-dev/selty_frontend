@@ -18,7 +18,7 @@ export type ProfileStackParamList = {
 
 export type RootStackParamList = {
     MainTabs: undefined;
-    ProfessionalDetail: { professionalId: String };
+    ProfessionalDetail: { professionalId: string };
     OfferDetail: { offerId: string };
     AnnonceDetail: { annonceId: string };
     CommentsModal: { annonceId: string };

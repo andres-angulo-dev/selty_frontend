@@ -1,4 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '@/app/navigation/types';
 import { View, StyleSheet, FlatList, ScrollView, Animated, KeyboardAvoidingView, Platform } from 'react-native';
 import { Colors, Spacing } from '@/shared/constants';
 
@@ -37,6 +40,8 @@ export const HomeScreen: React.FC = () => {
         'Coiffeur',
         'Avocat',
     ]);
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
     // ============================================
     // USER LOCATION
     // ============================================
@@ -122,7 +127,7 @@ export const HomeScreen: React.FC = () => {
             <SectionHeader title='Professionnels populaires' onSeeAllPress={() => console.log('SeeAll')} />
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={{ paddingHorizontal: Spacing.md, marginBottom: 15, }}>
                 {professionalsWithDistance.map((pro) => (
-                    <ProfessionalCard key={pro.id} professional={pro} onPress={(pro) => console.log('Pressed:', pro.firstName)} />
+                    <ProfessionalCard key={pro.id} professional={pro} onPress={(pro) => navigation.navigate('ProfessionalDetail', { professionalId: pro.id })} />
                 ))}
             </ScrollView>
 
@@ -145,7 +150,11 @@ export const HomeScreen: React.FC = () => {
     const renderAnnonce = ({ item }: { item: Annonce }) => (
         <AnnonceCard 
             annonce={item} 
-            onPress={(annonce) => console.log('Annonce:', annonce.title)} 
+            onPress={(annonce) => { 
+                if (annonce.professionalId) {
+                    navigation.navigate('ProfessionalDetail', { professionalId: annonce.professionalId });
+                }  
+            }}
             onLikePress={(annonce) => console.log('Liked:', annonce.title)} 
             onCommentPress={(annonce) => console.log('Comments:', annonce.title)} 
             onFavoritePress={(annonce) => console.log('Favorited:', annonce.title)} 
@@ -191,7 +200,7 @@ export const HomeScreen: React.FC = () => {
                         onRecentSearchPress={handleRecentSearchPress}
                         onClearHistory={handleClearHistory}
                         onCategoryPress={(cat) => console.log('Category:', cat.name)}
-                        onProfessionalPress={(pro) => console.log('Pro:', pro.firstName)}
+                        onProfessionalPress={(pro) => navigation.navigate('ProfessionalDetail', { professionalId: pro.id })}
                     />
                 ) : (
                     // Scrollable content
