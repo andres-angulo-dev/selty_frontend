@@ -14,10 +14,13 @@ import { CategoryCard } from '@/shared/components/CategoryCard';
 import { ProfessionalCard } from '@/shared/components/ProfessionalCard';
 import { OfferCard } from '@/shared/components/OfferCard';
 import { AnnonceCard } from '@/shared/components/AnnonceCard';
+import { useUserLocation } from '@/shared/hooks/useUserLocation';
+import { calculateDistance, formatDistance } from '@/shared/utils/geolocation';
 
 // Mock data
 import { mockCategories } from '../data/mockCategories';
 import { mockBanners } from '../data/mockBanners';
+import { Professional } from '@/features/professional/types';
 import { mockProfessionals } from '@/features/professional/data/mockProfessionals';
 import { mockOffers } from '@/features/offer/data/mockOffers';
 import { mockAnnonces } from '@/features/annonce/data/mockAnnonces';
@@ -35,10 +38,29 @@ export const HomeScreen: React.FC = () => {
         'Avocat',
     ]);
     // ============================================
+    // USER LOCATION
+    // ============================================
+    const { userLocation } = useUserLocation();
+
+    // ============================================
     // HEADER ANIMATION
     // ============================================
     // Animated value: 1 = header visible, 0 = header hidden
     const headerAnimation = useRef(new Animated.Value(1)).current;
+
+    // Calculate distances for progessionals based on user location
+    const professionalsWithDistance: Professional[] = mockProfessionals.map((pro) => {
+        if (userLocation && pro.latitude && pro.longitude) {
+            const distanceKm = calculateDistance(
+                userLocation.latitude,
+                userLocation.longitude,
+                pro.latitude,
+                pro.longitude,
+            );
+            return { ...pro, distance: formatDistance(distanceKm)};
+        }
+        return { ...pro};
+    })
 
     //Trigger animation when search focus changes
     useEffect(() => {
@@ -57,7 +79,7 @@ export const HomeScreen: React.FC = () => {
         cat.name.toLowerCase().includes(searchText.toLowerCase())
     );
     
-    const filteredProfessionals = mockProfessionals.filter((pro) =>
+    const filteredProfessionals = professionalsWithDistance.filter((pro) =>
         pro.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
         pro.lastName.toLowerCase().includes(searchText.toLowerCase()) ||
         pro.profession.toLowerCase().includes(searchText.toLowerCase()) 
@@ -99,7 +121,7 @@ export const HomeScreen: React.FC = () => {
             {/* Popular professionals - Horizontal scroll */}
             <SectionHeader title='Professionnels populaires' onSeeAllPress={() => console.log('SeeAll')} />
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={{ paddingHorizontal: Spacing.md, marginBottom: 15, }}>
-                {mockProfessionals.map((pro) => (
+                {professionalsWithDistance.map((pro) => (
                     <ProfessionalCard key={pro.id} professional={pro} onPress={(pro) => console.log('Pressed:', pro.firstName)} />
                 ))}
             </ScrollView>

@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
 
     locationRow: {
         flexDirection: 'row',
-        alignItems: 'center',
+        alignItems: 'baseline',
         justifyContent: 'flex-end',
         width: 80,
     },

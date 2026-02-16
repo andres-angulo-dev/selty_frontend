@@ -47,9 +47,9 @@ export const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
 
                     {/* Distance on the right */}    
                     {professional.distance && (
-                        <View style={styles.reviewDistance}>
+                        <View style={styles.distanceContainer}>
                             <Ionicons name='location-outline' size={14} color={Colors.text.tertiary} />
-                            <Text style={styles.distance}>{professional.distance}</Text>
+                            <Text style={styles.distanceText}>{professional.distance}</Text>
                         </View>
                     )}
                 </View>
@@ -131,11 +131,12 @@ const styles = StyleSheet.create({
         marginLeft: 2,
     },
     
-    reviewDistance: {
+    distanceContainer: {
         flexDirection: 'row',
+        alignItems: 'baseline',
     },
 
-    distance: {
+    distanceText: {
         ...Typography.caption,
         color: Colors.text.tertiary,
     },

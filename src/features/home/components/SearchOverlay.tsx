@@ -74,7 +74,7 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({
     // STATE 2: Show suggestions
     // ============================================
     return (
-        <ScrollView style={styles.container}> {/* contentContainerStyle={{ paddingBottom: keyboardHeight}}> */}
+        <ScrollView style={styles.container}> 
             {/* Catégory suggestions */}
             {categoryResults.length > 0 && (
                 <>
@@ -94,11 +94,19 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({
                     <Text style={styles.sectionTitle}>Professionnels</Text>
                     {professionalResults.map((pro) => (
                         <Pressable key={pro.id} onPress={() => onProfessionalPress(pro)} style={({ pressed }) => [styles.resultRow, pressed && styles.pressed]}>
-                            <Ionicons name='person-outline' size={18} color={Colors.primary.main} />
-                            <View>
-                                <Text style={styles.resultText}>{pro.firstName} {pro.lastName}</Text>
-                                <Text style={styles.resultSubText}>{pro.profession}</Text>
+                            <View style={styles.profilContainer}>
+                                <Ionicons name='person-outline' size={18} color={Colors.primary.main} />
+                                <View>
+                                    <Text style={styles.resultText}>{pro.firstName} {pro.lastName}</Text>
+                                    <Text style={styles.resultSubText}>{pro.profession}</Text>
+                                </View>
                             </View>
+                            {pro.distance && (
+                                <View style={styles.distanceContainer}>
+                                    <Ionicons name='location-outline' size={14} color={Colors.text.tertiary} />
+                                    <Text style={styles.distanceText}>{pro.distance}</Text>
+                                </View>
+                            )}
                         </Pressable>
                     ))}
                 </>
@@ -136,10 +144,15 @@ const styles = StyleSheet.create({
 
     resultRow: {
         flexDirection: 'row',
-        alignItems: 'center',
+        justifyContent: 'space-between',
         paddingVertical: Spacing.md,
         borderBottomWidth: 1,
         borderBottomColor: Colors.neutral.border,
+    },
+
+    profilContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
 
     resultText: {
@@ -152,6 +165,16 @@ const styles = StyleSheet.create({
         ...Typography.caption,
         color: Colors.text.tertiary,
         marginLeft: Spacing.sm,
+    },
+
+    distanceContainer: {
+        flexDirection: 'row',
+        alignItems: 'baseline',
+    },
+
+    distanceText: {
+        ...Typography.caption,
+        color: Colors.text.tertiary,
     },
 
     noResults: {
