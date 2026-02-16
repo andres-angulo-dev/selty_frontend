@@ -16,3 +16,10 @@ export type ProfileStackParamList = {
     ChangePassword: undefined;
 };
 
+export type RootStackParamList = {
+    MainTabs: undefined;
+    ProfessionalDetail: { professionalId: String };
+    OfferDetail: { offerId: string };
+    AnnonceDetail: { annonceId: string };
+    CommentsModal: { annonceId: string };
+}
