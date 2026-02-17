@@ -7,6 +7,7 @@ import { RootStackParamList } from '@/app/navigation/types';
 import { HeroSection } from '../components/HeroSection';
 import { ActionButtons } from '../components/ActionButtons';
 import { StatsRow } from '../components/StatsRow';
+import { AboutSection } from '../components/AboutSection'; 
 
 // Constants
 import { Colors, Typography, Spacing, Strings } from '@/shared/constants';
@@ -64,6 +65,12 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route })=> {
                 reviewsCount={professional.reviewsCount}
                 annoncesCount={professional.annoncesCount}
                 createdAt={professional.createdAt}
+            />
+
+            {/* About section */}
+            <AboutSection
+                description={professional.description}
+                services={professional.services}
             />
         </ScrollView>
     )
