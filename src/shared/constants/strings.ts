@@ -164,6 +164,13 @@ export const Strings = {
     // ------------------------------
     professional: {
         notFound: 'Professionnel non trouvé',
+        available: 'Disponible',
+        unavailable: 'Indisponible',
+        stats: {
+          annonces: 'ANNONCES',
+          reviews: 'AVIS',
+          memberSince: 'INSCRIT EN',
+        }
     },
 
   } as const;   
