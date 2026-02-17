@@ -1,8 +1,16 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/navigation/types';
+
+// Components
+import { HeroSection } from '../components/HeroSection';
+import { StatsRow } from '../components/StatsRow';
+
+// Constants
 import { Colors, Typography, Spacing, Strings } from '@/shared/constants';
+
+// Mocks
 import { getProfessionalDetail } from '../data/mockProfessionalDetails';
 
 // Type for the route props of this screen
@@ -18,17 +26,34 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route })=> {
     // Handle case where professional is not found
     if (!professional) {
         return (
-            <View style={styles.container}>
+            <View style={styles.errorContainer}>
                 <Text style={styles.errorText}>{Strings.professional.notFound}</Text>
             </View>
         );
     }
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>{professional.firstName} {professional.lastName}</Text>
-            <Text style={styles.subTitle}>{professional.profession}</Text>
-        </View>
+        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+            {/* Hero: avatar, name, profession, badge, location */}
+            <HeroSection
+                avatar={professional.avatar}
+                firstName={professional.firstName}
+                lastName={professional.lastName}
+                profession={professional.profession}
+                city={professional.city}
+                department={professional.department}
+                isCertified={professional.isCertified}
+                isAvailable={professional.isAvailable} 
+            />
+
+            {/* Stats: rating, annonce count, member since */}
+            <StatsRow 
+                rating={professional.rating}
+                reviewsCount={professional.reviewsCount}
+                annoncesCount={professional.annoncesCount}
+                createdAt={professional.createdAt}
+            />
+        </ScrollView>
     )
 }
 
@@ -36,20 +61,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.neutral.background,
+    },
+
+    errorContainer: {
+        flex: 1,
+        backgroundColor: Colors.neutral.background,
         justifyContent: 'center',
         alignItems: 'center'
-    },
-
-    title: {
-        ...Typography.h2,
-        color: Colors.text.secondary,
-        marginTop: Spacing.sm,
-    },
-
-    subTitle: {
-        ...Typography.body,
-        color: Colors.text.secondary,
-        marginTop: Spacing.sm, 
     },
 
     errorText: {

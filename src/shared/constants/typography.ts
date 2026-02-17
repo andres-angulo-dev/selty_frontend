@@ -9,6 +9,7 @@ export const FontFamily = {
 
 // Font size scale
 export const FontSize = {
+    xxs: 10,      // Extra small labels, captions                                                                                          
     xs: 12,      // Small labels, captions                                                                                          
     sm: 14,      // Secondary text, buttons                                                                                         
     md: 16,      // Body text (default)                                                                                             
@@ -66,6 +67,11 @@ export const FontSize = {
       fontSize: FontSize.xs,                                                                                                        
       fontWeight: 'normal',                                                                                                         
       lineHeight: FontSize.xs * LineHeight.normal,                                                                                  
+    },
+    captionBis: {                                                                                                                      
+      fontSize: FontSize.xxs,                                                                                                        
+      fontWeight: 'normal',                                                                                                         
+      lineHeight: FontSize.xxs * LineHeight.normal,                                                                                  
     },                                                                                                                              
                                                                                                                                     
     // Buttons                                                                                                                      
