@@ -170,6 +170,16 @@ export const Strings = {
           annonces: 'ANNONCES',
           reviews: 'AVIS',
           memberSince: 'INSCRIT EN',
+        },
+        actions: {
+          call: 'Appeler',
+          message: 'Message',
+          favorite: 'Favoris',
+          share: 'Partager',
+          noPhoneTitle: 'Numéro indisponible',
+          noPhoneMessage: 'Ce professionel n\a pas renseigné de numéro de téléphone.',
+          shareMessage: 'Découvre',
+          shareOnSialty: 'sur Sialty !',
         }
     },
 
