@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Typography, Spacing, BorderRadius, Layout } from '@/shared/constants';
+import { Colors, Typography, Spacing, BorderRadius, Layout, Strings } from '@/shared/constants';
 
 // Props type - receives only what it needs to display
 type HeroSectionProps = {
@@ -28,7 +28,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     return (
         <View style={styles.container}>
             {/* Availability status */}
-            <Text style={[styles.availabilityText, { color: isAvailable ? Colors.semantic.success : Colors.neutral.disabled }]}>{isAvailable ? 'Disponible' : 'Indisponible'}</Text>
+            <Text style={[styles.availabilityText, { color: isAvailable ? Colors.semantic.success : Colors.neutral.disabled }]}>{isAvailable ? Strings.professional.available : Strings.professional.unavailable }</Text>
 
             {/* Avatar */}
             <View style={styles.avatarContainer}>
