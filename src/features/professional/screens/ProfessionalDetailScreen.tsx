@@ -5,6 +5,7 @@ import { RootStackParamList } from '@/app/navigation/types';
 
 // Components
 import { HeroSection } from '../components/HeroSection';
+import { ActionButtons } from '../components/ActionButtons';
 import { StatsRow } from '../components/StatsRow';
 
 // Constants
@@ -44,6 +45,17 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route })=> {
                 department={professional.department}
                 isCertified={professional.isCertified}
                 isAvailable={professional.isAvailable} 
+            />
+
+            {/* Actions buttons: call, message, favorite, share */}
+            <ActionButtons
+                phone={professional.phone}
+                firstName={professional.firstName}
+                lastName={professional.lastName}
+                profession={professional.profession}
+                isFavorite={false}
+                onMessagePress={() => console.log('Message')}
+                onFavoriteToggle={(newValue) => console.log('Favorite:', newValue)}
             />
 
             {/* Stats: rating, annonce count, member since */}
