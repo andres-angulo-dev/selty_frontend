@@ -180,6 +180,12 @@ export const Strings = {
           noPhoneMessage: 'Ce professionel n\a pas renseigné de numéro de téléphone.',
           shareMessage: 'Découvre',
           shareOnSialty: 'sur Sialty !',
+        },
+        about: {
+          title: 'À propos',
+          seeMore: 'Voir plus',
+          seeLess: 'Voir moins',
+          servicesTitle: 'Services proposés'
         }
     },
 

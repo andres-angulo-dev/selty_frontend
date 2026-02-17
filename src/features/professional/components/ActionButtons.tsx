@@ -91,7 +91,6 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly',
         paddingBottom: Spacing.lg,
         paddingHorizontal: Spacing.md,
-        // backgroundColor: 'red',
     },
 
     button: {

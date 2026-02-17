@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     },
 
     statValue: {
-       ...Typography.h6,
+       ...Typography.caption,
        color: Colors.text.primary, 
     },
 
