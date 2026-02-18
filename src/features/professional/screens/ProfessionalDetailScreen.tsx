@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/navigation/types';
@@ -7,7 +7,8 @@ import { RootStackParamList } from '@/app/navigation/types';
 import { HeroSection } from '../components/HeroSection';
 import { ActionButtons } from '../components/ActionButtons';
 import { StatsRow } from '../components/StatsRow';
-import { AboutSection } from '../components/AboutSection'; 
+import { AboutSection } from '../components/AboutSection';
+import { TabSelector, TabName } from '../components/TabSelector'
 
 // Constants
 import { Colors, Typography, Spacing, Strings } from '@/shared/constants';
@@ -19,11 +20,11 @@ import { getProfessionalDetail } from '../data/mockProfessionalDetails';
 type Props = NativeStackScreenProps<RootStackParamList, 'ProfessionalDetail'>;
 
 export const ProfessionalDetailScreen: React.FC<Props> = ({ route })=> {
-    // Get the professionalId from navigation params
-    const { professionalId } = route.params;
-
-    // Fetch professional data (simulates API call)
-    const professional = getProfessionalDetail(professionalId);
+    // Active tab state - controls which content is shown
+    const [activeTab, setActiveTab] = useState<TabName>('annonces');
+    
+    const { professionalId } = route.params; // Get the professionalId from navigation params
+    const professional = getProfessionalDetail(professionalId); // Fetch professional data (simulates API call)
 
     // Handle case where professional is not found
     if (!professional) {
@@ -67,11 +68,26 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route })=> {
                 createdAt={professional.createdAt}
             />
 
-            {/* About section */}
+            {/* About (description + services) */}
             <AboutSection
                 description={professional.description}
                 services={professional.services}
             />
+
+            {/* Tab selector (Annonces | Avis) */}
+            <TabSelector
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+                annoncesCount={professional.annonces.length}
+                reviewsCount={professional.reviews.length}
+            />
+
+            {/* Tab content */}
+            {activeTab === 'annonces' ? (
+                <Text style={styles.placeholder}>Liste des annonces à venir...</Text>
+            ) : (
+                <Text style={styles.placeholder}>Liste des avis à venir...</Text>
+            )}
         </ScrollView>
     )
 }
@@ -90,7 +106,14 @@ const styles = StyleSheet.create({
     },
 
     errorText: {
-        ...Typography.body,
+        ...Typography.caption,
         color: Colors.semantic.error,
+    },
+
+    placeholder: {
+        ...Typography.caption,
+        color: Colors.text.tertiary,
+        textAlign: 'center',
+        paddingVertical: Spacing.xl,
     }
 })

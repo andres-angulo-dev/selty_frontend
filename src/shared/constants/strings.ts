@@ -186,6 +186,10 @@ export const Strings = {
           seeMore: 'Voir plus',
           seeLess: 'Voir moins',
           servicesTitle: 'Services proposés'
+        },
+        tabs: {
+          annonces: 'Annonces',
+          reviews: 'Avis',
         }
     },
 

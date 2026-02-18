@@ -24,6 +24,23 @@ export const mockAnnonces: Annonce[] = [
       isActive: true,
     },
     {
+      id: 'annonce-6',                                                                                                                          
+      title: 'Remplacement chauffe-eau et installation sanitaire',                                                                            
+      description: 'Spécialiste en remplacement de chauffe-eau, baignoire, douche et WC. Travail soigné, matériel de qualité. Devis gratuit sous 24h. Zone 77 et alentours.',                                                                                                                 
+      images: [],
+      city: 'Melun',
+      department: '77',
+      likesCount: 17,
+      commentsCount: 3,
+      isLiked: false,
+      isFavorite: false,
+      professionalId: 'pro-1',
+      categoryId: 'cat-1',
+      professional: mockProfessionals[0],    // Jean Dupont
+      createdAt: new Date('2025-01-15'),
+      isActive: true,
+    },
+    {
       id: 'annonce-2',
       title: 'Coiffure à domicile - Spécial mariage',
       description: 'Vous vous mariez bientôt ? Je me déplace chez vous pour la coiffure de la mariée et des demoiselles d\'honneur. Essai offert!',
