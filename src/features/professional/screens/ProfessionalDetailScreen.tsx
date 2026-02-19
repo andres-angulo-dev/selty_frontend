@@ -9,6 +9,8 @@ import { ActionButtons } from '../components/ActionButtons';
 import { StatsRow } from '../components/StatsRow';
 import { AboutSection } from '../components/AboutSection';
 import { TabSelector, TabName } from '../components/TabSelector'
+import { ReviewSummary } from '../components/ReviewSummary';
+import { ReviewCard } from '../components/ReviewCard';
 
 // Constants
 import { Colors, Typography, Spacing, Strings } from '@/shared/constants';
@@ -78,15 +80,27 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route })=> {
             <TabSelector
                 activeTab={activeTab}
                 onTabChange={setActiveTab}
-                annoncesCount={professional.annonces.length}
-                reviewsCount={professional.reviews.length}
+                annoncesCount={professional.annoncesCount}
+                reviewsCount={professional.reviewsCount}
             />
 
             {/* Tab content */}
             {activeTab === 'annonces' ? (
                 <Text style={styles.placeholder}>Liste des annonces à venir...</Text>
             ) : (
-                <Text style={styles.placeholder}>Liste des avis à venir...</Text>
+                <View style={styles.reviewContainer}>
+                    {/* Global rating summary */}
+                    <ReviewSummary reviews={professional.reviews} averageRating={professional.rating} />
+
+                    <Text style={styles.reviewTitle}>{Strings.professional.tabs.reviewsTitle}</Text>
+                    <View style={styles.separator} />
+                    {/* Individual review cards */}
+                    <View style={styles.reviewList}>
+                        {professional.reviews.map((review) => (
+                            <ReviewCard key={review.id} review={review} />
+                        ))}
+                    </View>
+                </View>
             )}
         </ScrollView>
     )
@@ -115,5 +129,28 @@ const styles = StyleSheet.create({
         color: Colors.text.tertiary,
         textAlign: 'center',
         paddingVertical: Spacing.xl,
-    }
+    },
+
+    reviewContainer: {
+        paddingTop: Spacing.md,
+    },
+
+    reviewTitle: {
+        ...Typography.label,
+        paddingHorizontal: Spacing.md,
+        paddingBottom: Spacing.sm,
+    },    
+    
+    separator: {
+        height: 1,
+        backgroundColor: Colors.neutral.border,
+        marginHorizontal: Spacing.md,
+        marginBottom: Spacing.md,
+    },
+
+    reviewList: {
+        paddingHorizontal: Spacing.md,
+        paddingBottom: Spacing.xl,
+        gap: Spacing.sm,
+    },
 })

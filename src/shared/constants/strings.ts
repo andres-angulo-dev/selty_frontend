@@ -36,7 +36,7 @@ export const Strings = {
         title: 'Profil',                                                                                                            
         subtitle: 'Gérer votre compte',                                                                                             
       },                                                                                                                            
-    },                                                                                                                              
+    },          
                                                                                                                                     
     // Common buttons                                                                                                               
     buttons: {                                                                                                                      
@@ -177,7 +177,7 @@ export const Strings = {
           favorite: 'Favoris',
           share: 'Partager',
           noPhoneTitle: 'Numéro indisponible',
-          noPhoneMessage: 'Ce professionel n\a pas renseigné de numéro de téléphone.',
+          noPhoneMessage: 'Ce professionnel n\'a pas renseigné de numéro de téléphone.',
           shareMessage: 'Découvre',
           shareOnSialty: 'sur Sialty !',
         },
@@ -190,7 +190,26 @@ export const Strings = {
         tabs: {
           annonces: 'Annonces',
           reviews: 'Avis',
+          noReviews: 'Aucun avis pour le moment',
+          reviewsCount: (n: number) => `${n} avis`,
+          reviewsSummaryTitle: 'Vue d\'ensemble',
+          reviewsTitle: 'Avis clients',
         }
+    },
+
+    // ------------------------------
+    // Date formatting
+    // ------------------------------
+    dates: {
+        justNow: "À l'instant",
+        today: "Aujourd'hui",
+        yesterday: 'Hier',
+        minutesAgo: (n: number) => `Il y a ${n} min`,
+        hoursAgo: (n: number) => `Il y a ${n}h`,
+        daysAgo: (n: number) => `Il y a ${n} jours`,
+        weeksAgo: (n: number) => `Il y a ${n} semaine${n > 1 ? 's' : ''}`,
+        monthsAgo: (n: number) => `Il y a ${n} mois`,
+        yearsAgo: (n: number) => `Il y a ${n} an${n > 1 ? 's' : ''}`,
     },
 
   } as const;   

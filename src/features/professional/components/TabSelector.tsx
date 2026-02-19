@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         marginHorizontal: Spacing.md,
-        borderBottomWidth: 1,
+        borderBottomWidth: 2,
         borderBottomColor: Colors.neutral.border,
     },
 
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         paddingVertical: Spacing.sm,
-        borderBottomWidth: 2,
+        borderBottomWidth: 4,
         borderBottomColor: 'transparent',
     },
 
