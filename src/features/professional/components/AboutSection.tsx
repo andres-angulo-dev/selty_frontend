@@ -80,14 +80,13 @@ const styles = StyleSheet.create({
     toggleText: {
         ...Typography.caption,
         color: Colors.text.tertiary,
-        marginBottom: Spacing.lg
+        marginBottom: Spacing.lg,
     },
 
     serviceRow: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: 8,
-        marginBottom: Spacing.sm,
     },
 
     serviceText: {

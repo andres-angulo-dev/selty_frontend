@@ -46,12 +46,13 @@ const styles = StyleSheet.create({
         marginHorizontal: Spacing.md,
         borderBottomWidth: 2,
         borderBottomColor: Colors.neutral.border,
+        marginBottom: Spacing.md,
     },
 
     tab: {
         flex: 1,
         alignItems: 'center',
-        paddingVertical: Spacing.sm,
+        paddingBottom: Spacing.sm,
         borderBottomWidth: 4,
         borderBottomColor: 'transparent',
     },
