@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/navigation/types';
+import { Annonce } from '@/features/annonce/types';
+import { Review } from '@/features/profile/types';
 
 // Components
 import { HeroSection } from '../components/HeroSection';
@@ -11,6 +13,7 @@ import { AboutSection } from '../components/AboutSection';
 import { TabSelector, TabName } from '../components/TabSelector'
 import { ReviewSummary } from '../components/ReviewSummary';
 import { ReviewCard } from '../components/ReviewCard';
+import { AnnonceCard } from '@/shared/components/AnnonceCard';
 
 // Constants
 import { Colors, Typography, Spacing, Strings } from '@/shared/constants';
@@ -18,15 +21,28 @@ import { Colors, Typography, Spacing, Strings } from '@/shared/constants';
 // Mocks
 import { getProfessionalDetail } from '../data/mockProfessionalDetails';
 
+// Union type for FlatList items (either Annonce or Review)
+type ListItem = Annonce | Review;
+
 // Type for the route props of this screen
 type Props = NativeStackScreenProps<RootStackParamList, 'ProfessionalDetail'>;
 
 export const ProfessionalDetailScreen: React.FC<Props> = ({ route })=> {
     // Active tab state - controls which content is shown
     const [activeTab, setActiveTab] = useState<TabName>('annonces');
-    
+    const [displayedCount, setDisplayedCount] = useState(10);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const tableSelectorY = useRef(0);
+
+    const flatListRef = useRef<FlatList>(null); // Ref to access FlatList methods (scroll to top on tab change)
     const { professionalId } = route.params; // Get the professionalId from navigation params
     const professional = getProfessionalDetail(professionalId); // Fetch professional data (simulates API call)
+
+    // Reset pagination and scroll to tabSelector when tab changes
+    useEffect(() => {
+        setDisplayedCount(10);
+        flatListRef.current?.scrollToOffset({ offset: tableSelectorY.current, animated: true });
+    }, [activeTab])
 
     // Handle case where professional is not found
     if (!professional) {
@@ -37,8 +53,47 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route })=> {
         );
     }
 
-    return (
-        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    // Slice data based on current tab and displayed count
+    const currentData: ListItem[] = activeTab === 'annonces' ? professional.annonces.slice(0, displayedCount) : professional.reviews.slice(0, displayedCount);
+
+    // Total items for the current tab
+    const totalItems = activeTab === 'annonces' ? professional.annonces.length : professional.reviews.length;
+
+    // Load more items when reaching the end of the list
+    const handleLoadMore = () => {
+        if (isLoadingMore || displayedCount >= totalItems) return;
+
+        setIsLoadingMore(true);
+        // Simulate API delay
+        setTimeout(() => {
+            setDisplayedCount(prev => prev + 10);
+            setIsLoadingMore(false);
+        }, 500);
+    };
+
+    // Render each item based on active tab
+    const renderItem = ({ item }: { item: ListItem }) => {
+        if (activeTab === 'annonces') {
+            return (
+                <AnnonceCard 
+                    annonce={item as Annonce}  // "item as Annonce" → type casting: we tell TypeScript, required because item is typed as ListItem (Annonce | Review)
+                    onPress={() => console.log('Annonce pressed')}
+                    onLikePress={() => console.log('Like')}
+                    onFavoritePress={() => console.log('Favorite')}
+                    onCommentPress={() => console.log('Comment')}
+                />
+            );
+        };
+        return (
+            <View style={styles.reviewItem}>
+                <ReviewCard review={item as Review} />
+            </View>
+        );
+    };
+
+    // Static header content (rendered once above the list)
+    const renderHeader = () => (
+        <>
             {/* Hero: avatar, name, profession, badge, location */}
             <HeroSection
                 avatar={professional.avatar}
@@ -50,7 +105,7 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route })=> {
                 isCertified={professional.isCertified}
                 isAvailable={professional.isAvailable} 
             />
-
+        
             {/* Actions buttons: call, message, favorite, share */}
             <ActionButtons
                 phone={professional.phone}
@@ -61,7 +116,7 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route })=> {
                 onMessagePress={() => console.log('Message')}
                 onFavoriteToggle={(newValue) => console.log('Favorite:', newValue)}
             />
-
+        
             {/* Stats: rating, annonce count, member since */}
             <StatsRow 
                 rating={professional.rating}
@@ -69,47 +124,75 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route })=> {
                 annoncesCount={professional.annoncesCount}
                 createdAt={professional.createdAt}
             />
-
+        
             {/* About (description + services) */}
             <AboutSection
                 description={professional.description}
                 services={professional.services}
             />
-
+        
             {/* Tab selector (Annonces | Avis) */}
-            <TabSelector
-                activeTab={activeTab}
-                onTabChange={setActiveTab}
-                annoncesCount={professional.annoncesCount}
-                reviewsCount={professional.reviewsCount}
-            />
-
-            {/* Tab content */}
-            {activeTab === 'annonces' ? (
-                <Text style={styles.placeholder}>Liste des annonces à venir...</Text>
-            ) : (
-                <View style={styles.reviewContainer}>
+            <View onLayout={(event) => { tableSelectorY.current = event.nativeEvent.layout.y; }}>
+                <TabSelector
+                    activeTab={activeTab}
+                    onTabChange={setActiveTab}
+                    annoncesCount={professional.annoncesCount}
+                    reviewsCount={professional.reviewsCount}
+                />
+            </View>
+             
+            {/* Show review summary only on Avis tab */}
+            {activeTab === 'avis' && (
+                <>
                     {/* Global rating summary */}
                     <ReviewSummary reviews={professional.reviews} averageRating={professional.rating} />
-
-                    <Text style={styles.reviewTitle}>{Strings.professional.tabs.reviewsTitle}</Text>
-                    <View style={styles.separator} />
-                    {/* Individual review cards */}
-                    <View style={styles.reviewList}>
-                        {professional.reviews.map((review) => (
-                            <ReviewCard key={review.id} review={review} />
-                        ))}
-                    </View>
-                </View>
+            
+                    {/* Title + separator before the review cards */}
+                    {professional.reviewsCount !== 0 &&  (
+                        <>
+                            <Text style={styles.reviewTitle}>{Strings.professional.tabs.reviewsTitle}</Text>
+                            <View style={styles.separator} />
+                        </>
+                    )}
+                </>
             )}
-        </ScrollView>
+        </>
+    );
+
+    // Show loading indicator at the bottom while fetching more
+    const renderFooter = () => {
+        if (!isLoadingMore) return null;
+        return (
+            <ActivityIndicator style={styles.loader} color={Colors.primary.main} />
+        )
+    }
+
+    return (
+        <View style={styles.container}>
+            <FlatList
+                ref={flatListRef} // Reference to control scroll programmatically
+                data={currentData} // Data to display (annonces OR reviews)
+                keyExtractor={(item) => item.id}
+                renderItem={renderItem}  // Function called for each item in data
+                ListHeaderComponent={renderHeader}  // Rendered ONCE above the list, displayed before renderItem
+                ListFooterComponent={renderFooter} // Rendered ONCE below the list, displayed after renderItem
+                onEndReached={handleLoadMore} // At xx% of the end, triggers the display of 10 additional items
+                onEndReachedThreshold={0.5} // xx% to trigger display of 10 additional items
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.contentContainer}
+            />
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: Colors.neutral.background,
+     container: {
+      flex: 1,
+      backgroundColor: Colors.neutral.background,
+    },
+    
+    contentContainer: {
+        paddingBottom: Spacing.xl,
     },
 
     errorContainer: {
@@ -124,15 +207,9 @@ const styles = StyleSheet.create({
         color: Colors.semantic.error,
     },
 
-    placeholder: {
-        ...Typography.caption,
-        color: Colors.text.tertiary,
-        textAlign: 'center',
-        paddingVertical: Spacing.xl,
-    },
-
-    reviewContainer: {
-        paddingTop: Spacing.md,
+    reviewItem: {
+        paddingHorizontal: Spacing.md,
+        marginBottom: Spacing.sm,
     },
 
     reviewTitle: {
@@ -148,9 +225,7 @@ const styles = StyleSheet.create({
         marginBottom: Spacing.md,
     },
 
-    reviewList: {
-        paddingHorizontal: Spacing.md,
-        paddingBottom: Spacing.xl,
-        gap: Spacing.sm,
+    loader: {
+        paddingVertical: Spacing.lg,
     },
 })

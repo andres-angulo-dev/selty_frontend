@@ -59,7 +59,7 @@ export const ReviewSummary: React.FC<ReviewSummaryProps> = ({
                             </View>
 
                             {/* % */}
-                            <Text style={styles.countLabel}>{percentage}%</Text>
+                            <Text style={styles.percentLabel}>{percentage}%</Text>
                         </View>
                     ))}
                 </View>
@@ -131,10 +131,10 @@ const styles =  StyleSheet.create({
         borderRadius: BorderRadius.full,
     },
 
-    countLabel: {
+    percentLabel: {
         ...Typography.caption,
         color: Colors.text.tertiary,
-        width: 30,
+        width: 40,
         textAlign: 'center',
     },
 

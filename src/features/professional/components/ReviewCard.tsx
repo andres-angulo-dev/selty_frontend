@@ -14,7 +14,7 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
     const stars = Array.from({ length: 5 }, (_, i) => i < review.rating);
 
     return (
-        <View style={styles.reviews}>
+        <View style={styles.container}>
             {/* Header: avatar + name + date */}
             <View style={styles.header}>
                 {/* Avatar placeholder with initials */}
@@ -43,14 +43,6 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: Colors.neutral.card,
-        borderRadius: BorderRadius.lg,
-        padding: Spacing.sm, 
-        borderWidth: 1,
-        borderColor: Colors.neutral.border,
-    },    
-    
-    reviews: {
         backgroundColor: Colors.neutral.card,
         borderRadius: BorderRadius.lg,
         padding: Spacing.sm, 
