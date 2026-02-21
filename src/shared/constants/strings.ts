@@ -3,7 +3,10 @@ export const Strings = {
     app: {                                                                                                                          
       name: 'Sialty',                                                                                                               
       tagline: 'Trouvez le bon professionnel, facilement.',                                                                         
-    },                                                                                                                              
+    },     
+
+    // App locale for date and number formatting                                                                                                  
+    locale: 'fr-FR',     
                                                                                                                                     
     // Navigation / Tab names                                                                                                       
     tabs: {                                                                                                                         

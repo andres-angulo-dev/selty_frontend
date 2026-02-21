@@ -37,4 +37,10 @@ export const formatRelativeDate = (date: Date, precision: DatePrecision = 'days'
 
     // Convert days to years
     return Strings.dates.yearsAgo(diffYears);
+
 }
+
+// Format a date to a readable string (e.g "30 juin 2025")
+export const formatAbsoluteDate = (date: Date): string => {
+    return date.toLocaleDateString(Strings.locale, {day: 'numeric', month: 'long', year: 'numeric'});
+};

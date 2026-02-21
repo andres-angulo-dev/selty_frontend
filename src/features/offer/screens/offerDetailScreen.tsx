@@ -5,14 +5,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/navigation/types';
 import { getOfferById } from '../data/mockOffers';
+import { formatAbsoluteDate } from '@/shared/utils/formatDate';
 
 // Screen props: gives access to route.params.offerId and navigation
 type Props = NativeStackScreenProps<RootStackParamList, 'OfferDetail'>;
-
-// Format a date to a readable string (e.g "30 juin 2025")
-const formatDate = (date: Date): string => {
-    return date.toLocaleDateString('fr-FR', {day: 'numeric', month: 'long', year: 'numeric'});
-};
 
 export const OfferDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     const { offerId } = route.params;
@@ -61,13 +57,13 @@ export const OfferDetailScreen: React.FC<Props> = ({ route, navigation }) => {
                     {offer.startsAt && (
                         <View style={styles.dateRow}>
                             <Ionicons name='calendar-outline' size={16} color={Colors.text.tertiary} />
-                            <Text style={styles.dateText}>{Strings.offer.startsAt} {formatDate(offer.startsAt)}</Text> 
+                            <Text style={styles.dateText}>{Strings.offer.startsAt} {formatAbsoluteDate(offer.startsAt)}</Text> 
                         </View>
                     )}
                     {offer.expiresAt && (
                         <View style={styles.dateRow}>
                             <Ionicons name='time-outline' size={16} color={Colors.text.tertiary} />
-                            <Text style={styles.dateText}>{Strings.offer.expiresAt} {formatDate(offer.expiresAt)}</Text>
+                            <Text style={styles.dateText}>{Strings.offer.expiresAt} {formatAbsoluteDate(offer.expiresAt)}</Text>
                         </View>
                     )}
                 </View>
