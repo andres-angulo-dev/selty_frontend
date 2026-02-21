@@ -198,6 +198,18 @@ export const Strings = {
     },
 
     // ------------------------------
+    // Offer detail
+    // ------------------------------
+    offer: {
+        notFound: 'Offre non trouvée',
+        validity: 'Validité',
+        startsAt: 'Du',
+        expiresAt: 'Jusqu\'au',
+        professional: 'Proposé par',
+        call: 'Appeler',
+    },
+
+    // ------------------------------
     // Date formatting
     // ------------------------------
     dates: {

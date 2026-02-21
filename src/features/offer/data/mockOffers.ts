@@ -6,6 +6,10 @@ import { Offer } from '../types';
 import { mockProfessionals } from '@/features/professional/data/mockProfessionals';
 import { mockCategories } from '@/features/home/data/mockCategories';
 
+export const getOfferById = (offerId: string): Offer | null => {
+  return mockOffers.find((offer) => offer.id === offerId) ?? null;
+};
+
 export const mockOffers: Offer[] = [
     {
       id: 'offer-1',
