@@ -135,7 +135,7 @@ export const HomeScreen: React.FC = () => {
             <SectionHeader title={Strings.home.currentOffers} onSeeAllPress={() => console.log('SeeAll')} />
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalList} contentContainerStyle={styles.horizontalListContent}>
                 {mockOffers.map((offer) => (
-                    <OfferCard key={offer.id} offer={offer} onPress={(offer) => console.log('Pressed:', offer.title)} />
+                    <OfferCard key={offer.id} offer={offer} onPress={(offer) => navigation.navigate('OfferDetail', { offerId: offer.id })} />
                 ))}
             </ScrollView>
 
