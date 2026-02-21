@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Typography, Spacing } from '@/shared/constants';
 import { Annonce } from '@/features/annonce/types';
+import { formatRelativeDate } from '@/shared/utils/formatDate';
 
 interface AnnonceCardProps {
     annonce: Annonce;
@@ -82,6 +83,9 @@ export const AnnonceCard: React.FC<AnnonceCardProps> = ({
                 <Pressable onPress={() => onFavoritePress(annonce)} style={({ pressed }) => [styles.actionButton, pressed && styles.actionPressed]}>
                     <Ionicons name={annonce.isFavorite ? 'bookmark' : 'bookmark-outline'} size={20} color={annonce.isFavorite ? Colors.primary.main : Colors.text.tertiary} />
                 </Pressable>
+
+                {/* Date */}
+                <Text style={styles.date}>{formatRelativeDate(annonce.createdAt, 'seconds')}</Text>
             </View>
         </View>
     )
@@ -169,7 +173,7 @@ const styles = StyleSheet.create({
     actionButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginRight: Spacing.lg,
+        marginRight: Spacing.md,
     },
 
     actionPressed: {
@@ -180,5 +184,11 @@ const styles = StyleSheet.create({
         ...Typography.caption,
         color: Colors.text.tertiary,
         marginLeft: 4,
+    },
+
+    date: {
+        ...Typography.caption,
+        color: Colors.text.tertiary,
+        marginLeft: 'auto',
     }
 })
