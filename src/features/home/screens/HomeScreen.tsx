@@ -150,10 +150,9 @@ export const HomeScreen: React.FC = () => {
     const renderAnnonce = ({ item }: { item: Annonce }) => (
         <AnnonceCard 
             annonce={item} 
-            onPress={(annonce) => { 
-                if (annonce.professionalId) {
-                    navigation.navigate('ProfessionalDetail', { professionalId: annonce.professionalId });
-                }  
+            onPress={(annonce) => {
+                console.log('Annonce:', annonce.id);
+                navigation.navigate('AnnonceDetail', { annonceId: annonce.id });
             }}
             onLikePress={(annonce) => console.log('Liked:', annonce.title)} 
             onCommentPress={(annonce) => console.log('Comments:', annonce.title)} 

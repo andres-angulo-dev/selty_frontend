@@ -27,7 +27,7 @@ type ListItem = Annonce | Review;
 // Type for the route props of this screen
 type Props = NativeStackScreenProps<RootStackParamList, 'ProfessionalDetail'>;
 
-export const ProfessionalDetailScreen: React.FC<Props> = ({ route })=> {
+export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })=> {
     // Active tab state - controls which content is shown
     const [activeTab, setActiveTab] = useState<TabName>('annonces');
     const [displayedCount, setDisplayedCount] = useState(10);
@@ -77,7 +77,7 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route })=> {
             return (
                 <AnnonceCard 
                     annonce={item as Annonce}  // "item as Annonce" → type casting: we tell TypeScript, required because item is typed as ListItem (Annonce | Review)
-                    onPress={() => console.log('Annonce pressed')}
+                    onPress={(annonce) => navigation.navigate('AnnonceDetail', { annonceId: annonce.id})}
                     onLikePress={() => console.log('Like')}
                     onFavoritePress={() => console.log('Favorite')}
                     onCommentPress={() => console.log('Comment')}
