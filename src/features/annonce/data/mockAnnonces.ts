@@ -5,6 +5,10 @@
 import { Annonce } from "../types";
 import { mockProfessionals } from "@/features/professional/data/mockProfessionals";
 
+export const getAnnonceById = (id: string): Annonce | undefined => {
+  return mockAnnonces.find((annonce) => annonce.id === id);
+};
+
 export const mockAnnonces: Annonce[] = [
     {
       id: 'annonce-1',

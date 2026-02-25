@@ -211,6 +211,20 @@ export const Strings = {
         professional: 'Proposé par',
         call: 'Appeler',
     },
+    
+    // ------------------------------
+    // Offer detail
+    // ------------------------------
+    annonce: {
+      notFound: 'Annonce non trouvée',
+      location: 'Localisation',
+      publishedAt: 'Publié',
+      interactions: 'Interactions',
+      professional: 'Proposé par',
+      call: 'Appeler',
+      likes: (n: number) => `${n} j'aime`,
+      comments: (n: number) => `${n} commentaire${n > 1 ? 's' : ''}`,
+    },
 
     // ------------------------------
     // Date formatting
