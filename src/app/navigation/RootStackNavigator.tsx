@@ -8,6 +8,7 @@ import { TabNavigator }  from './TabNavigator';
 import { ProfessionalDetailScreen } from '@/features/professional/screens/ProfessionalDetailScreen';
 import { OfferDetailScreen } from '@/features/offer/screens/offerDetailScreen';
 import { AnnonceDetailScreen } from '@/features/annonce/screens/AnnonceDetailScreen';
+import { CommentsModal } from '@/features/annonce/screens/CommentsModal';
 
 const BACK_ICON_SIZE = 22;
 
@@ -67,6 +68,16 @@ export const RootStackNavigator: React.FC = () => {
                             <Ionicons name='chevron-back' size={BACK_ICON_SIZE} color={Colors.text.primary} />
                         </Pressable>
                     )
+                })}
+            />
+
+            <Stack.Screen
+                name='CommentsModal'
+                component={CommentsModal}
+                options={({ navigation }) => ({
+                    presentation: 'modal', // The modal begins with a bottom to top animation (IOs)
+                    animation: 'slide_from_bottom', // // The modal begins with a bottom to top animation (IOs)
+                    headerShown: false,
                 })}
             />
         </Stack.Navigator>

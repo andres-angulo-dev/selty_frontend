@@ -4,6 +4,7 @@
 
 import { Annonce } from "../types";
 import { mockProfessionals } from "@/features/professional/data/mockProfessionals";
+import { mockComments } from "./mockComments";
 
 export const getAnnonceById = (id: string): Annonce | undefined => {
   return mockAnnonces.find((annonce) => annonce.id === id);
@@ -18,7 +19,7 @@ export const mockAnnonces: Annonce[] = [
       city: 'Melun',
       department: '77',
       likesCount: 24,
-      commentsCount: 5,
+      commentsCount: mockComments.filter((c) => c.annonceId === 'annonce-1').length,
       isLiked: false,
       isFavorite: false,
       professionalId: 'pro-1',
@@ -35,7 +36,7 @@ export const mockAnnonces: Annonce[] = [
       city: 'Melun',
       department: '77',
       likesCount: 17,
-      commentsCount: 3,
+      commentsCount: mockComments.filter((c) => c.annonceId === 'annonce-6').length,
       isLiked: false,
       isFavorite: false,
       professionalId: 'pro-1',
@@ -52,7 +53,7 @@ export const mockAnnonces: Annonce[] = [
       city: 'Pontault-Combault',
       department: '77',
       likesCount: 45,
-      commentsCount: 12,
+      commentsCount: mockComments.filter((c) => c.annonceId === 'annonce-2').length,
       isLiked: true,
       isFavorite: true,
       professionalId: 'pro-2',
@@ -69,7 +70,7 @@ export const mockAnnonces: Annonce[] = [
       city: 'Torcy',
       department: '77',
       likesCount: 67,
-      commentsCount: 23,
+      commentsCount: mockComments.filter((c) => c.annonceId === 'annonce-3').length,
       isLiked: false,
       isFavorite: false,
       professionalId: 'pro-3',
@@ -86,7 +87,7 @@ export const mockAnnonces: Annonce[] = [
       city: 'Chelles',
       department: '77',
       likesCount: 112,
-      commentsCount: 34,
+      commentsCount: mockComments.filter((c) => c.annonceId === 'annonce-4').length,
       isLiked: true,
       isFavorite: false,
       professionalId: 'pro-4',
@@ -103,7 +104,7 @@ export const mockAnnonces: Annonce[] = [
       city: 'Lagny-sur-Marne',
       department: '77',
       likesCount: 8,
-      commentsCount: 0,
+      commentsCount: mockComments.filter((c) => c.annonceId === 'annonce-5').length,
       isLiked: false,
       isFavorite: false,
       professionalId: 'pro-5',

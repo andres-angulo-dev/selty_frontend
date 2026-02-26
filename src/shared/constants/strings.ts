@@ -213,17 +213,28 @@ export const Strings = {
     },
     
     // ------------------------------
-    // Offer detail
+    // Annonce detail
     // ------------------------------
     annonce: {
       notFound: 'Annonce non trouvée',
       location: 'Localisation',
+      department: 'Dép.',
       publishedAt: 'Publié',
       interactions: 'Interactions',
       professional: 'Proposé par',
       call: 'Appeler',
       likes: (n: number) => `${n} j'aime`,
       comments: (n: number) => `${n} commentaire${n > 1 ? 's' : ''}`,
+    },
+
+    // ------------------------------                                                                                                             
+    // Comments modal                                                                                                                             
+    // ------------------------------   
+    comments: {
+      title: (n: number) => `Commentaires (${n})`,
+      empty: 'Aucun commentaire pour le moment',
+      placeholder: 'Écrire un commentaire...',
+      send: 'Envoyer',
     },
 
     // ------------------------------

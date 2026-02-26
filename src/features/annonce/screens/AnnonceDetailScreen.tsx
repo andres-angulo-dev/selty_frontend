@@ -6,7 +6,6 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/navigation/types';
 import { getAnnonceById } from '../data/mockAnnonces';
 import { formatRelativeDate } from '@/shared/utils/formatDate';
-import { ProfessionalCard } from '@/shared/components/ProfessionalCard';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AnnonceDetail'>;
 
@@ -33,7 +32,7 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     // Open the native phone dialer
     const handleCallPress = () => {
         if (annonce.professional?.phone) {
-            Linking.openURL(`tèl:${annonce.professional.phone}`)
+            Linking.openURL(`tel:${annonce.professional.phone}`)
         };
     };
 
@@ -50,7 +49,7 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
                 <Text style={styles.sectionTitle}>{Strings.annonce.location}</Text>
                 <View style={styles.infoRow}>
                     <Ionicons name='location-outline' size={16} color={Colors.text.tertiary} />
-                    <Text>{annonce.city} • Dép. {annonce.department}</Text>
+                    <Text>{annonce.city} • {Strings.annonce.department} {annonce.department}</Text>
                 </View>
             </View>
 
@@ -74,10 +73,10 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
                     </View>
 
                     {/* Comments */}
-                    <View style={styles.interactionItem}>
+                    <Pressable onPress={() => navigation.navigate('CommentsModal', { annonceId: annonce.id })} style={({ pressed }) => [styles.interactionItem, pressed && styles.pressed]}>
                         <Ionicons name='chatbubbles-outline' size={18} color={Colors.text.tertiary} />
                         <Text style={styles.interactionText}>{Strings.annonce.comments(annonce.commentsCount)}</Text>
-                    </View>
+                    </Pressable>
                 </View>
             </View>
 
@@ -105,7 +104,7 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
 
             {/* Call button */}
             {annonce.professional?.phone && (
-                <Pressable onPress={handleCallPress} style={({ pressed }) => [styles.callButton, pressed && styles.pressed]}>
+                <Pressable onPress={handleCallPress} style={({ pressed }) => [styles.callButton, pressed && styles.callButtonPressed]}>
                     <Ionicons name='call-outline' size={18} color={Colors.neutral.white}/>
                     <Text style={styles.callButtonText}>{Strings.annonce.call}</Text>
                 </Pressable>
@@ -113,7 +112,6 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
         </ScrollView>
     )
 };
-
 
 const styles = StyleSheet.create({
     container: {
@@ -238,7 +236,7 @@ const styles = StyleSheet.create({
         marginTop: Spacing.sm,
     },
 
-    CallButtonPressed: {
+    callButtonPressed: {
         opacity: 0.8,
     },
 

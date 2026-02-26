@@ -80,7 +80,7 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
                     onPress={(annonce) => navigation.navigate('AnnonceDetail', { annonceId: annonce.id})}
                     onLikePress={() => console.log('Like')}
                     onFavoritePress={() => console.log('Favorite')}
-                    onCommentPress={() => console.log('Comment')}
+                    onCommentPress={(annonce) => navigation.navigate('CommentsModal', { annonceId: annonce.id})} 
                 />
             );
         };
