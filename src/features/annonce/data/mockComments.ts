@@ -18,6 +18,8 @@
           userAvatar: null,
           annonceId: 'annonce-1',
           createdAt: new Date('2025-02-10'),
+          usefulCount: 5,                                                                                                                               
+          isUseful: false, 
       },
       {
           id: 'comment-2',
@@ -27,6 +29,8 @@
           userAvatar: null,
           annonceId: 'annonce-1',
           createdAt: new Date('2025-02-08'),
+          usefulCount: 3,                                                                                                                               
+          isUseful: false, 
       },
       {
           id: 'comment-3',
@@ -36,6 +40,8 @@
           userAvatar: null,
           annonceId: 'annonce-1',
           createdAt: new Date('2025-02-07'),
+          usefulCount: 2,                                                                                                                               
+          isUseful: true,
       },
 
       // annonce-6 (chauffe-eau Jean Dupont)
@@ -47,6 +53,8 @@
           userAvatar: null,
           annonceId: 'annonce-6',
           createdAt: new Date('2025-01-20'),
+          usefulCount: 4,                                                                                                                               
+          isUseful: false,
       },
       {
           id: 'comment-5',
@@ -56,6 +64,8 @@
           userAvatar: null,
           annonceId: 'annonce-6',
           createdAt: new Date('2025-01-18'),
+          usefulCount: 1,                                                                                                                               
+          isUseful: false,
       },
 
       // annonce-2 (coiffure Marie Martin)
@@ -67,6 +77,8 @@
           userAvatar: null,
           annonceId: 'annonce-2',
           createdAt: new Date('2025-02-08'),
+          usefulCount: 7,                                                                                                                               
+          isUseful: true,
       },
       {
           id: 'comment-7',
@@ -76,6 +88,8 @@
           userAvatar: null,
           annonceId: 'annonce-2',
           createdAt: new Date('2025-02-06'),
+          usefulCount: 3,                                                                                                                               
+          isUseful: false,
       },
 
       // annonce-3 (immobilier Paul Leblanc)
@@ -87,6 +101,8 @@
           userAvatar: null,
           annonceId: 'annonce-3',
           createdAt: new Date('2025-02-06'),
+          usefulCount: 6,                                                                                                                               
+          isUseful: false,
       },
       {
           id: 'comment-9',
@@ -96,6 +112,8 @@
           userAvatar: null,
           annonceId: 'annonce-3',
           createdAt: new Date('2025-02-05'),
+          usefulCount: 4,                                                                                                                               
+          isUseful: true,
       },
 
       // annonce-4 (sport Sophie Durand)
@@ -107,7 +125,10 @@
           userAvatar: null,
           annonceId: 'annonce-4',
           createdAt: new Date('2025-02-04'),
+          usefulCount: 2,                                                                                                                               
+          isUseful: false,
       },
+
       {
           id: 'comment-11',
           content: 'C\'est adapté aux débutants ?',
@@ -116,5 +137,7 @@
           userAvatar: null,
           annonceId: 'annonce-4',
           createdAt: new Date('2025-02-03'),
+          usefulCount: 8,                                                                                                                               
+          isUseful: false,
       },    
   ]

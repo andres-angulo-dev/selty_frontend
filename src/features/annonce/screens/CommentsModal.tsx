@@ -50,6 +50,8 @@ export const CommentsModal: React.FC<Props> = ({ route, navigation }) => {
             userAvatar: currentUser.userAvatar,
             annonceId,
             createdAt: new Date(),
+            usefulCount: 0,
+            isUseful: false,
         };
 
         setComments((prev) => [newComment, ...prev]);
@@ -57,6 +59,15 @@ export const CommentsModal: React.FC<Props> = ({ route, navigation }) => {
 
         // Scroll to top to show the new comment 
         flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+    };
+
+    // Toggle useful state on a comment 
+    const handleUseful = (commentId: string) => {
+        setComments((prev) => 
+            prev.map((c) => 
+                c.id === commentId ? { ...c, isUseful: !c.isUseful, usefulCount: c.isUseful ? c.usefulCount - 1 : c.usefulCount + 1 } : c 
+            )
+        );
     };
 
     // Render a signle comment card
@@ -78,6 +89,12 @@ export const CommentsModal: React.FC<Props> = ({ route, navigation }) => {
                     <Text style={styles.date}>{formatRelativeDate(item.createdAt, 'seconds')}</Text>
                 </View>
                 <Text style={styles.commentText}>{item.content}</Text>
+                <View style={styles.commentFooter}>
+                    <Pressable onPress={() => handleUseful(item.id)} style={styles.usefulButton}>
+                        <Ionicons name={item.isUseful ? 'thumbs-up' : 'thumbs-up-outline'} size={13} color={item.isUseful ? Colors.primary.main : Colors.text.tertiary} />
+                        <Text style={[styles.usefulText, item.isUseful && styles.usefulTextActive]}>{item.usefulCount > 0 ? `${Strings.comments.useful} (${item.usefulCount})` : Strings.comments.useful}</Text>
+                    </Pressable>
+                </View>
             </View>
         </View>
     );
@@ -144,7 +161,7 @@ export const CommentsModal: React.FC<Props> = ({ route, navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white',
+        backgroundColor: Colors.neutral.background,
         borderTopLeftRadius: Platform.OS === 'android' ? 32 : 0,
         borderTopRightRadius: Platform.OS === 'android' ? 32 : 0,
         overflow: 'hidden',
@@ -243,6 +260,30 @@ const styles = StyleSheet.create({
         color: Colors.text.tertiary,
         textAlign: 'center',
         marginTop: Spacing.xl,
+    },
+
+    commentFooter: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        marginTop: Spacing.xs,
+    },
+
+    usefulButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+        paddingVertical: 2,
+        paddingHorizontal: Spacing.xs,
+    },
+
+    usefulText: {
+        ...Typography.caption,
+        color: Colors.text.tertiary,
+        fontSize: 11,
+    },
+
+    usefulTextActive: {
+        color: Colors.primary.main,
     },
 
     inputBar: {
