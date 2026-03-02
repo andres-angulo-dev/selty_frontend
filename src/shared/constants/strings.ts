@@ -235,6 +235,7 @@ export const Strings = {
       empty: 'Aucun commentaire pour le moment',
       placeholder: 'Écrire un commentaire...',
       send: 'Envoyer',
+      useful: 'Utile',
     },
 
     // ------------------------------

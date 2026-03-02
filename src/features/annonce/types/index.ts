@@ -12,7 +12,7 @@ export interface Annonce {
   // Content
   title: string;                // e.g. "Plumbing services in the 77 area"
   description: string;          // Detailed description
-  images: string[];              // List of image URLs
+  images: string[];             // List of image URLs
   
   // Location
   city: string;
@@ -22,7 +22,7 @@ export interface Annonce {
   likesCount: number;           // Total likes
   commentsCount: number;        // Total Comments
   isLiked: boolean;             // Liked by current user
-  isFavorite: boolean;           // Saved by current user
+  isFavorite: boolean;          // Saved by current user
   
   // Relations (ID for backend)
   professionalId: string;
@@ -58,4 +58,8 @@ export interface Comment {
 
     // Metadata
     createdAt: Date;
+
+    // Interactions 
+    usefulCount: number;        // Total "useful" marks
+    isUseful: boolean;          // Marked as useful by current user
 }
