@@ -55,6 +55,7 @@ export interface Comment {
 
     // Relations
     annonceId: string;          // Which annonce this belongs to
+    parentId: string | null;    // null = top-level, string = reply to another comment
 
     // Metadata
     createdAt: Date;

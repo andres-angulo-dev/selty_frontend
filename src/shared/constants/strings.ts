@@ -236,6 +236,14 @@ export const Strings = {
       placeholder: 'Écrire un commentaire...',
       send: 'Envoyer',
       useful: 'Utile',
+      reply: 'Répondre',
+      replyLabel: 'Réponse à',
+      replyingTo: (name: string) => `@${name}`,
+      cancelReply: 'Annuler',
+      currentUser: 'Moi',
+      viewReply: 'Voir la réponse',
+      viewReplies: (n: number) => `Voir les ${n} réponses`,
+      collapseReplies: 'Réduire',
     },
 
     // ------------------------------
