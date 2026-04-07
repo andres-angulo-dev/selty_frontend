@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Typography, Spacing, Strings } from '@/shared/constants';
 import { Category } from '../types';
-import { Professional } from '@/features/professional/types';
+import { Professional } from '@/shared/types';
 
 interface SearchOverlayProps {
     searchText: string;

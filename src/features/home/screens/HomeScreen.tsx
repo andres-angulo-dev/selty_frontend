@@ -23,13 +23,12 @@ import { calculateDistance, formatDistance } from '@/shared/utils/geolocation';
 // Mock data
 import { mockCategories } from '../data/mockCategories';
 import { mockBanners } from '../data/mockBanners';
-import { Professional } from '@/features/professional/types';
 import { mockProfessionals } from '@/features/professional/data/mockProfessionals';
 import { mockOffers } from '@/features/offer/data/mockOffers';
 import { mockAnnonces } from '@/features/annonce/data/mockAnnonces';
 
 // Types
-import { Annonce } from '@/features/annonce/types';
+import { Professional, Annonce } from '@/shared/types';
 
 export const HomeScreen: React.FC = () => {
     // Temporary state 

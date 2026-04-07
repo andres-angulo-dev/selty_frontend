@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Typography, Spacing } from '@/shared/constants';
-import { Annonce } from '@/features/annonce/types';
+import { Annonce } from '@/shared/types';
 import { formatRelativeDate } from '@/shared/utils/formatDate';
 
 interface AnnonceCardProps {
