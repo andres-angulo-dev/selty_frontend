@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/navigation/types';
@@ -52,19 +52,22 @@ export const HomeScreen: React.FC = () => {
     // Animated value: 1 = header visible, 0 = header hidden
     const headerAnimation = useRef(new Animated.Value(1)).current;
 
-    // Calculate distances for progessionals based on user location
-    const professionalsWithDistance: Professional[] = mockProfessionals.map((pro) => {
-        if (userLocation && pro.latitude && pro.longitude) {
-            const distanceKm = calculateDistance(
-                userLocation.latitude,
-                userLocation.longitude,
-                pro.latitude,
-                pro.longitude,
-            );
-            return { ...pro, distance: formatDistance(distanceKm)};
-        }
-        return { ...pro};
-    })
+    // Calculate distances for professionals based on user location
+    // useMemo: recomputes only when userLocation changes, not on every keystroke
+    const professionalsWithDistance = useMemo<Professional[]>(() =>
+        mockProfessionals.map((pro) => {
+            if (userLocation && pro.latitude && pro.longitude) {
+                const distanceKm = calculateDistance(
+                    userLocation.latitude,
+                    userLocation.longitude,
+                    pro.latitude,
+                    pro.longitude,
+                );
+                return { ...pro, distance: formatDistance(distanceKm) };
+            }
+            return { ...pro };
+        }),
+    [userLocation]);
 
     //Trigger animation when search focus changes
     useEffect(() => {
@@ -79,15 +82,21 @@ export const HomeScreen: React.FC = () => {
     // SEARCH LOGIC
     // ============================================
     // Filter categories and professionals based on search text
-    const filteredCategories = mockCategories.filter((cat) => 
-        cat.name.toLowerCase().includes(searchText.toLowerCase())
-    );
-    
-    const filteredProfessionals = professionalsWithDistance.filter((pro) =>
-        pro.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
-        pro.lastName.toLowerCase().includes(searchText.toLowerCase()) ||
-        pro.profession.toLowerCase().includes(searchText.toLowerCase()) 
-    );
+    // useMemo: recomputes only when searchText changes
+    const filteredCategories = useMemo(() =>
+        mockCategories.filter((cat) =>
+            cat.name.toLowerCase().includes(searchText.toLowerCase())
+        ),
+    [searchText]);
+
+    // useMemo: recomputes only when professionalsWithDistance or searchText changes
+    const filteredProfessionals = useMemo(() =>
+        professionalsWithDistance.filter((pro) =>
+            pro.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
+            pro.lastName.toLowerCase().includes(searchText.toLowerCase()) ||
+            pro.profession.toLowerCase().includes(searchText.toLowerCase())
+        ),
+    [professionalsWithDistance, searchText]);
     
     // clear search history
     const handleClearHistory = () => {
