@@ -2,8 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/navigation/types';
-import { Annonce } from '@/features/annonce/types';
-import { Review } from '@/features/profile/types';
+import { Annonce, Review } from '@/shared/types';
 
 // Components
 import { HeroSection } from '../components/HeroSection';

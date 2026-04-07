@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Typography, Spacing } from '@/shared/constants';
-import { Offer } from '@/features/offer/types';
+import { Offer } from '@/shared/types';
 
 interface OfferCardProps {
     offer: Offer;

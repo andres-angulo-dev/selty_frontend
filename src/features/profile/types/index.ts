@@ -1,77 +1,66 @@
-// ============================================                                                                                               
-// USER TYPES                                                                                                                                 
-// ============================================       
+// ============================================
+// PROFILE TYPES
+// ============================================
+
+// Review has moved to shared/types (used across multiple features).
+// Re-exported here for backward compatibility during migration.
+export type { Review } from '@/shared/types';
+
+// ============================================
+// USER TYPES — stay here (profile feature only)
+// ============================================
 
 // User account type
 export type AccountType = 'user' | 'professional';
 
-// Notifivation preferences
+// Notification preferences
 export interface NotificationSettings {
-    messages: boolean;      // New message received  
-    favorites: boolean;     // Favorite pro posted someting
-    promotions: boolean;    // Sialty offers and news    
-    reviews: boolean;       // Response to a review
+  messages: boolean;    // New message received
+  favorites: boolean;   // Favorite pro posted something
+  promotions: boolean;  // Sialty offers and news
+  reviews: boolean;     // Response to a review
 }
 
 // User notification preferences (push + email)
 export interface UserNotifications {
-    push: NotificationSettings;
-    email: NotificationSettings;
+  push: NotificationSettings;
+  email: NotificationSettings;
 }
 
 // Main User interface
 export interface User {
-    // Identity
-    id: string;
-    userName: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    avatar: string | null;
+  // Identity
+  id: string;
+  userName: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  avatar: string | null;
 
-    // Account type
-    accountType: AccountType;
-    
-    // Dates
-    createdAt: Date;
-    updatedAt: Date;
-    lastLoginAt: Date;
+  // Account type
+  accountType: AccountType;
 
-    // Vérification
-    isEmailVerified: boolean;
-    isPhoneVerified: boolean;
+  // Dates
+  createdAt: Date;
+  updatedAt: Date;
+  lastLoginAt: Date;
 
-    // Account status
-    isActive: boolean;
+  // Verification
+  isEmailVerified: boolean;
+  isPhoneVerified: boolean;
 
-    // Permissions (moderation)
-    canPost: boolean;
-    canMessage: boolean;
-    canReview: boolean;
+  // Account status
+  isActive: boolean;
 
-    // Notification preferences
-    notifications: UserNotifications;
+  // Permissions (moderation)
+  canPost: boolean;
+  canMessage: boolean;
+  canReview: boolean;
 
-    // Statistics
-    reviewsCount: number;
-}
+  // Notification preferences
+  notifications: UserNotifications;
 
-// ============================================                                                                                               
-// REVIEW TYPES                                                                                                                               
-// ============================================  
-
-// Review given by user to a professional
-export interface Review {
-    id: string;
-    userId: string;
-    userName: string;
-    userAvatar: string | null;
-    professionalId: string;
-    professionalName: string;
-    professionalAvatar: string | null;
-    rating: number; // 1-5
-    comment: string;
-    createdAt: Date;
-    updatedAt: Date | null;
+  // Statistics
+  reviewsCount: number;
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Typography, Spacing, BorderRadius } from '@/shared/constants';
-import { Review } from '@/features/profile/types';
+import { Review } from '@/shared/types';
 import { formatRelativeDate } from '@/shared/utils/formatDate';
 
 type ReviewCardProps = {
