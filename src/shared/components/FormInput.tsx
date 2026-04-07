@@ -22,7 +22,7 @@ export const FormInput: React.FC<FormInputProps> = ({
     return (
         <View style={styles.container}>
             {/* Label */}
-            <Text>{label}</Text>
+            <Text style={styles.label}>{label}</Text>
 
             <View style={styles.inputRow}>
                 {/* Input field */}
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     },
 
     label: {
-        ...Typography.BodyBold, 
+        ...Typography.bodyBold,
         color: Colors.text.primary,
         marginBottom: Spacing.xs,
     },
@@ -94,12 +94,10 @@ const styles = StyleSheet.create({
 
     errorText: {
         ...Typography.caption,
-        color: Colors.semantic.error, 
+        color: Colors.semantic.error,
         marginTop: Spacing.xs,
     }
 })
-
-
 
 
 // // Simple input
@@ -134,7 +132,7 @@ const styles = StyleSheet.create({
 //     },
 
 //     label: {
-//         ...Typography.BodyBold, 
+//         ...Typography.BodyBold,
 //         color: Colors.text.primary,
 //         marginBottom: Spacing.xs,
 //     },
@@ -156,7 +154,7 @@ const styles = StyleSheet.create({
 
 //     errorText: {
 //         ...Typography.caption,
-//         color: Colors.semantic.error, 
+//         color: Colors.semantic.error,
 //         marginTop: Spacing.xs,
 //     }
 // })

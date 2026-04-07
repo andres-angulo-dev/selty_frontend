@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     profession: {
         ...Typography.body,
         color: Colors.text.secondaryBis,
-        fontWeight: 600,
+        fontWeight: '600',
         marginBottom: Spacing.sm,
     },
 

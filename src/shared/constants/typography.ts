@@ -3,8 +3,8 @@ import { TextStyle } from 'react-native';
 // Font family constants
 export const FontFamily = {
     regular: 'System',
-    medium: 'Sytem',
-    bodl: 'Sytem',
+    medium: 'System',
+    bold: 'System',
 } as const;
 
 // Font size scale
@@ -45,16 +45,21 @@ export const FontSize = {
       lineHeight: FontSize.xl * LineHeight.tight,                                                                                   
     },                                                                                                                              
                                                                                                                                     
-    // Body text                                                                                                                    
-    body: {                                                                                                                         
-      fontSize: FontSize.md,                                                                                                        
-      fontWeight: 'normal',                                                                                                         
-      lineHeight: FontSize.md * LineHeight.normal,                                                                                  
-    },                                                                                                                              
-    bodySmall: {                                                                                                                    
-      fontSize: FontSize.sm,                                                                                                        
-      fontWeight: 'normal',                                                                                                         
-      lineHeight: FontSize.sm * LineHeight.normal,                                                                                  
+    // Body text
+    body: {
+      fontSize: FontSize.md,
+      fontWeight: 'normal',
+      lineHeight: FontSize.md * LineHeight.normal,
+    },
+    bodyBold: {
+      fontSize: FontSize.md,
+      fontWeight: '600',
+      lineHeight: FontSize.md * LineHeight.normal,
+    },
+    bodySmall: {
+      fontSize: FontSize.sm,
+      fontWeight: 'normal',
+      lineHeight: FontSize.sm * LineHeight.normal,
     },                                                                                                                              
                                                                                                                                     
     // Labels and captions                                                                                                          
