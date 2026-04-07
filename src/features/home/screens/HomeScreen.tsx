@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/navigation/types';
@@ -119,7 +119,7 @@ export const HomeScreen: React.FC = () => {
     // ============================================    
     // ListHeaderComponent: everything above the vertical feed
     // This is rendered once at the top of the FlatList
-    const renderHeader = () => (
+    const renderHeader = useCallback(() => (
         <View>
             {/* Categories - Horizontal scroll */}
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0, marginBottom: 15, }} contentContainerStyle={{ paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm }}>
@@ -150,20 +150,20 @@ export const HomeScreen: React.FC = () => {
             {/* Feed section title */}
             <SectionHeader title={Strings.home.nearYou} />
         </View>
-    )
+    ), [professionalsWithDistance, navigation]);
 
     // ============================================
     // FEED ITEM (each annonce card)
-    // ============================================    
-    const renderAnnonce = ({ item }: { item: Annonce }) => (
-        <AnnonceCard 
-            annonce={item} 
+    // ============================================
+    const renderAnnonce = useCallback(({ item }: { item: Annonce }) => (
+        <AnnonceCard
+            annonce={item}
             onPress={(annonce) => navigation.navigate('AnnonceDetail', { annonceId: annonce.id })}
-            onLikePress={(annonce) => console.log('Liked:', annonce.title)} 
-            onCommentPress={(annonce) => navigation.navigate('CommentsModal', { annonceId: annonce.id})} 
-            onFavoritePress={(annonce) => console.log('Favorited:', annonce.title)} 
+            onLikePress={(annonce) => console.log('Liked:', annonce.title)}
+            onCommentPress={(annonce) => navigation.navigate('CommentsModal', { annonceId: annonce.id})}
+            onFavoritePress={(annonce) => console.log('Favorited:', annonce.title)}
         />
-    )
+    ), [navigation]);
 
     // ============================================
     // MAIN RENDER
