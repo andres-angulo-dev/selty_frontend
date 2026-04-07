@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { View, Text, FlatList, StyleSheet, TextInput, Pressable, Keyboard, Image, Platform, LayoutAnimation } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TextInput, Pressable, Image, Platform, LayoutAnimation } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors, Typography, Spacing, Strings, BorderRadius } from '@/shared/constants';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,6 +9,7 @@ import { Comment } from '../types';
 import { getCommentsByAnnonceId } from '../data/mockComments';
 import { formatRelativeDate } from '@/shared/utils/formatDate';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useKeyboardHeight } from '@/shared/hooks/useKeyboardHeight';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CommentsModal'>;
 type CommentWithReplies = Comment & { replies: Comment[] }; // Local type: comment with its replies nested
@@ -22,7 +23,6 @@ export const CommentsModal: React.FC<Props> = ({ route, navigation }) => {
     const { annonceId } = route.params;
     const [comments, setComments] = useState<Comment[]>(getCommentsByAnnonceId(annonceId));
     const [inputText, setInputText] = useState('');
-    const [keyboardHeight, setKeyboardHeight] = useState(0);
     const [replyingTo, setReplyingTo] = useState<{ id: string; userName: string; parentId: string; } | null>(null); // Tracks which comment is being replied to
     const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set()); // Tracks which top-level comments have their replies expanded
     const insets = useSafeAreaInsets();
@@ -72,13 +72,8 @@ export const CommentsModal: React.FC<Props> = ({ route, navigation }) => {
         return result;
     }, [commentTree, expandedComments]);    
 
-    // Track keyboard height to manually push content above the keyboard, we listen to native keyboard events and apply marginBottom directly
-    useEffect(() => {
-      const show = Keyboard.addListener('keyboardWillShow', (e) => setKeyboardHeight(e.endCoordinates.height)); // listening to the size once opened
-      const hide = Keyboard.addListener('keyboardWillHide', () => setKeyboardHeight(0)); // once closed
-      
-      return () => { show.remove(); hide.remove(); };
-    }, []);
+    // Track keyboard height with cross-platform hook (iOS: keyboardWill*, Android: keyboardDid*)
+    const keyboardHeight = useKeyboardHeight();
 
     // Once flatListData updates, scroll to the pending comment id if any
     useEffect(() => {
