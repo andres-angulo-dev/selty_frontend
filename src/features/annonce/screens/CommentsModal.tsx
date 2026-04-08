@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, TextInput, Pressable, Image, Platform, LayoutAnimation } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors, Typography, Spacing, Strings, BorderRadius } from '@/shared/constants';
@@ -13,6 +13,12 @@ import { useKeyboardHeight } from '@/shared/hooks/useKeyboardHeight';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CommentsModal'>;
 type CommentWithReplies = Comment & { replies: Comment[] }; // Local type: comment with its replies nested
+
+// Static mock user — defined outside component to avoid new reference on every render
+const currentUser = {
+    userName: Strings.comments.currentUser,
+    userAvatar: null as string | null,
+};
 type FlatItem =  // FlatList requires a flat array - we flatten comments + replies + toggles into one list, so we can use scrollToIndex on any item directly
     | { type: 'comment'; comment: CommentWithReplies }
     | { type: 'toggle_show'; parentId: string; replyCount: number }
@@ -29,12 +35,6 @@ export const CommentsModal: React.FC<Props> = ({ route, navigation }) => {
     const flatListRef = useRef<FlatList>(null);
     const pendingScrollId = useRef<string | null>(null); // Stores the id of the comment to scroll to after next render
 
-    // Mock current user (will come from auth context later)
-    const currentUser = {
-        userName: Strings.comments.currentUser,
-        userAvatar: null as string | null,
-    }
-    
     // Allows to display the send button in inputBar
     const canSend = inputText.trim().length > 0;
 
@@ -88,8 +88,9 @@ export const CommentsModal: React.FC<Props> = ({ route, navigation }) => {
         }
     }, [flatListData]);
 
-    // Toggle replies visibility with animation 
-    const toggleReplies = (commentId: string) => {
+    // Toggle replies visibility with animation
+    // useCallback with [] deps: uses functional setExpandedComments, no external dependencies
+    const toggleReplies = useCallback((commentId: string) => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setExpandedComments((prev) => {
             const next = new Set(prev);
@@ -98,9 +99,9 @@ export const CommentsModal: React.FC<Props> = ({ route, navigation }) => {
             } else {
                 next.add(commentId);
             }
-            return next
-        })
-    };
+            return next;
+        });
+    }, []);
 
     // Add a new comment locally (will be replaced by API call later)
     const handleSend = () => {
@@ -140,17 +141,19 @@ export const CommentsModal: React.FC<Props> = ({ route, navigation }) => {
         setReplyingTo(null);
     };
 
-    // Toggle useful state on a comment 
-    const handleUseful = (commentId: string) => {
-        setComments((prev) => 
-            prev.map((c) => 
-                c.id === commentId ? { ...c, isUseful: !c.isUseful, usefulCount: c.isUseful ? c.usefulCount - 1 : c.usefulCount + 1 } : c 
+    // Toggle useful state on a comment
+    // useCallback with [] deps: uses functional setComments, no external dependencies
+    const handleUseful = useCallback((commentId: string) => {
+        setComments((prev) =>
+            prev.map((c) =>
+                c.id === commentId ? { ...c, isUseful: !c.isUseful, usefulCount: c.isUseful ? c.usefulCount - 1 : c.usefulCount + 1 } : c
             )
         );
-    };
+    }, []);
  
     // Render a single comment card (isReply = true for indented replies)
-    const renderComment = (item: Comment, isReply = false, effectiveParentId?: string, hasReplies = false, noBottomMargin = false) => (
+    // useCallback: stable reference so renderItem's memoization is not broken
+    const renderComment = useCallback((item: Comment, isReply = false, effectiveParentId?: string, hasReplies = false, noBottomMargin = false) => (
         <View style={[styles.commentCard, hasReplies && { marginBottom: 0 }, noBottomMargin && { marginBottom: 0}, isReply && styles.replyCard]}>
             {/* Avatar photo or initial */}
             <View style={styles.avatar}>
@@ -186,10 +189,11 @@ export const CommentsModal: React.FC<Props> = ({ route, navigation }) => {
                 }
             </View>
         </View>
-    );
+    ), [handleUseful]);
 
     // Render each flat list item based on its type
-    const renderItem = ({ item }: { item: FlatItem }) => {
+    // useCallback: stable reference prevents FlatList from re-rendering all items on every state change
+    const renderItem = useCallback(({ item }: { item: FlatItem }) => {
         switch (item.type) {
             case 'comment':
                 return renderComment(item.comment, false, undefined, item.comment.replies.length > 0);
@@ -219,7 +223,7 @@ export const CommentsModal: React.FC<Props> = ({ route, navigation }) => {
                     </Pressable>
                 );
         }
-    };
+    }, [renderComment, toggleReplies]);
 
     return (
         <SafeAreaView style={styles.container} edges={[ 'top', 'left', 'right']}>
