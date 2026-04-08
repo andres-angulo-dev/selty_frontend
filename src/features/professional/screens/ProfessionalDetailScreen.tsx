@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/navigation/types';
@@ -43,6 +43,100 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
         flatListRef.current?.scrollToOffset({ offset: tableSelectorY.current, animated: true });
     }, [activeTab])
 
+    // Render each item based on active tab
+    // useCallback: stable reference prevents FlatList from re-rendering all items on every state change
+    const renderItem = useCallback(({ item }: { item: ListItem }) => {
+        if (activeTab === 'annonces') {
+            return (
+                <AnnonceCard
+                    annonce={item as Annonce}
+                    onPress={(annonce) => navigation.navigate('AnnonceDetail', { annonceId: annonce.id})}
+                    onLikePress={() => console.log('Like')}
+                    onFavoritePress={() => console.log('Favorite')}
+                    onCommentPress={(annonce) => navigation.navigate('CommentsModal', { annonceId: annonce.id})}
+                />
+            );
+        }
+        return (
+            <View style={styles.reviewItem}>
+                <ReviewCard review={item as Review} />
+            </View>
+        );
+    }, [activeTab, navigation]);
+
+    // Static header content (rendered once above the list)
+    // useCallback: stable reference prevents FlatList from re-rendering the header on every state change
+    // Guard inside: professional may be undefined before the early return check below
+    const renderHeader = useCallback(() => {
+        if (!professional) return null;
+        return (
+            <>
+                {/* Hero: avatar, name, profession, badge, location */}
+                <HeroSection
+                    avatar={professional.avatar}
+                    firstName={professional.firstName}
+                    lastName={professional.lastName}
+                    profession={professional.profession}
+                    city={professional.city}
+                    department={professional.department}
+                    isCertified={professional.isCertified}
+                    isAvailable={professional.isAvailable}
+                />
+
+                {/* Actions buttons: call, message, favorite, share */}
+                <ActionButtons
+                    phone={professional.phone}
+                    firstName={professional.firstName}
+                    lastName={professional.lastName}
+                    profession={professional.profession}
+                    isFavorite={false}
+                    onMessagePress={() => console.log('Message')}
+                    onFavoriteToggle={(newValue) => console.log('Favorite:', newValue)}
+                />
+
+                {/* Stats: rating, annonce count, member since */}
+                <StatsRow
+                    rating={professional.rating}
+                    reviewsCount={professional.reviewsCount}
+                    annoncesCount={professional.annoncesCount}
+                    createdAt={professional.createdAt}
+                />
+
+                {/* About (description + services) */}
+                <AboutSection
+                    description={professional.description}
+                    services={professional.services}
+                />
+
+                {/* Tab selector (Annonces | Avis) */}
+                <View onLayout={(event) => { tableSelectorY.current = event.nativeEvent.layout.y; }}>
+                    <TabSelector
+                        activeTab={activeTab}
+                        onTabChange={setActiveTab}
+                        annoncesCount={professional.annoncesCount}
+                        reviewsCount={professional.reviewsCount}
+                    />
+                </View>
+
+                {/* Show review summary only on Avis tab */}
+                {activeTab === 'avis' && (
+                    <>
+                        {/* Global rating summary */}
+                        <ReviewSummary reviews={professional.reviews} averageRating={professional.rating} />
+
+                        {/* Title + separator before the review cards */}
+                        {professional.reviewsCount !== 0 &&  (
+                            <>
+                                <Text style={styles.reviewTitle}>{Strings.professional.tabs.reviewsTitle}</Text>
+                                <View style={styles.separator} />
+                            </>
+                        )}
+                    </>
+                )}
+            </>
+        );
+    }, [professional, activeTab]);
+
     // Handle case where professional is not found
     if (!professional) {
         return (
@@ -69,94 +163,6 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
             setIsLoadingMore(false);
         }, 500);
     };
-
-    // Render each item based on active tab
-    const renderItem = ({ item }: { item: ListItem }) => {
-        if (activeTab === 'annonces') {
-            return (
-                <AnnonceCard 
-                    annonce={item as Annonce}  // "item as Annonce" → type casting: we tell TypeScript, required because item is typed as ListItem (Annonce | Review)
-                    onPress={(annonce) => navigation.navigate('AnnonceDetail', { annonceId: annonce.id})}
-                    onLikePress={() => console.log('Like')}
-                    onFavoritePress={() => console.log('Favorite')}
-                    onCommentPress={(annonce) => navigation.navigate('CommentsModal', { annonceId: annonce.id})} 
-                />
-            );
-        };
-        return (
-            <View style={styles.reviewItem}>
-                <ReviewCard review={item as Review} />
-            </View>
-        );
-    };
-
-    // Static header content (rendered once above the list)
-    const renderHeader = () => (
-        <>
-            {/* Hero: avatar, name, profession, badge, location */}
-            <HeroSection
-                avatar={professional.avatar}
-                firstName={professional.firstName}
-                lastName={professional.lastName}
-                profession={professional.profession}
-                city={professional.city}
-                department={professional.department}
-                isCertified={professional.isCertified}
-                isAvailable={professional.isAvailable} 
-            />
-        
-            {/* Actions buttons: call, message, favorite, share */}
-            <ActionButtons
-                phone={professional.phone}
-                firstName={professional.firstName}
-                lastName={professional.lastName}
-                profession={professional.profession}
-                isFavorite={false}
-                onMessagePress={() => console.log('Message')}
-                onFavoriteToggle={(newValue) => console.log('Favorite:', newValue)}
-            />
-        
-            {/* Stats: rating, annonce count, member since */}
-            <StatsRow 
-                rating={professional.rating}
-                reviewsCount={professional.reviewsCount}
-                annoncesCount={professional.annoncesCount}
-                createdAt={professional.createdAt}
-            />
-        
-            {/* About (description + services) */}
-            <AboutSection
-                description={professional.description}
-                services={professional.services}
-            />
-        
-            {/* Tab selector (Annonces | Avis) */}
-            <View onLayout={(event) => { tableSelectorY.current = event.nativeEvent.layout.y; }}>
-                <TabSelector
-                    activeTab={activeTab}
-                    onTabChange={setActiveTab}
-                    annoncesCount={professional.annoncesCount}
-                    reviewsCount={professional.reviewsCount}
-                />
-            </View>
-             
-            {/* Show review summary only on Avis tab */}
-            {activeTab === 'avis' && (
-                <>
-                    {/* Global rating summary */}
-                    <ReviewSummary reviews={professional.reviews} averageRating={professional.rating} />
-            
-                    {/* Title + separator before the review cards */}
-                    {professional.reviewsCount !== 0 &&  (
-                        <>
-                            <Text style={styles.reviewTitle}>{Strings.professional.tabs.reviewsTitle}</Text>
-                            <View style={styles.separator} />
-                        </>
-                    )}
-                </>
-            )}
-        </>
-    );
 
     // Show loading indicator at the bottom while fetching more
     const renderFooter = () => {
