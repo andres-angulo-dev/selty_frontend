@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView, StyleSheet, Alert } from 'react-native';
+import { View, ScrollView, StyleSheet, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ProfileStackParamList } from '@/app/navigation/types';
@@ -69,7 +69,9 @@ export const ChangePasswordScreen: React.FC = () => {
     }
 
     return (
-        <ScrollView style={styles.container}>
+        // KeyboardAvoidingView pushes content up when keyboard opens so the save button stays visible
+        <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <ScrollView>
             <View style={styles.form}>
                 {/* Current password */}
                 <FormInput label={Strings.profile.labels.currentPassword} value={currentPassword} onChangeText={setCurrentPassword} placeholder={Strings.profile.placeholders.currentPassword} secureTextEntry autoCapitalize='none' autoCorrect={false} error={errors.currentPassword} />
@@ -86,6 +88,7 @@ export const ChangePasswordScreen: React.FC = () => {
                 </View>
             </View>
         </ScrollView>
+        </KeyboardAvoidingView>
     )
 }
 

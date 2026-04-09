@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView, StyleSheet, Alert } from 'react-native';
+import { View, ScrollView, StyleSheet, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ProfileStackParamList } from '@/app/navigation/types';
@@ -77,7 +77,9 @@ export const EditProfileScreen: React.FC = () => {
     }
 
     return (
-        <ScrollView style={styles.container}>
+        // KeyboardAvoidingView pushes content up when keyboard opens so the save button stays visible
+        <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <ScrollView>
             <View style={styles.form}>
                 {/* Username */}
                 <FormInput label={Strings.profile.labels.userName} value={userName} onChangeText={setUserName} placeholder={Strings.profile.placeholders.userName} autoCapitalize='none' editable={editableFields.userName} showEditButton onEditPress={() => toggleEdit('userName')} error={errors.userName} />
@@ -101,6 +103,7 @@ export const EditProfileScreen: React.FC = () => {
             </View>
 
         </ScrollView>
+        </KeyboardAvoidingView>
     )
 }
 

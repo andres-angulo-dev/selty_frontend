@@ -1,6 +1,7 @@
 import React from "react";
 import Constants from "expo-constants";
 import { ScrollView, View, Text, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors, Typography, Spacing, Strings } from '@/shared/constants';
 
 // Navigation
@@ -33,7 +34,8 @@ export const ProfileScreen: React.FC = () => {
     const handleLogout = () => console.log('Logout pressed');                                                                                   
     const handleDeleteAccount = () => console.log('Delete account pressed');
     
-    return (                                                                                                                        
+    return (
+        <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
         <ScrollView style={styles.container}>
             
 
@@ -89,14 +91,19 @@ export const ProfileScreen: React.FC = () => {
 
             {/* App version */}
             <Text style={styles.version}>{Strings.profile.version} {Constants.expoConfig?.version ?? '1.0.0'}</Text>
-        </ScrollView>                                                                                                                  
-    );                                                                                                                              
+        </ScrollView>
+        </SafeAreaView>
+    );
   };                                                                                                                                
                                                                                                                                     
-const styles = StyleSheet.create({                                                                                                
-    container: {                                                                                                                    
-        flex: 1,                                                                                                                                                                                                                 
-        backgroundColor: Colors.neutral.background,                                                                                   
+const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: Colors.neutral.background,
+    },
+
+    container: {
+        flex: 1,
     },       
 
     buttonContainer: {
