@@ -34,11 +34,7 @@ export const HomeScreen: React.FC = () => {
     // Temporary state 
     const [searchText, setSearchText] = useState('');
     const [isSearchFocused, setIsSearchFocused] = useState(false);
-    const [recentSearches, setRecentSearches] = useState<string[]>([
-        'Plombier',
-        'Coiffeur',
-        'Avocat',
-    ]);
+    const [recentSearches, setRecentSearches] = useState<string[]>([]);
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
     // ============================================
