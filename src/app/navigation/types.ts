@@ -2,11 +2,11 @@
 
 // Root tab navigator toures
 export type RootTabParamList = {
-    HomeTab: undefined;
-    SearchTab: undefined;
-    FavoritesTab: undefined;
-    MessagingTab: undefined;
-    ProfileTab: undefined;
+    Home: undefined;
+    Search: undefined;
+    Favorites: undefined;
+    Messages: undefined;
+    Profile: undefined;
 };
 
 // Profile stack routes

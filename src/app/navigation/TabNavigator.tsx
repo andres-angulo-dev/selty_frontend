@@ -15,8 +15,9 @@ import { Strings } from '@/shared/constants/strings';
 import { AnimatedTabBarButton } from '@/shared/components/AnimatedTabBarButton';                                                                                                                 
                                                                                                                                   
 // Import Constants                                                                                                               
-import { Colors, Typography } from '@/shared/constants';                                                                                      
-const Tab = createBottomTabNavigator();                                                                                           
+import { Colors, Typography } from '@/shared/constants';
+import { RootTabParamList } from '@/app/navigation/types';
+const Tab = createBottomTabNavigator<RootTabParamList>();                                                                                           
 
 export const TabNavigator: React.FC = () => {                                                                                     
 
@@ -37,30 +38,32 @@ export const TabNavigator: React.FC = () => {
                 tabBarButton: (props) => <AnimatedTabBarButton {...props} />,       
                 tabBarIcon: ({ color, size, focused }) => {
                     const iconSize = size;
-                    
+
+                    // Route names are English identifiers — labels (French) are set via tabBarLabel in each Tab.Screen
                     switch (route.name) {
-                        case Strings.tabs.home:
+                        case 'Home':
                             return <Ionicons name={focused ? "home-sharp" : "home-outline"} size={iconSize} color={color} />;
-                        case Strings.tabs.search:
-                            return  focused 
-                                ? <AntDesign name="search" size={iconSize} color={color} /> 
+                        case 'Search':
+                            return  focused
+                                ? <AntDesign name="search" size={iconSize} color={color} />
                                 : <Feather name="search" size={iconSize} color={color} />;
-                        case Strings.tabs.favorites:
+                        case 'Favorites':
                             return <Fontisto name={focused ? "bookmark-alt" : "bookmark"} size={iconSize} color={color} />;
-                        case Strings.tabs.messages:
+                        case 'Messages':
                             return <MaterialCommunityIcons name={focused ? "message-reply" : "message-reply-outline"} size={iconSize} color={color} />;
-                        case Strings.tabs.profile:
+                        case 'Profile':
                             return <MaterialCommunityIcons name={focused ? "account-circle" : "account-circle-outline"} size={iconSize} color={color} />;
                     }
-                }                                                        
-            })}                                                                                                                          
-        > 
+                }
+            })}
+        >
 
-            <Tab.Screen name={Strings.tabs.home} component={HomeScreen} />
-            <Tab.Screen name={Strings.tabs.search} component={SearchScreen} />
-            <Tab.Screen name={Strings.tabs.favorites} component={FavoritesScreen} />
-            <Tab.Screen name={Strings.tabs.messages} component={MessagingScreen} options={{headerShown: true, headerTitle: Strings.tabs.messages, headerStyle: {backgroundColor: Colors.neutral.background}, headerTitleAlign: 'left', headerTitleStyle: {...Typography.h3, color: Colors.text.primary}}}/>
-            <Tab.Screen name={Strings.tabs.profile} component={ProfileStackNavigator} />
+            {/* Route name = English identifier, tabBarLabel = French display label */}
+            <Tab.Screen name="Home" component={HomeScreen} options={{ tabBarLabel: Strings.tabs.home }} />
+            <Tab.Screen name="Search" component={SearchScreen} options={{ tabBarLabel: Strings.tabs.search }} />
+            <Tab.Screen name="Favorites" component={FavoritesScreen} options={{ tabBarLabel: Strings.tabs.favorites }} />
+            <Tab.Screen name="Messages" component={MessagingScreen} options={{ tabBarLabel: Strings.tabs.messages, headerShown: true, headerTitle: Strings.tabs.messages, headerStyle: {backgroundColor: Colors.neutral.background}, headerTitleAlign: 'left', headerTitleStyle: {...Typography.h3, color: Colors.text.primary}}}/>
+            <Tab.Screen name="Profile" component={ProfileStackNavigator} options={{ tabBarLabel: Strings.tabs.profile }} />
 
         </Tab.Navigator>                                                                                                              
     );                                                                                                                              
