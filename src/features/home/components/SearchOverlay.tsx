@@ -81,7 +81,7 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({
                     <Text style={styles.sectionTitle}>{Strings.search.categories}</Text>
                     {categoryResults.map((category) => (
                         <Pressable key={category.id} onPress={() => onCategoryPress(category)} style={({ pressed }) => [styles.resultRow, pressed && styles.pressed]}>
-                            <Ionicons name={category.icon as any} size={18} color={Colors.primary.main} />
+                            <Ionicons name={category.icon as keyof typeof Ionicons.glyphMap} size={18} color={Colors.primary.main} />
                             <Text style={styles.resultText}>{category.name}</Text>
                         </Pressable>
                     ))}

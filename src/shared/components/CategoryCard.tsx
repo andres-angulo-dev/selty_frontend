@@ -17,7 +17,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
         <Pressable onPress={() => onPress(category)} style={({ pressed }) => [styles.container, pressed && styles.pressed]}>
             {/* Icon with colored background */}
             <View style={[styles.iconContainer, { backgroundColor: category.color || Colors.neutral.border }]}>
-                <Ionicons name={category.icon as any} size={28} color={Colors.neutral.white} />
+                <Ionicons name={category.icon as keyof typeof Ionicons.glyphMap} size={28} color={Colors.neutral.white} />
             </View>
             
             {/* Category name */}
