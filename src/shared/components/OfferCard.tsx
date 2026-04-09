@@ -43,7 +43,7 @@ export const OfferCard: React.FC<OfferCardProps> = ({
                 {/* Category */}
                 {offer.category && (
                     <View style={styles.categoryRow}>
-                        <Ionicons name={offer.category.icon as any} size={14} color={Colors.text.tertiary} />
+                        <Ionicons name={offer.category.icon as keyof typeof Ionicons.glyphMap} size={14} color={Colors.text.tertiary} />
                         <Text style={styles.categoryName} numberOfLines={1}>
                             {offer.category.name}
                         </Text> 
