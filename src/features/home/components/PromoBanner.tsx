@@ -1,11 +1,8 @@
 import React, { useRef, useState, useEffect} from 'react';
-import { View, Text, StyleSheet, FlatList, Dimensions, Pressable } from 'react-native'
+import { View, Text, StyleSheet, FlatList, Pressable, useWindowDimensions } from 'react-native'
 import { Colors, Typography, Spacing } from '@/shared/constants';
 import { Banner } from '../types';
 
-//Get screen width for full-width banners
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const BANNER_WIDTH = SCREEN_WIDTH - Spacing.md * 2; // Banner takes full width minus left + right margins
 const BANNER_HEIGHT = 150;
 
 interface PromoBannerProps {
@@ -19,6 +16,10 @@ export const PromoBanner: React.FC<PromoBannerProps> = ({
     onBannerPress,
     autoScrollInterval = 4000, // Time between auto-scrolls in ms
 }) => {
+    // Dynamic screen width — recalculates on orientation change or window resize
+    const { width: SCREEN_WIDTH } = useWindowDimensions();
+    const BANNER_WIDTH = SCREEN_WIDTH - Spacing.md * 2; // Subtract horizontal margins from both sides
+
     // Track current banner index
     const [currentIndex, setCurrentIndex] = useState(0); // State: which banner is currently visible (0, 1, 2...)
     const flatListRef = useRef<FlatList>(null); // A reference to the FlatList component, this allows us to call methods on it (like scrollToIndex), unlike useState, changing a ref does NOT cause a re-render
@@ -40,7 +41,7 @@ export const PromoBanner: React.FC<PromoBannerProps> = ({
     }, [banners.length, autoScrollInterval]); // Dependencies array: re-run this effect only if these values change
 
     // manual-scroll effect - Update current index on manual scroll
-    const handleScrooll = (event: any) => {  // Calculates which banner is currently visible based on scroll position
+    const handleScroll = (event: any) => {  // Calculates which banner is currently visible based on scroll position
         const offsetX = event.nativeEvent.contentOffset.x; // contentOffset.x = how many pixels the user has scrolled horizontally
         const index = Math.round(offsetX / BANNER_WIDTH); //  Math.round handles cases where the user is between two banners - vDivide by banner width to get the index (0, 1, 2...)
         setCurrentIndex(index);
@@ -49,7 +50,7 @@ export const PromoBanner: React.FC<PromoBannerProps> = ({
     // Render a single banner
     const renderBanner = ({ item }: {item: Banner }) => ( // FlatList calls this function for each item in the data array, { item } is destructured from { item, index } provided by FlatList
         <Pressable onPress={() => onBannerPress(item)} style={({ pressed }) => [pressed && styles.pressed]}>
-            <View style={[styles.banner, {backgroundColor: item.backgroundColor }]}>
+            <View style={[styles.banner, { width: BANNER_WIDTH, backgroundColor: item.backgroundColor }]}>
                 <Text style={styles.bannerTitle}>{item.title}</Text>
                 <Text style={styles.bannerSubtitle}>{item.subtitle}</Text>
             </View>
@@ -59,7 +60,23 @@ export const PromoBanner: React.FC<PromoBannerProps> = ({
     return (
         <View style={styles.container}>
             {/* Banner carousel */}
-            <FlatList ref={flatListRef} data={banners} renderItem={renderBanner} keyExtractor={(item) => item.id} horizontal style={{ flexGrow: 0 }} pagingEnabled showsHorizontalScrollIndicator={false} onScroll={handleScrooll} scrollEventThrottle={16} />
+            <FlatList
+                ref={flatListRef}
+                data={banners}
+                renderItem={renderBanner}
+                keyExtractor={(item) => item.id}
+                horizontal
+                style={{ flexGrow: 0 }}
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                onScroll={handleScroll}
+                scrollEventThrottle={16}
+                getItemLayout={(_, index) => ({
+                    length: BANNER_WIDTH + Spacing.md * 2,  // Full width of one item (banner + both margins)
+                    offset: (BANNER_WIDTH + Spacing.md * 2) * index,  // Position of this item from the start
+                    index,
+                })}
+            />
 
             {/* Dot indicators */}
             <View style={styles.dotsContainer}>
@@ -77,7 +94,6 @@ const styles = StyleSheet.create({
     },
 
     banner: {
-        width: BANNER_WIDTH,
         height: BANNER_HEIGHT,
         borderRadius: 12,
         marginHorizontal: Spacing.md,
