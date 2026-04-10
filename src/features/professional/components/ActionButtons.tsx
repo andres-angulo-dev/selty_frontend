@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Linking, Share, Alert } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Linking, Share, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Typography, Strings, Spacing} from '@/shared/constants';
 
@@ -59,28 +59,28 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
     return (
         <View style={styles.container}>
             {/* Call button */}
-            <TouchableOpacity style={styles.button} onPress={handleCall}>
+            <Pressable style={({ pressed }) => [styles.button, pressed && styles.pressed]} onPress={handleCall}>
                 <Ionicons name='call-outline' size={22} color={Colors.primary.main} />
                 <Text style={styles.buttonText}>{Strings.professional.actions.call}</Text>
-            </TouchableOpacity>
+            </Pressable>
 
             {/* Message button */}
-            <TouchableOpacity style={styles.button} onPress={onMessagePress}>
+            <Pressable style={({ pressed }) => [styles.button, pressed && styles.pressed]} onPress={onMessagePress}>
                 <Ionicons name="chatbubble-outline" size={22} color={Colors.primary.main} />
                 <Text style={styles.buttonText}>{Strings.professional.actions.message}</Text>
-            </TouchableOpacity>
+            </Pressable>
 
             {/* Favorite button */}
-            <TouchableOpacity style={styles.button} onPress={handleFavorite}>
+            <Pressable style={({ pressed }) => [styles.button, pressed && styles.pressed]} onPress={handleFavorite}>
                 <Ionicons name={favorite ? 'heart' : 'heart-outline'} size={22} color={favorite ? Colors.semantic.error : Colors.primary.main } />
                 <Text style={styles.buttonText}>{Strings.professional.actions.favorite}</Text>
-            </TouchableOpacity>
+            </Pressable>
 
             {/* Share button */}
-            <TouchableOpacity style={styles.button} onPress={handleShare}>
+            <Pressable style={({ pressed }) => [styles.button, pressed && styles.pressed]} onPress={handleShare}>
                 <Ionicons name='share-outline' size={22} color={Colors.primary.main} />
                 <Text style={styles.buttonText}>{Strings.professional.actions.share}</Text>
-            </TouchableOpacity>
+            </Pressable>
         </View>
     )
 }
@@ -96,6 +96,10 @@ const styles = StyleSheet.create({
     button: {
         alignItems: 'center',
         gap: 4,
+    },
+
+    pressed: {
+        opacity: 0.7,
     },
 
     buttonText: {

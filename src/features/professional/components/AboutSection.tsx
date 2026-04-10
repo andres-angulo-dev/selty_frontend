@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, NativeSyntheticEvent, TextLayoutEventData } from 'react-native';
+import { View, Text, Pressable, StyleSheet, NativeSyntheticEvent, TextLayoutEventData } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Typography, Spacing, Strings } from '@/shared/constants';
 
@@ -42,9 +42,9 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
 
             {/* Show toggle button only if text needs truncation */}
             {needsTruncation && (
-                <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)}>
+                <Pressable onPress={() => setIsExpanded(!isExpanded)} style={({ pressed }) => pressed && styles.pressed}>
                     <Text style={styles.toggleText}>{ isExpanded ? Strings.professional.about.seeLess : Strings.professional.about.seeMore }</Text>
-                </TouchableOpacity>
+                </Pressable>
             )}    
 
             {/* Services list */}
@@ -81,6 +81,10 @@ const styles = StyleSheet.create({
         ...Typography.caption,
         color: Colors.text.tertiary,
         marginBottom: Spacing.lg,
+    },
+
+    pressed: {
+        opacity: 0.7,
     },
 
     serviceRow: {
