@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, TextInput, Pressable, Image, Platform, LayoutAnimation } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TextInput, Pressable, Image, Platform, LayoutAnimation, UIManager } from 'react-native';
+
+// Enable LayoutAnimation on Android (required for both old and New Architecture)
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors, Typography, Spacing, Strings, BorderRadius } from '@/shared/constants';
 import { Ionicons } from '@expo/vector-icons';
