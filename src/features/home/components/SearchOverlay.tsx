@@ -44,8 +44,8 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({
                 </View>
 
                 {/* Recent searches list */}
-                {recentSearches.map((search, index) => (
-                    <Pressable key={index} onPress={() => onRecentSearchPress(search)} style={({ pressed }) => [pressed && styles.pressed]}>
+                {recentSearches.map((search) => (
+                    <Pressable key={search} onPress={() => onRecentSearchPress(search)} style={({ pressed }) => [pressed && styles.pressed]}>
                         <Ionicons name='time-outline' size={18} color={Colors.text.tertiary} />
                         <Text style={styles.resultText}>{search}</Text>
                     </Pressable>

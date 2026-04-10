@@ -50,8 +50,8 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
             {/* Services list */}
             <Text style={styles.sectionTitle}>{Strings.professional.about.servicesTitle}</Text>
 
-            {services.map((service, index) => (
-                <View key={index} style={styles.serviceRow}>
+            {services.map((service) => (
+                <View key={service} style={styles.serviceRow}>
                     <Ionicons name='checkmark-circle' size={18} color={Colors.semantic.success} />
                     <Text style={styles.serviceText}>{service}</Text>
                 </View>
