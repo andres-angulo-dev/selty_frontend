@@ -14,7 +14,7 @@ interface ButtonProps {
     variant?: ButtonVariant;
     size?: ButtonSize;
     fullWidth?: boolean;
-    disable?: boolean;
+    disabled?: boolean;
     loading?: boolean;
 }
 
@@ -24,11 +24,11 @@ export const Button: React.FC<ButtonProps> = ({
     variant = 'primary',
     size = 'medium',
     fullWidth = false,
-    disable = false,
+    disabled = false,
     loading = false,
 }) => {
-    // Determine if button is interactive  
-    const isDisabled = disable || loading;
+    // Determine if button is interactive
+    const isDisabled = disabled || loading;
 
     // Get styles based on variant
     const getVariantStyle = () => {
