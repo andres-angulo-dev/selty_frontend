@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
+import { Strings } from '@/shared/constants';
 
 interface UserLocation {
     latitude: number;
@@ -24,7 +25,7 @@ export const useUserLocation = (): UseUserLocationReturn => {
                 const { status } = await Location.requestForegroundPermissionsAsync();
 
                 if (status !== 'granted') {
-                    setErrorMsg('Permission de localisation refusée');
+                    setErrorMsg(Strings.location.permissionDenied);
                     setIsLoading(false);
                     return;
                 }
@@ -39,7 +40,7 @@ export const useUserLocation = (): UseUserLocationReturn => {
                     longitude: currentLocation.coords.longitude,
                 });
             } catch (error) {
-                setErrorMsg('Impossible de récupérer la localisation');
+                setErrorMsg(Strings.location.fetchError);
             } finally {
                 setIsLoading(false);
             }

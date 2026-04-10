@@ -247,6 +247,14 @@ export const Strings = {
     },
 
     // ------------------------------
+    // Location (useUserLocation hook)
+    // ------------------------------
+    location: {
+        permissionDenied: 'Permission de localisation refusée',
+        fetchError: 'Impossible de récupérer la localisation',
+    },
+
+    // ------------------------------
     // Date formatting
     // ------------------------------
     dates: {
