@@ -74,8 +74,7 @@ const styles = StyleSheet.create({
         padding: Spacing.md,
         marginRight: Spacing.md,
         width: 260,
-        borderWidth: 1,
-        borderColor: Colors.neutral.border,
+        ...Colors.shadow.card,
     },
 
     pressed: {
@@ -86,7 +85,7 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
         borderRadius: 50,
-        backgroundColor: Colors.neutral.background,
+        backgroundColor: Colors.neutral.inputBg,
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: Spacing.md,

@@ -45,9 +45,8 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: Colors.neutral.card,
         borderRadius: BorderRadius.lg,
-        padding: Spacing.sm, 
-        borderWidth: 1,
-        borderColor: Colors.neutral.border,
+        padding: Spacing.sm,
+        ...Colors.shadow.card,
     },
 
     header: {

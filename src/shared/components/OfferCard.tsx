@@ -62,8 +62,7 @@ const styles = StyleSheet.create({
         padding: Spacing.md,
         marginRight: Spacing.md,
         width: 200,
-        borderWidth: 1,
-        borderColor: Colors.neutral.border,
+        ...Colors.shadow.card,
     },
 
     pressed: {

@@ -377,8 +377,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.neutral.card,
         borderRadius: BorderRadius.lg,
         padding: Spacing.sm,
-        borderWidth: 1,
-        borderColor: Colors.neutral.border,
+        ...Colors.shadow.card,
     },
 
     commentHeader: {
@@ -510,13 +509,11 @@ const styles = StyleSheet.create({
 
     input: {
         flex: 1,
-        ...Typography.label, 
+        ...Typography.label,
         fontSize: 12,
         color: Colors.text.primary,
-        backgroundColor: Colors.neutral.background,
+        backgroundColor: Colors.neutral.inputBg,
         borderRadius: BorderRadius.lg,
-        borderWidth: 1,
-        borderColor: Colors.neutral.border,
         paddingHorizontal: Spacing.md,
         paddingVertical: Spacing.sm,
         maxHeight: 100,

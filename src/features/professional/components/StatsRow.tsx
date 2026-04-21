@@ -62,8 +62,7 @@ const styles = StyleSheet.create({
         marginHorizontal: Spacing.md,
         paddingVertical: Spacing.md,
         borderRadius: BorderRadius.lg,
-        borderWidth: 1,
-        borderColor: Colors.neutral.border,
+        ...Colors.shadow.card,
     },
 
     stat: {
