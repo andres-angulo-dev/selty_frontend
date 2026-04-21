@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     },
 
     pressed: {
-        backgroundColor: Colors.neutral.background, // Subtle feedback 
+        backgroundColor: Colors.neutral.inputBg,
     },
 
     left: {

@@ -180,9 +180,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: Colors.neutral.card,
         borderRadius: BorderRadius.lg,
-        padding: Spacing.md, 
-        borderWidth: 1, 
-        borderColor: Colors.neutral.border, 
+        padding: Spacing.md,
+        ...Colors.shadow.card,
     },
 
     pressed: {
@@ -193,10 +192,10 @@ const styles = StyleSheet.create({
         width: 44,
         height: 44,
         borderRadius: BorderRadius.full,
-        backgroundColor: Colors.neutral.background,
+        backgroundColor: Colors.neutral.inputBg,
         justifyContent: 'center',
         alignItems: 'center',
-        marginRight: Spacing.sm, 
+        marginRight: Spacing.sm,
     },
 
     professionalInfo: {

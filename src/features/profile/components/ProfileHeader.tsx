@@ -88,9 +88,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: Colors.neutral.background,
-        borderWidth: 1,
-        borderColor: Colors.neutral.border,
+        backgroundColor: Colors.neutral.inputBg,
     },
 
     infoContainer:{

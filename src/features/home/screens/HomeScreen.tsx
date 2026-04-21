@@ -16,7 +16,7 @@ import { SearchBar } from '@/shared/components/SearchBar';
 import { CategoryCard } from '@/shared/components/CategoryCard';
 import { ProfessionalCard } from '@/shared/components/ProfessionalCard';
 import { OfferCard } from '@/shared/components/OfferCard';
-import { AnnonceCard } from '@/shared/components/AnnonceCard';
+import { AnnonceGridCard } from '@/shared/components/AnnonceGridCard';
 import { useUserLocation } from '@/shared/hooks/useUserLocation';
 import { calculateDistance, formatDistance } from '@/shared/utils/geolocation';
 
@@ -26,6 +26,13 @@ import { mockBanners } from '../data/mockBanners';
 import { mockProfessionals } from '@/features/professional/data/mockProfessionals';
 import { mockOffers } from '@/features/offer/data/mockOffers';
 import { mockAnnonces } from '@/features/annonce/data/mockAnnonces';
+
+// Maps categoryId → display name for the grid card badge.
+// Kept local because this mapping is view-only logic, not business logic.
+const CATEGORY_NAMES: Record<string, string> = mockCategories.reduce(
+    (acc, cat) => ({ ...acc, [cat.id]: cat.name }),
+    {} as Record<string, string>,
+);
 
 // Types
 import { Professional, Annonce } from '@/shared/types';
@@ -149,15 +156,13 @@ export const HomeScreen: React.FC = () => {
     ), [professionalsWithDistance, navigation]);
 
     // ============================================
-    // FEED ITEM (each annonce card)
+    // FEED ITEM (Instagram-style grid card)
     // ============================================
     const renderAnnonce = useCallback(({ item }: { item: Annonce }) => (
-        <AnnonceCard
+        <AnnonceGridCard
             annonce={item}
+            categoryName={CATEGORY_NAMES[item.categoryId]}
             onPress={(annonce) => navigation.navigate('AnnonceDetail', { annonceId: annonce.id })}
-            onLikePress={(annonce) => console.log('Liked:', annonce.title)}
-            onCommentPress={(annonce) => navigation.navigate('CommentsModal', { annonceId: annonce.id})}
-            onFavoritePress={(annonce) => console.log('Favorited:', annonce.title)}
         />
     ), [navigation]);
 
@@ -204,13 +209,15 @@ export const HomeScreen: React.FC = () => {
                     />
                 ) : (
                     // Scrollable content
-                    <FlatList 
-                        data={mockAnnonces} 
-                        renderItem={renderAnnonce} 
-                        keyExtractor={(item) => item.id} 
-                        ListHeaderComponent={renderHeader} 
-                        showsVerticalScrollIndicator={false} 
-                        contentContainerStyle={styles.flatListContent} 
+                    <FlatList
+                        data={mockAnnonces}
+                        renderItem={renderAnnonce}
+                        keyExtractor={(item) => item.id}
+                        ListHeaderComponent={renderHeader}
+                        showsVerticalScrollIndicator={false}
+                        contentContainerStyle={styles.flatListContent}
+                        numColumns={2}
+                        columnWrapperStyle={styles.gridRow}
                     />
                 )}
             </KeyboardAvoidingView>
@@ -227,6 +234,13 @@ const styles = StyleSheet.create({
 
     flatListContent: {
         paddingBottom: Spacing.xl,
+        paddingHorizontal: Spacing.md,
+    },
+
+    // Gap of 3px between the two columns — same as Instagram's tight grid.
+    gridRow: {
+        gap: 3,
+        marginBottom: 3,
     },
 
     horizontalList: {
