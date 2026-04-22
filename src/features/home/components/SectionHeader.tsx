@@ -1,18 +1,20 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ViewStyle } from 'react-native';
 import { Colors, Typography, Spacing } from '@/shared/constants';
 
 interface SectionHeaderProps {
     title: string;
     onSeeAllPress?: () => void;
+    containerStyle?: ViewStyle;
 }
 
 export const SectionHeader: React.FC<SectionHeaderProps> = ({
-    title, 
+    title,
     onSeeAllPress,
+    containerStyle,
 }) => {
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, containerStyle]}>
             {/* Section Title */}
             <Text style={styles.title}>{title}</Text>
 

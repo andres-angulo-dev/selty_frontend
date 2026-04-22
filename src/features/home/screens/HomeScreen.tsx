@@ -124,15 +124,16 @@ export const HomeScreen: React.FC = () => {
     // This is rendered once at the top of the FlatList
     const renderHeader = useCallback(() => (
         <View>
-            {/* Categories - Horizontal scroll */}
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0, marginBottom: 15, }} contentContainerStyle={{ paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm }}>
-                {mockCategories.map((category) => (
-                    <CategoryCard key={category.id} category={category} onPress={(cat) => console.log('Pressed:', cat.name)} />
-                ))}
-            </ScrollView>
+            {/* Promo banner carousel — shown first (Stitch AI order) */}
+            <PromoBanner banners={mockBanners} onBannerPress={(Banner) => console.log('Banner', Banner.title)} />
 
-            {/* Promo banner carousel */}
-            <PromoBanner banners={mockBanners} onBannerPress={(Banner) => console.log('Banner', Banner.title)} /> 
+            {/* Categories */}
+            <SectionHeader title={Strings.home.categories} containerStyle={{ marginTop: 0 }} />
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0, marginBottom: Spacing.md }} contentContainerStyle={{ paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm }}>
+                {mockCategories.map((category) => (
+                    <CategoryCard key={category.id} category={category} onPress={(cat) => console.log('Pressed:', cat.name)} variant="circle" />
+                ))}
+            </ScrollView> 
         
             {/* Popular professionals - Horizontal scroll */}
             <SectionHeader title={Strings.home.popularProfessionals} onSeeAllPress={() => console.log('SeeAll')} />

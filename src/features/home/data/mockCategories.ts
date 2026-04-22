@@ -61,4 +61,11 @@ export const mockCategories: Category[] = [
       color: '#BEE3DB',
       professionalsCount: 9,
     },
+    {
+      id: 'cat-all',
+      name: 'Toutes',
+      icon: 'apps-outline',
+      color: '#022448',
+      professionalsCount: 0,
+    },
 ]
