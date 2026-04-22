@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { View, TextInput, StyleSheet, Pressable, TextInputProps } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Typography, Spacing } from '@/shared/constants';
+import { Colors, Typography, Spacing, BorderRadius, Layout } from '@/shared/constants';
 
 interface SearchBarProps extends TextInputProps {
     onClear?: () => void;       // Callback when clear button is pressed
@@ -16,7 +16,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     isActive: isActiveProp,
     ...textInputProps
 }) => {
-    
+
     const inputRef = useRef<TextInput>(null); // Ref to control the TextInput (blur on back press)
     const hasText = value !== undefined && value?.length > 0 // Check if search is active (text entered)
     const isActive = isActiveProp ?? hasText;
@@ -38,7 +38,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
             {/* Text input */}
             <TextInput ref={inputRef} style={styles.input} placeholderTextColor={Colors.text.tertiary} autoCapitalize='none' autoCorrect={false} returnKeyType='search' value={value} {...textInputProps} />
-        
+
             {/* Clear button (visible when text is entered) */}
             {value && value.length > 0 && (
                 <Pressable onPress={onClear} style={({ pressed }) => [styles.clearButton, pressed && styles.pressed]}>
@@ -54,11 +54,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: Colors.neutral.inputBg,
-        borderRadius: 12,
+        borderRadius: BorderRadius.lg,
         paddingHorizontal: Spacing.md,
         marginHorizontal: Spacing.md,
         marginVertical: Spacing.sm,
-        height: 48,
+        height: Layout.inputHeight,
     },
 
     iconButton: {

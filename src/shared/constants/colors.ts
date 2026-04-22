@@ -35,7 +35,6 @@ export const Colors = {
     text: {
       primary: '#1E1E1E',    // Main text
       secondary: '#666666',  // Secondary text
-      secondaryBis: '#2A70B9',
       tertiary: '#999999',   // Placeholder, hints
       inverse: '#FFFFFF',    // Text on dark backgrounds
     },

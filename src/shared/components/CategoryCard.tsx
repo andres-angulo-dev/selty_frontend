@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Typography, Spacing } from '@/shared/constants';
+import { Colors, Typography, Spacing, BorderRadius, FontSize } from '@/shared/constants';
 import { Category } from '@/shared/types';
 
 interface CategoryCardProps {
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     iconContainer: {
         width: 60,
         height: 60,
-        borderRadius: 16,
+        borderRadius: BorderRadius.xl,
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: Spacing.xs,
@@ -79,14 +79,14 @@ const styles = StyleSheet.create({
     circleIconContainer: {
         width: 56,
         height: 56,
-        borderRadius: 28,
+        borderRadius: BorderRadius.full,
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: Spacing.xs,
     },
 
     circleName: {
-        fontSize: 10,
+        fontSize: FontSize.xxs,
         fontWeight: '700',
         color: Colors.text.secondary,
         textAlign: 'center',

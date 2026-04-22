@@ -21,7 +21,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, Typography } from '@/shared/constants';
+import { Colors, Spacing, Typography, BorderRadius, FontSize } from '@/shared/constants';
 import { Annonce } from '@/shared/types';
 
 // ============================================
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     // overflow: 'hidden' is required for BlurView to respect borderRadius.
     badge: {
         alignSelf: 'flex-start',
-        borderRadius: 20,
+        borderRadius: BorderRadius.full,
         overflow: 'hidden',
         borderWidth: 1,
         borderColor: 'rgba(255,255,255,0.3)',
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     },
 
     ratingText: {
-        fontSize: 10,
+        fontSize: FontSize.xxs,
         fontWeight: '600',
         color: 'rgba(255,255,255,0.9)',
     },
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
     },
 
     distanceText: {
-        fontSize: 10,
+        fontSize: FontSize.xxs,
         color: 'rgba(255,255,255,0.85)',
         flexShrink: 1,          // Truncates with ellipsis if still too long
     },
