@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, ImageBackground } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, Typography } from '@/shared/constants';
+import { Colors, Spacing, BorderRadius, FontSize } from '@/shared/constants';
 import { Offer } from '@/shared/types';
 
 const CARD_WIDTH = 175;
@@ -63,14 +63,10 @@ const styles = StyleSheet.create({
         width: CARD_WIDTH,
         height: 195,
         backgroundColor: Colors.neutral.white,
-        borderRadius: 12,
+        borderRadius: BorderRadius.lg,
         marginRight: Spacing.sm,
         // No overflow: 'hidden' — would kill shadow AND clip the floating badge
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.11,
-        shadowRadius: 8,
-        elevation: 4,
+        ...Colors.shadow.card,
     },
 
     pressed: {
@@ -80,8 +76,8 @@ const styles = StyleSheet.create({
     // Clips image to top rounded corners only
     coverWrapper: {
         height: COVER_HEIGHT,
-        borderTopLeftRadius: 12,
-        borderTopRightRadius: 12,
+        borderTopLeftRadius: BorderRadius.lg,
+        borderTopRightRadius: BorderRadius.lg,
         overflow: 'hidden',
     },
 
@@ -105,7 +101,7 @@ const styles = StyleSheet.create({
         left: 10,
         zIndex: 10,
         backgroundColor: Colors.semantic.error,
-        borderRadius: 20,
+        borderRadius: BorderRadius.full,
         paddingHorizontal: 12,
         paddingVertical: 5,
         shadowColor: '#000',
@@ -116,7 +112,7 @@ const styles = StyleSheet.create({
     },
 
     discountText: {
-        fontSize: 12,
+        fontSize: FontSize.xs,
         fontWeight: '800',
         color: Colors.neutral.white,
         letterSpacing: 0.3,

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, ImageBackground } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Typography, Spacing } from '@/shared/constants';
+import { Colors, Typography, Spacing, BorderRadius, FontSize } from '@/shared/constants';
 import { Professional } from '@/shared/types';
 
 const CARD_WIDTH = 200;
@@ -82,14 +82,10 @@ const styles = StyleSheet.create({
     card: {
         width: CARD_WIDTH,
         backgroundColor: Colors.neutral.white,
-        borderRadius: 12,
+        borderRadius: BorderRadius.lg,
         marginRight: Spacing.sm,
         // No overflow: 'hidden' here — it kills shadow on iOS
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.12,
-        shadowRadius: 8,
-        elevation: 4,
+        ...Colors.shadow.card,
     },
 
     pressed: {
@@ -100,8 +96,8 @@ const styles = StyleSheet.create({
     coverWrapper: {
         width: CARD_WIDTH,
         height: COVER_HEIGHT,
-        borderTopLeftRadius: 12,
-        borderTopRightRadius: 12,
+        borderTopLeftRadius: BorderRadius.lg,
+        borderTopRightRadius: BorderRadius.lg,
         overflow: 'hidden',
     },
 
@@ -126,7 +122,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.55)',
         paddingHorizontal: 7,
         paddingVertical: 3,
-        borderRadius: 20,
+        borderRadius: BorderRadius.full,
     },
 
     ratingText: {
@@ -140,14 +136,14 @@ const styles = StyleSheet.create({
     },
 
     name: {
-        fontSize: 14,
+        fontSize: FontSize.sm,
         fontWeight: '700',
         color: Colors.text.primary,
         marginBottom: 2,
     },
 
     profession: {
-        fontSize: 12,
+        fontSize: FontSize.xs,
         color: Colors.text.secondary,
         marginBottom: Spacing.xs,
     },
@@ -167,11 +163,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#E8F8EF',
         paddingHorizontal: 6,
         paddingVertical: 2,
-        borderRadius: 20,
+        borderRadius: BorderRadius.full,
     },
 
     certifiedText: {
-        fontSize: 10,
+        fontSize: FontSize.xxs,
         fontWeight: '600',
         color: CERTIFIED_GREEN,
     },
