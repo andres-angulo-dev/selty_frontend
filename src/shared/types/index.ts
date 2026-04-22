@@ -61,6 +61,10 @@ export interface Professional {
   // Stats
   annoncesCount: number;           // Number of annonces posted
 
+  // Display (HomeScreen card)
+  coverImage?: string;             // Cover photo URL (ProfessionalCoverCard)
+  startingPrice?: number;          // Starting price in euros ("À partir de X€")
+
   // Relations
   mainCategoryId: string;          // Main category (displayed on card)
   secondaryCategoryIds: string[];  // Other categories (for search/filter)

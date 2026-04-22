@@ -146,6 +146,9 @@ export const Strings = {
     // ------------------------------                                                                                                         
     home: {
         searchPlaceholder: 'Rechercher un professionnel...',
+        categories: 'Catégories',
+        forYou: 'Pour vous',
+        specialOffers: 'Offres spéciales',
         popularProfessionals: 'Professionnels populaires',
         currentOffers: 'Les offres du moment',
         nearYou: 'Près de chez vous',

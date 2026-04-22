@@ -14,7 +14,7 @@ import { SearchOverlay } from '../components/SearchOverlay';
 // Shared components
 import { SearchBar } from '@/shared/components/SearchBar';
 import { CategoryCard } from '@/shared/components/CategoryCard';
-import { ProfessionalCard } from '@/shared/components/ProfessionalCard';
+import { ProfessionalCoverCard } from '@/shared/components/ProfessionalCoverCard';
 import { OfferCard } from '@/shared/components/OfferCard';
 import { AnnonceGridCard } from '@/shared/components/AnnonceGridCard';
 import { useUserLocation } from '@/shared/hooks/useUserLocation';
@@ -135,16 +135,16 @@ export const HomeScreen: React.FC = () => {
                 ))}
             </ScrollView> 
         
-            {/* Popular professionals - Horizontal scroll */}
-            <SectionHeader title={Strings.home.popularProfessionals} onSeeAllPress={() => console.log('SeeAll')} />
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={{ paddingHorizontal: Spacing.md, marginBottom: 15, }}>
+            {/* Pour vous — Horizontal scroll of cover cards */}
+            <SectionHeader title={Strings.home.forYou} onSeeAllPress={() => console.log('SeeAll')} />
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={{ paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm, marginBottom: Spacing.xs }}>
                 {professionalsWithDistance.map((pro) => (
-                    <ProfessionalCard key={pro.id} professional={pro} onPress={(pro) => navigation.navigate('ProfessionalDetail', { professionalId: pro.id })} />
+                    <ProfessionalCoverCard key={pro.id} professional={pro} onPress={(pro) => navigation.navigate('ProfessionalDetail', { professionalId: pro.id })} />
                 ))}
             </ScrollView>
 
-            {/* Current offers - Horizontal scroll */}
-            <SectionHeader title={Strings.home.currentOffers} onSeeAllPress={() => console.log('SeeAll')} />
+            {/* Offres spéciales - Horizontal scroll */}
+            <SectionHeader title={Strings.home.specialOffers} onSeeAllPress={() => console.log('SeeAll')} />
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalList} contentContainerStyle={styles.horizontalListContent}>
                 {mockOffers.map((offer) => (
                     <OfferCard key={offer.id} offer={offer} onPress={(offer) => navigation.navigate('OfferDetail', { offerId: offer.id })} />
