@@ -1,9 +1,11 @@
 import React, { useRef, useState, useEffect} from 'react';
-import { View, Text, StyleSheet, FlatList, Pressable, useWindowDimensions } from 'react-native'
+import { View, Text, StyleSheet, FlatList, Pressable, ImageBackground, useWindowDimensions } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors, Typography, Spacing } from '@/shared/constants';
 import { Banner } from '../types';
 
-const BANNER_HEIGHT = 150;
+const BANNER_HEIGHT = 180;
 
 interface PromoBannerProps {
     banners: Banner[];
@@ -47,13 +49,58 @@ export const PromoBanner: React.FC<PromoBannerProps> = ({
         setCurrentIndex(index);
     };
 
-    // Render a single banner
-    const renderBanner = ({ item }: {item: Banner }) => ( // FlatList calls this function for each item in the data array, { item } is destructured from { item, index } provided by FlatList
-        <Pressable onPress={() => onBannerPress(item)} style={({ pressed }) => [pressed && styles.pressed]}>
-            <View style={[styles.banner, { width: BANNER_WIDTH, backgroundColor: item.backgroundColor }]}>
+    // Shared inner content (same layout for gradient and solid banners)
+    const renderBannerContent = (item: Banner) => (
+        <>
+            {/* Decorative circle — top-right corner, semi-transparent */}
+            <View style={styles.decorativeCircle} />
+
+            {/* Text block */}
+            <View style={styles.bannerContent}>
                 <Text style={styles.bannerTitle}>{item.title}</Text>
                 <Text style={styles.bannerSubtitle}>{item.subtitle}</Text>
             </View>
+
+            {/* CTA button — only shown when ctaLabel is provided */}
+            {item.ctaLabel && (
+                <View style={styles.ctaButton}>
+                    <Text style={styles.ctaText}>{item.ctaLabel}</Text>
+                    <Ionicons name="arrow-forward" size={14} color={Colors.primary.main} />
+                </View>
+            )}
+        </>
+    );
+
+    // Render a single banner — priority: imageUrl > gradientColors > backgroundColor
+    const renderBanner = ({ item }: { item: Banner }) => (
+        <Pressable onPress={() => onBannerPress(item)} style={({ pressed }) => [pressed && styles.pressed]}>
+            {item.imageUrl ? (
+                // Photo background (advertisers / pros with real images)
+                <ImageBackground
+                    source={{ uri: item.imageUrl }}
+                    style={[styles.banner, { width: BANNER_WIDTH }]}
+                    imageStyle={{ borderRadius: 16 }}
+                >
+                    {/* Dark overlay so text stays readable on any photo */}
+                    <View style={styles.imageOverlay} />
+                    {renderBannerContent(item)}
+                </ImageBackground>
+            ) : item.gradientColors ? (
+                // Gradient background (Sialty promo banners)
+                <LinearGradient
+                    colors={item.gradientColors}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={[styles.banner, { width: BANNER_WIDTH }]}
+                >
+                    {renderBannerContent(item)}
+                </LinearGradient>
+            ) : (
+                // Solid color fallback
+                <View style={[styles.banner, { width: BANNER_WIDTH, backgroundColor: item.backgroundColor }]}>
+                    {renderBannerContent(item)}
+                </View>
+            )}
         </Pressable>
     );
 
@@ -72,8 +119,8 @@ export const PromoBanner: React.FC<PromoBannerProps> = ({
                 onScroll={handleScroll}
                 scrollEventThrottle={16}
                 getItemLayout={(_, index) => ({
-                    length: BANNER_WIDTH + Spacing.md * 2,  // Full width of one item (banner + both margins)
-                    offset: (BANNER_WIDTH + Spacing.md * 2) * index,  // Position of this item from the start
+                    length: BANNER_WIDTH,   // No internal margin — outer container padding handles spacing
+                    offset: BANNER_WIDTH * index,
                     index,
                 })}
             />
@@ -90,19 +137,35 @@ export const PromoBanner: React.FC<PromoBannerProps> = ({
 
 const styles = StyleSheet.create({
     container: {
-        marginVertical: Spacing.sm,
+        marginTop: Spacing.sm,
     },
 
     banner: {
         height: BANNER_HEIGHT,
-        borderRadius: 12,
-        marginHorizontal: Spacing.md,
+        borderRadius: 16,
         padding: Spacing.lg,
-        justifyContent: 'center',
+        justifyContent: 'space-between',
+        overflow: 'hidden',
     },
 
-    pressed: {
-        opacity: 0.8,
+    imageOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0, 0, 0, 0.40)',
+        borderRadius: 16,
+    },
+
+    decorativeCircle: {
+        position: 'absolute',
+        width: 160,
+        height: 160,
+        borderRadius: 80,
+        backgroundColor: 'rgba(255, 255, 255, 0.10)',
+        top: -40,
+        right: -40,
+    },
+
+    bannerContent: {
+        maxWidth: 220,
     },
 
     bannerTitle: {
@@ -113,16 +176,37 @@ const styles = StyleSheet.create({
     },
 
     bannerSubtitle: {
-        ...Typography.body,
-        color: Colors.neutral.white,
-        opacity: 0.9,
+        fontSize: 12,
+        color: 'rgba(255, 255, 255, 0.80)',
+        fontWeight: '500',
+    },
+
+    ctaButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        backgroundColor: Colors.neutral.white,
+        alignSelf: 'flex-start',
+        paddingHorizontal: Spacing.md,
+        paddingVertical: 8,
+        borderRadius: 9999,
+    },
+
+    ctaText: {
+        fontSize: 13,
+        fontWeight: '700',
+        color: Colors.primary.main,
+    },
+
+    pressed: {
+        opacity: 0.8,
     },
 
     dotsContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: Spacing.sm,
+        marginTop: Spacing.xs,
     },
     
     dot: {
