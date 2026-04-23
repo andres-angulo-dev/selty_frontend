@@ -1,10 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, Pressable, StyleSheet, NativeSyntheticEvent, TextLayoutEventData } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { Colors, Typography, Spacing, Strings } from '@/shared/constants';
+import { Colors, Typography, Spacing, BorderRadius, Strings } from '@/shared/constants';
 
-// Props type
-type AboutSectionProps= {
+type AboutSectionProps = {
     description: string;
     services: string[];
 };
@@ -13,16 +11,15 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
     description,
     services,
 }) => {
-    const hasChecked = useRef(false); // Ref to check only once (does NOT trigger re-render)
-    const [isExpanded, setIsExpanded] = useState(false); // State to toggle description expand/collapse
-    const [needsTruncation, setNeedsTruncation] = useState(false); // State to show or hide "See more / See less"
+    const hasChecked = useRef(false);
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [needsTruncation, setNeedsTruncation] = useState(false);
     const lines = 5;
 
-    // Called every time Text renders - but we only act once
     const handleTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
         if (!hasChecked.current) {
             hasChecked.current = true;
-            if (event.nativeEvent.lines.length > lines) setNeedsTruncation(true) // Only check when text is NOT truncated (first render or expanded)
+            if (event.nativeEvent.lines.length > lines) setNeedsTruncation(true);
         }
     };
 
@@ -32,69 +29,83 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
             <Text style={styles.sectionTitle}>{Strings.professional.about.title}</Text>
 
             {/* Description with "See more / See less" */}
-            <Text 
-                style={[styles.description, !needsTruncation && { paddingBottom: Spacing.lg }]} 
-                numberOfLines={hasChecked.current ? (isExpanded ? undefined : lines) : undefined} 
+            <Text
+                style={styles.description}
+                numberOfLines={hasChecked.current ? (isExpanded ? undefined : lines) : undefined}
                 onTextLayout={handleTextLayout}
             >
                 {description}
             </Text>
 
-            {/* Show toggle button only if text needs truncation */}
             {needsTruncation && (
                 <Pressable onPress={() => setIsExpanded(!isExpanded)} style={({ pressed }) => pressed && styles.pressed}>
-                    <Text style={styles.toggleText}>{ isExpanded ? Strings.professional.about.seeLess : Strings.professional.about.seeMore }</Text>
+                    <Text style={styles.toggleText}>
+                        {isExpanded ? Strings.professional.about.seeLess : Strings.professional.about.seeMore}
+                    </Text>
                 </Pressable>
-            )}    
+            )}
 
-            {/* Services list */}
-            <Text style={styles.sectionTitle}>{Strings.professional.about.servicesTitle}</Text>
-
-            {services.map((service) => (
-                <View key={service} style={styles.serviceRow}>
-                    <Ionicons name='checkmark-circle' size={18} color={Colors.semantic.success} />
-                    <Text style={styles.serviceText}>{service}</Text>
+            {/* Services as pill chips — no separate title, flows below description */}
+            {services.length > 0 && (
+                <View style={styles.chipsRow}>
+                    {services.map((service) => (
+                        <View key={service} style={styles.chip}>
+                            <Text style={styles.chipText}>{service}</Text>
+                        </View>
+                    ))}
                 </View>
-            ))}
+            )}
         </View>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
         paddingHorizontal: Spacing.md,
         paddingVertical: Spacing.lg,
+        gap: Spacing.md,
     },
 
     sectionTitle: {
         ...Typography.label,
-        color: Colors.text.secondary,
-        marginBottom: Spacing.sm
+        color: Colors.text.primary,
+        fontWeight: '700',
     },
 
     description: {
         ...Typography.caption,
         lineHeight: 22,
+        color: Colors.text.secondary,
     },
 
     toggleText: {
         ...Typography.caption,
         color: Colors.text.tertiary,
-        marginBottom: Spacing.lg,
     },
 
     pressed: {
         opacity: 0.7,
     },
 
-    serviceRow: {
+    // Wrapping row of pills
+    chipsRow: {
         flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
+        flexWrap: 'wrap',
+        gap: Spacing.sm,
+        marginTop: Spacing.xs,
     },
 
-    serviceText: {
-        ...Typography.caption,
-        lineHeight: 22,
+    // Individual pill — light blue bg, primary text, full rounded
+    chip: {
+        paddingHorizontal: Spacing.md,
+        paddingVertical: Spacing.xs + 2,
+        backgroundColor: '#EEF2F7',
+        borderRadius: BorderRadius.full,
     },
-})
+
+    chipText: {
+        fontSize: 13,
+        fontWeight: '500',
+        color: Colors.primary.main,
+    },
+});

@@ -62,6 +62,9 @@ const styles = StyleSheet.create({
         marginHorizontal: Spacing.md,
         paddingVertical: Spacing.md,
         borderRadius: BorderRadius.lg,
+        marginTop: -16,     // Overlaps the bottom of HeroSection for a depth effect
+        zIndex: 10,
+        elevation: 10,
         ...Colors.shadow.card,
     },
 
