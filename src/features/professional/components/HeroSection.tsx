@@ -3,7 +3,6 @@ import { View, Text, Image, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Typography, Spacing, BorderRadius, Layout, Strings } from '@/shared/constants';
 
-// Props type - receives only what it needs to display
 type HeroSectionProps = {
     avatar: string | null;
     firstName: string;
@@ -16,22 +15,22 @@ type HeroSectionProps = {
 };
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
-      avatar,
-      firstName,
-      lastName,
-      profession,
-      city,
-      department,
-      isCertified,
-      isAvailable,    
+    avatar,
+    firstName,
+    lastName,
+    profession,
+    city,
+    department,
+    isCertified,
+    isAvailable,
 }) => {
+    const statusColor = isAvailable ? Colors.semantic.success : Colors.neutral.disabled;
+    const statusBg = isAvailable ? 'rgba(39,174,96,0.12)' : 'rgba(0,0,0,0.06)';
+
     return (
         <View style={styles.container}>
-            {/* Availability status */}
-            <Text style={[styles.availabilityText, { color: isAvailable ? Colors.semantic.success : Colors.neutral.disabled }]}>{isAvailable ? Strings.professional.available : Strings.professional.unavailable }</Text>
-
-            {/* Avatar */}
-            <View style={styles.avatarContainer}>
+            {/* Top row: avatar (left) + availability pill (right) */}
+            <View style={styles.topRow}>
                 {avatar ? (
                     <Image source={{ uri: avatar }} style={styles.avatar} />
                 ) : (
@@ -39,6 +38,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                         <Text style={styles.avatarInitials}>{firstName[0]} {lastName[0]}</Text>
                     </View>
                 )}
+
+                <View style={{ flex: 1 }} />
+
+                <View style={[styles.availabilityBadge, { backgroundColor: statusBg }]}>
+                    <View style={[styles.availabilityDot, { backgroundColor: statusColor }]} />
+                    <Text style={[styles.availabilityText, { color: statusColor }]}>
+                        {isAvailable ? Strings.professional.available : Strings.professional.unavailable}
+                    </Text>
+                </View>
             </View>
 
             {/* Name + Certified badge */}
@@ -58,35 +66,29 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 <Text style={styles.locationText}>{city}, {department}</Text>
             </View>
         </View>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
-        alignItems: 'center',
-        paddingVertical: Spacing.lg,
+        paddingTop: Spacing.lg,
+        paddingBottom: Spacing.xl,   // Extra space so StatsRow overlap doesn't hide content
         paddingHorizontal: Spacing.md,
+        backgroundColor: Colors.neutral.white,
+        borderBottomLeftRadius: 24,  // rounded-b-3xl from Stitch — hero floats over gray bg
+        borderBottomRightRadius: 24,
     },
 
-    availabilityText: {
-        position: 'absolute',
-        right: 0,
-        zIndex: 10,
-        paddingHorizontal: Spacing.md,
-        ...Typography.captionBis,
-        fontWeight: '600',
-        marginTop: Spacing.xs,
-    },
-
-    avatarContainer: {
-        position: 'relative',
+    topRow: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
         marginBottom: Spacing.md,
     },
 
     avatar: {
         width: Layout.avatarSizeLarge,
         height: Layout.avatarSizeLarge,
-        borderRadius: BorderRadius.full,
+        borderRadius: BorderRadius.xl,   // Rounded square — replaces the old circle
     },
 
     avatarPlaceholder: {
@@ -98,6 +100,26 @@ const styles = StyleSheet.create({
     avatarInitials: {
         ...Typography.h2,
         color: Colors.text.inverse,
+    },
+
+    availabilityBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        paddingHorizontal: Spacing.sm,
+        paddingVertical: 5,
+        borderRadius: BorderRadius.full,
+    },
+
+    availabilityDot: {
+        width: 7,
+        height: 7,
+        borderRadius: BorderRadius.full,
+    },
+
+    availabilityText: {
+        ...Typography.captionBis,
+        fontWeight: '600',
     },
 
     nameRow: {
@@ -112,7 +134,7 @@ const styles = StyleSheet.create({
     },
 
     certifiedIcon: {
-        marginLeft: Spacing.xs
+        marginLeft: Spacing.xs,
     },
 
     profession: {
@@ -132,4 +154,4 @@ const styles = StyleSheet.create({
         color: Colors.text.tertiary,
         marginLeft: Spacing.xs,
     },
-})
+});

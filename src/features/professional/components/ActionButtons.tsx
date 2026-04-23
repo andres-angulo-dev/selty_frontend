@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, Pressable, StyleSheet, Linking, Share, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Typography, Strings, Spacing} from '@/shared/constants';
+import { Colors, Typography, Strings, Spacing, BorderRadius } from '@/shared/constants';
 
-// Props type
 type ActionButtonsProps = {
     phone: string | null;
     firstName: string;
@@ -23,10 +22,8 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
     onMessagePress,
     onFavoriteToggle,
 }) => {
-    // Local State for favorite toggle
     const [favorite, setFavorite] = useState(isFavorite);
 
-    // Open native phone app
     const handleCall = () => {
         if (!phone) {
             Alert.alert(
@@ -38,18 +35,16 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
         Linking.openURL(`tel:${phone}`);
     };
 
-    // Open native share sheet
     const handleShare = async () => {
         try {
             await Share.share({
                 message: `${Strings.professional.actions.shareMessage} ${firstName} ${lastName} (${profession}) ${Strings.professional.actions.shareOnSialty}`,
             });
         } catch (error) {
-            // User cancelled or error occured - do nothing
+            // User cancelled or error occurred — do nothing
         }
     };
 
-    // Toggle favorite state
     const handleFavorite = () => {
         const newValue = !favorite;
         setFavorite(newValue);
@@ -60,50 +55,77 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
         <View style={styles.container}>
             {/* Call button */}
             <Pressable style={({ pressed }) => [styles.button, pressed && styles.pressed]} onPress={handleCall}>
-                <Ionicons name='call-outline' size={22} color={Colors.primary.main} />
+                <View style={styles.iconContainer}>
+                    <Ionicons name='call-outline' size={22} color={Colors.primary.main} />
+                </View>
                 <Text style={styles.buttonText}>{Strings.professional.actions.call}</Text>
             </Pressable>
 
             {/* Message button */}
             <Pressable style={({ pressed }) => [styles.button, pressed && styles.pressed]} onPress={onMessagePress}>
-                <Ionicons name="chatbubble-outline" size={22} color={Colors.primary.main} />
+                <View style={styles.iconContainer}>
+                    <Ionicons name="chatbubble-outline" size={22} color={Colors.primary.main} />
+                </View>
                 <Text style={styles.buttonText}>{Strings.professional.actions.message}</Text>
             </Pressable>
 
             {/* Favorite button */}
             <Pressable style={({ pressed }) => [styles.button, pressed && styles.pressed]} onPress={handleFavorite}>
-                <Ionicons name={favorite ? 'heart' : 'heart-outline'} size={22} color={favorite ? Colors.semantic.error : Colors.primary.main } />
+                <View style={[styles.iconContainer, favorite && styles.iconContainerFavorite]}>
+                    <Ionicons
+                        name={favorite ? 'heart' : 'heart-outline'}
+                        size={22}
+                        color={favorite ? Colors.semantic.error : Colors.primary.main}
+                    />
+                </View>
                 <Text style={styles.buttonText}>{Strings.professional.actions.favorite}</Text>
             </Pressable>
 
             {/* Share button */}
             <Pressable style={({ pressed }) => [styles.button, pressed && styles.pressed]} onPress={handleShare}>
-                <Ionicons name='share-outline' size={22} color={Colors.primary.main} />
+                <View style={styles.iconContainer}>
+                    <Ionicons name='share-outline' size={22} color={Colors.primary.main} />
+                </View>
                 <Text style={styles.buttonText}>{Strings.professional.actions.share}</Text>
             </Pressable>
         </View>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
-        paddingBottom: Spacing.lg,
+        paddingVertical: Spacing.lg,
         paddingHorizontal: Spacing.md,
     },
 
     button: {
         alignItems: 'center',
-        gap: 4,
+        gap: 6,
     },
 
     pressed: {
         opacity: 0.7,
     },
 
+    // Gray rounded square container — matches the Stitch design
+    iconContainer: {
+        width: 48,
+        height: 48,
+        borderRadius: BorderRadius.xl,
+        backgroundColor: Colors.neutral.inputBg,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    // Light red tint when favorited
+    iconContainerFavorite: {
+        backgroundColor: 'rgba(235,87,87,0.10)',
+    },
+
     buttonText: {
         ...Typography.caption,
-        color: Colors.primary.main,
+        color: Colors.text.secondary,
     },
-})
+});

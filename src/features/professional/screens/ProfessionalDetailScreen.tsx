@@ -12,7 +12,7 @@ import { AboutSection } from '../components/AboutSection';
 import { TabSelector, TabName } from '../components/TabSelector'
 import { ReviewSummary } from '../components/ReviewSummary';
 import { ReviewCard } from '../components/ReviewCard';
-import { AnnonceCard } from '@/shared/components/AnnonceCard';
+import { AnnonceListCard } from '../components/AnnonceListCard';
 
 // Constants
 import { Colors, Typography, Spacing, Strings } from '@/shared/constants';
@@ -48,12 +48,9 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
     const renderItem = useCallback(({ item }: { item: ListItem }) => {
         if (activeTab === 'annonces') {
             return (
-                <AnnonceCard
+                <AnnonceListCard
                     annonce={item as Annonce}
-                    onPress={(annonce) => navigation.navigate('AnnonceDetail', { annonceId: annonce.id})}
-                    onLikePress={() => console.log('Like')}
-                    onFavoritePress={() => console.log('Favorite')}
-                    onCommentPress={(annonce) => navigation.navigate('CommentsModal', { annonceId: annonce.id})}
+                    onPress={(annonce) => navigation.navigate('AnnonceDetail', { annonceId: annonce.id })}
                 />
             );
         }
@@ -83,6 +80,14 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
                     isAvailable={professional.isAvailable}
                 />
 
+                {/* Stats: rating, annonce count, member since — overlaps hero bottom */}
+                <StatsRow
+                    rating={professional.rating}
+                    reviewsCount={professional.reviewsCount}
+                    annoncesCount={professional.annoncesCount}
+                    createdAt={professional.createdAt}
+                />
+
                 {/* Actions buttons: call, message, favorite, share */}
                 <ActionButtons
                     phone={professional.phone}
@@ -92,14 +97,6 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
                     isFavorite={false}
                     onMessagePress={() => console.log('Message')}
                     onFavoriteToggle={(newValue) => console.log('Favorite:', newValue)}
-                />
-
-                {/* Stats: rating, annonce count, member since */}
-                <StatsRow
-                    rating={professional.rating}
-                    reviewsCount={professional.reviewsCount}
-                    annoncesCount={professional.annoncesCount}
-                    createdAt={professional.createdAt}
                 />
 
                 {/* About (description + services) */}
@@ -193,7 +190,7 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
 const styles = StyleSheet.create({
      container: {
       flex: 1,
-      backgroundColor: Colors.neutral.background,
+      backgroundColor: '#F6F3F2',   // Gray-cream page background (Stitch: surface-container-low)
     },
     
     contentContainer: {
