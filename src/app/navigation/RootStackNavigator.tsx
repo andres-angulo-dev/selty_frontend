@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing } from '@/shared/constants';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -60,14 +60,15 @@ export const RootStackNavigator: React.FC = () => {
                 component={AnnonceDetailScreen}
                 options={({ navigation }) => ({
                     headerShown: true,
-                    headerTitle: '',
+                    headerTitle: 'Annonce',
+                    headerTitleStyle: { fontSize: 16, fontWeight: '600', color: Colors.text.primary },
                     headerShadowVisible: false,
                     headerStyle: { backgroundColor: Colors.neutral.background },
                     headerLeft: () => (
                         <Pressable onPress={() => navigation.goBack()} style={{ paddingRight: Spacing.sm }}>
                             <Ionicons name='chevron-back' size={BACK_ICON_SIZE} color={Colors.text.primary} />
                         </Pressable>
-                    )
+                    ),
                 })}
             />
 

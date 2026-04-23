@@ -25,6 +25,8 @@ export const mockAnnonces: Annonce[] = [
       professionalId: 'pro-1',
       categoryId: 'cat-1',
       professional: mockProfessionals[0],    // Jean Dupont
+      priceType: 'quote',
+      isNew: true,
       createdAt: new Date('2025-02-09'),
       isActive: true,
     },
@@ -93,6 +95,7 @@ export const mockAnnonces: Annonce[] = [
       professionalId: 'pro-4',
       categoryId: 'cat-5',
       professional: mockProfessionals[3],    // Sophie Durand
+      isFree: true,
       createdAt: new Date('2025-02-03'),
       isActive: true,
     },
@@ -110,7 +113,9 @@ export const mockAnnonces: Annonce[] = [
       professionalId: 'pro-5',
       categoryId: 'cat-1',
       professional: mockProfessionals[4],    // Lucas Bernard
+      priceType: 'fixed',
+      isNew: true,
       createdAt: new Date('2025-02-10'),
       isActive: true,
-    },   
+    },
 ]

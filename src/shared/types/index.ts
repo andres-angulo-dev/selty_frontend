@@ -101,6 +101,13 @@ export interface Annonce {
   // Populated relation (for display)
   professional: Professional | null;
 
+  // Pricing
+  isFree?: boolean;                // true = "Gratuit" stat item
+  priceType?: 'fixed' | 'quote';  // fixed = "Prix fixe", quote = "Devis gratuit"
+
+  // Display
+  isNew?: boolean;                 // "Nouveau" badge overlaid on hero image
+
   // Metadata
   createdAt: Date;
   isActive: boolean;
