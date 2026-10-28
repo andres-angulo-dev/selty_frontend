@@ -190,7 +190,7 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
 const styles = StyleSheet.create({
      container: {
       flex: 1,
-      backgroundColor: '#F6F3F2',   // Gray-cream page background (Stitch: surface-container-low)
+      backgroundColor: Colors.neutral.surface,   // Gray-cream page background (Stitch: surface-container-low)
     },
     
     contentContainer: {

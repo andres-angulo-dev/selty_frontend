@@ -98,8 +98,9 @@ export interface Annonce {
   professionalId: string;
   categoryId: string;
 
-  // Populated relation (for display)
+  // Populated relations (for display)
   professional: Professional | null;
+  category: Category | null;
 
   // Pricing
   isFree?: boolean;                // true = "Gratuit" stat item

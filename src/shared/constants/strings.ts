@@ -253,6 +253,7 @@ export const Strings = {
       interactions: 'Interactions',
       professional: 'Proposé par',
       call: 'Appeler',
+      message: 'Envoyer un message',
       likes: (n: number) => `${n} j'aime`,
       comments: (n: number) => `${n} commentaire${n > 1 ? 's' : ''}`,
     },

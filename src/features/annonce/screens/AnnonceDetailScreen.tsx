@@ -6,19 +6,11 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/navigation/types';
 import { getAnnonceById } from '../data/mockAnnonces';
 import { formatRelativeDate } from '@/shared/utils/formatDate';
+import { ProfessionalRowCard } from '@/shared/components/ProfessionalRowCard';
+import { MapPlaceholder } from '@/shared/components/MapPlaceholder';
+import { DetailCtaBar } from '@/shared/components/DetailCtaBar';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AnnonceDetail'>;
-
-const CATEGORY_LABELS: Record<string, string> = {
-    'cat-1': 'Artisans',
-    'cat-2': 'Beauté',
-    'cat-3': 'Juridique',
-    'cat-4': 'Maison',
-    'cat-5': 'Santé',
-    'cat-6': 'Cours',
-    'cat-7': 'Tech',
-    'cat-8': 'Événements',
-};
 
 export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     const { annonceId } = route.params;
@@ -43,7 +35,7 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     }, [annonce]);
 
     const handleMessagePress = useCallback(() => {
-        Alert.alert('Messagerie', 'La messagerie sera disponible prochainement.');
+        Alert.alert(Strings.messaging.comingSoonTitle, Strings.messaging.comingSoonMessage);
     }, []);
 
     // Sync header heart with isLiked state — same action as the in-content like button
@@ -75,7 +67,7 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
         );
     }
 
-    const categoryLabel = CATEGORY_LABELS[annonce.categoryId] ?? null;
+    const categoryLabel = annonce.category?.name ?? null;
     const imageUrl = annonce.images[0] ?? null;
 
     // Stat items with icons derived from pricing fields
@@ -90,10 +82,13 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
         }
     };
 
+    // Open the native phone dialer, or explain why we can't
     const handleCallPress = () => {
         if (annonce.professional?.phone) {
             Linking.openURL(`tel:${annonce.professional.phone}`);
+            return;
         }
+        Alert.alert(Strings.professional.actions.noPhoneTitle, Strings.professional.actions.noPhoneMessage);
     };
 
     return (
@@ -175,64 +170,43 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
 
                     <View style={styles.separator} />
 
-                    {/* Professional card */}
+                    {/* Professional card (shared component) */}
                     {annonce.professional && (
                         <>
                             <Text style={styles.sectionTitle}>{Strings.annonce.professional}</Text>
-                            <Pressable
+                            <ProfessionalRowCard
+                                name={`${annonce.professional.firstName} ${annonce.professional.lastName}`}
+                                subtitle={`${annonce.professional.profession} · ${annonce.professional.city}`}
+                                avatarUrl={annonce.professional.avatar}
+                                rating={annonce.professional.rating}
+                                reviewsCount={annonce.professional.reviewsCount}
+                                reviewsLabel={Strings.offer.reviews}
+                                isVerified={annonce.professional.isCertified}
+                                verifiedLabel={Strings.offer.verified}
+                                isOnline={annonce.professional.isAvailable}
                                 onPress={handleProfessionalPress}
-                                style={({ pressed }) => [styles.professionalCard, pressed && styles.pressed]}
-                            >
-                                <View style={styles.avatar}>
-                                    <Ionicons name='person' size={20} color={Colors.text.tertiary} />
-                                </View>
-                                <View style={styles.professionalInfo}>
-                                    <Text style={styles.professionalName}>
-                                        {annonce.professional.firstName} {annonce.professional.lastName}
-                                    </Text>
-                                    <Text style={styles.profession}>{annonce.professional.profession}</Text>
-                                </View>
-                                <Ionicons name='chevron-forward' size={18} color={Colors.neutral.border} />
-                            </Pressable>
+                                style={styles.professionalCard}
+                            />
                         </>
                     )}
 
-                    {/* Location section with map placeholder */}
+                    {/* Location section (shared placeholder until the real map lands) */}
                     <Text style={styles.sectionTitle}>{Strings.annonce.location}</Text>
-                    <View style={styles.mapPlaceholder}>
-                        <Ionicons name='location' size={32} color={Colors.primary.main} />
-                    </View>
-                    <View style={styles.locationRow}>
-                        <Ionicons name='location-outline' size={14} color={Colors.text.tertiary} />
-                        <Text style={styles.locationText}>
-                            {annonce.city} — {Strings.annonce.department} {annonce.department}
-                        </Text>
-                    </View>
+                    <MapPlaceholder
+                        caption={`${annonce.city} — ${Strings.annonce.department} ${annonce.department}`}
+                        captionIcon='location-outline'
+                    />
                 </View>
             </ScrollView>
 
             {/* Fixed CTA — anchored outside ScrollView at screen bottom */}
-            {annonce.professional?.phone && (
-                <View style={styles.ctaContainer}>
-                    {/* Message button */}
-                    <Pressable
-                        onPress={handleMessagePress}
-                        style={({ pressed }) => [styles.messageButton, pressed && styles.pressed]}
-                    >
-                        <Ionicons name='chatbubble-outline' size={22} color={Colors.primary.main} />
-                    </Pressable>
-
-                    {/* Primary call button */}
-                    <Pressable
-                        onPress={handleCallPress}
-                        style={({ pressed }) => [styles.callButton, pressed && styles.callButtonPressed]}
-                    >
-                        <Ionicons name='call-outline' size={18} color={Colors.neutral.white} />
-                        <Text style={styles.callButtonText}>
-                            {Strings.annonce.call} {annonce.professional.firstName}
-                        </Text>
-                    </Pressable>
-                </View>
+            {annonce.professional && (
+                <DetailCtaBar
+                    onPrimaryPress={handleCallPress}
+                    primaryLabel={`${Strings.annonce.call} ${annonce.professional.firstName}`}
+                    onSecondaryPress={handleMessagePress}
+                    secondaryAccessibilityLabel={Strings.annonce.message}
+                />
             )}
         </View>
     );
@@ -241,7 +215,7 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F6F3F2',
+        backgroundColor: Colors.neutral.surface,
     },
 
     errorContainer: {
@@ -401,106 +375,12 @@ const styles = StyleSheet.create({
     },
 
     // ── Professional card ─────────────────────────────
+    // Spacing only: the card itself is the shared ProfessionalRowCard
     professionalCard: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: Colors.neutral.background,
-        borderRadius: BorderRadius.lg,
-        padding: Spacing.md,
         marginBottom: Spacing.lg,
-        gap: Spacing.sm,
-        ...Colors.shadow.card,
     },
 
     pressed: {
         opacity: 0.7,
-    },
-
-    avatar: {
-        width: 44,
-        height: 44,
-        borderRadius: BorderRadius.full,
-        backgroundColor: Colors.neutral.inputBg,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
-    professionalInfo: {
-        flex: 1,
-    },
-
-    professionalName: {
-        ...Typography.label,
-        color: Colors.text.primary,
-        fontWeight: '600',
-    },
-
-    profession: {
-        ...Typography.caption,
-        color: Colors.text.secondary,
-    },
-
-    // ── Location / Map placeholder ────────────────────
-    mapPlaceholder: {
-        height: 140,
-        backgroundColor: '#E8EDF2',
-        borderRadius: BorderRadius.lg,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: Spacing.sm,
-    },
-
-    locationRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: Spacing.xs,
-        marginBottom: Spacing.md,
-    },
-
-    locationText: {
-        ...Typography.bodySmall,
-        color: Colors.text.secondary,
-    },
-
-    // ── Fixed CTA ─────────────────────────────────────
-    ctaContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: Spacing.sm,
-        backgroundColor: Colors.neutral.white,
-        paddingHorizontal: Spacing.md,
-        paddingVertical: Spacing.md,
-        borderTopWidth: 1,
-        borderTopColor: Colors.neutral.border,
-    },
-
-    messageButton: {
-        width: 48,
-        height: 48,
-        borderRadius: BorderRadius.lg,
-        backgroundColor: Colors.neutral.inputBg,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
-    callButton: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: Spacing.sm,
-        backgroundColor: Colors.primary.main,
-        borderRadius: BorderRadius.lg,
-        paddingVertical: Spacing.md,
-    },
-
-    callButtonPressed: {
-        opacity: 0.8,
-    },
-
-    callButtonText: {
-        ...Typography.label,
-        color: Colors.neutral.white,
-        fontWeight: '600',
     },
 });
