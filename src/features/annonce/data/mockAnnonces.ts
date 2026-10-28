@@ -4,6 +4,7 @@
 
 import { Annonce } from "../types";
 import { mockProfessionals } from "@/features/professional/data/mockProfessionals";
+import { mockCategories } from "@/features/home/data/mockCategories";
 import { mockComments } from "./mockComments";
 
 export const getAnnonceById = (id: string): Annonce | undefined => {
@@ -25,6 +26,7 @@ export const mockAnnonces: Annonce[] = [
       professionalId: 'pro-1',
       categoryId: 'cat-1',
       professional: mockProfessionals[0],    // Jean Dupont
+      category: mockCategories[0],           // Artisans
       priceType: 'quote',
       isNew: true,
       createdAt: new Date('2025-02-09'),
@@ -44,6 +46,7 @@ export const mockAnnonces: Annonce[] = [
       professionalId: 'pro-1',
       categoryId: 'cat-1',
       professional: mockProfessionals[0],    // Jean Dupont
+      category: mockCategories[0],           // Artisans
       createdAt: new Date('2025-01-15'),
       isActive: true,
     },
@@ -61,6 +64,7 @@ export const mockAnnonces: Annonce[] = [
       professionalId: 'pro-2',
       categoryId: 'cat-2',
       professional: mockProfessionals[1],    // Marie Martin
+      category: mockCategories[1],           // Beauté
       createdAt: new Date('2025-02-07'),
       isActive: true,
     },
@@ -78,6 +82,7 @@ export const mockAnnonces: Annonce[] = [
       professionalId: 'pro-3',
       categoryId: 'cat-3',
       professional: mockProfessionals[2],    // Paul Leblanc
+      category: mockCategories[2],           // Juridique
       createdAt: new Date('2025-02-05'),
       isActive: true,
     },
@@ -95,6 +100,7 @@ export const mockAnnonces: Annonce[] = [
       professionalId: 'pro-4',
       categoryId: 'cat-5',
       professional: mockProfessionals[3],    // Sophie Durand
+      category: mockCategories[4],           // Santé
       isFree: true,
       createdAt: new Date('2025-02-03'),
       isActive: true,
@@ -113,6 +119,7 @@ export const mockAnnonces: Annonce[] = [
       professionalId: 'pro-5',
       categoryId: 'cat-1',
       professional: mockProfessionals[4],    // Lucas Bernard
+      category: mockCategories[0],           // Artisans
       priceType: 'fixed',
       isNew: true,
       createdAt: new Date('2025-02-10'),

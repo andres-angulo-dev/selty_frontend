@@ -27,6 +27,7 @@ export const Colors = {
       border: '#E1E5EB',     // Border color
       disabled: '#B0B8C4',   // Disabled state
       inputBg: '#F2F4F7',    // Search bar and input fields background
+      surface: '#F6F3F2',    // Gray-cream page background behind white cards (detail screens)
     },
 
     // ------------------------------
