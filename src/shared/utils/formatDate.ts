@@ -44,3 +44,14 @@ export const formatRelativeDate = (date: Date, precision: DatePrecision = 'days'
 export const formatAbsoluteDate = (date: Date): string => {
     return date.toLocaleDateString(Strings.locale, {day: 'numeric', month: 'long', year: 'numeric'});
 };
+
+// Whole days between `now` and `date` (e.g 12 → "Expire dans 12 jours"). Negative when `date` is in the past.
+// Both dates are normalised to local midnight before comparing, so "tomorrow 00:01"
+// counts as 1 day, not 0 (the classic countdown off-by-one bug).
+// `now` is injectable to keep the function testable.
+export const getDaysUntil = (date: Date, now: Date = new Date()): number => {
+    const MS_PER_DAY = 24 * 60 * 60 * 1000;
+    const targetMidnight = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+    const nowMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    return Math.round((targetMidnight - nowMidnight) / MS_PER_DAY);
+};

@@ -1,0 +1,1381 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/index.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_index_ts",
+      "community": 25,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "App.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/App.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_app_tsx",
+      "community": 6,
+      "norm_label": "app.tsx"
+    },
+    {
+      "label": "App()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/App.tsx",
+      "source_location": "L5",
+      "id": "app_app",
+      "community": 6,
+      "norm_label": "app()"
+    },
+    {
+      "label": "RootStackNavigator.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/app/navigation/RootStackNavigator.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_app_navigation_rootstacknavigator_tsx",
+      "community": 26,
+      "norm_label": "rootstacknavigator.tsx"
+    },
+    {
+      "label": "options.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/app/navigation/options.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_app_navigation_options_ts",
+      "community": 27,
+      "norm_label": "options.ts"
+    },
+    {
+      "label": "TabNavigator.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/app/navigation/TabNavigator.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_app_navigation_tabnavigator_tsx",
+      "community": 28,
+      "norm_label": "tabnavigator.tsx"
+    },
+    {
+      "label": "types.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/app/navigation/types.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_app_navigation_types_ts",
+      "community": 29,
+      "norm_label": "types.ts"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/home/types/index.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_home_types_index_ts",
+      "community": 30,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "mockBanners.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/home/data/mockBanners.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_home_data_mockbanners_ts",
+      "community": 31,
+      "norm_label": "mockbanners.ts"
+    },
+    {
+      "label": "mockCategories.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/home/data/mockCategories.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_home_data_mockcategories_ts",
+      "community": 32,
+      "norm_label": "mockcategories.ts"
+    },
+    {
+      "label": "PromoBanner.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/home/components/PromoBanner.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_home_components_promobanner_tsx",
+      "community": 3,
+      "norm_label": "promobanner.tsx"
+    },
+    {
+      "label": "handleScroll()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/home/components/PromoBanner.tsx",
+      "source_location": "L46",
+      "id": "promobanner_handlescroll",
+      "community": 3,
+      "norm_label": "handlescroll()"
+    },
+    {
+      "label": "renderBannerContent()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/home/components/PromoBanner.tsx",
+      "source_location": "L53",
+      "id": "promobanner_renderbannercontent",
+      "community": 3,
+      "norm_label": "renderbannercontent()"
+    },
+    {
+      "label": "HomeHeader.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/home/components/HomeHeader.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_home_components_homeheader_tsx",
+      "community": 33,
+      "norm_label": "homeheader.tsx"
+    },
+    {
+      "label": "SearchOverlay.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/home/components/SearchOverlay.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_home_components_searchoverlay_tsx",
+      "community": 34,
+      "norm_label": "searchoverlay.tsx"
+    },
+    {
+      "label": "SectionHeader.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/home/components/SectionHeader.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_home_components_sectionheader_tsx",
+      "community": 35,
+      "norm_label": "sectionheader.tsx"
+    },
+    {
+      "label": "HomeScreen.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/home/screens/HomeScreen.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_home_screens_homescreen_tsx",
+      "community": 1,
+      "norm_label": "homescreen.tsx"
+    },
+    {
+      "label": "handleClearHistory()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/home/screens/HomeScreen.tsx",
+      "source_location": "L105",
+      "id": "homescreen_handleclearhistory",
+      "community": 1,
+      "norm_label": "handleclearhistory()"
+    },
+    {
+      "label": "handleRecentSearchPress()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/home/screens/HomeScreen.tsx",
+      "source_location": "L110",
+      "id": "homescreen_handlerecentsearchpress",
+      "community": 1,
+      "norm_label": "handlerecentsearchpress()"
+    },
+    {
+      "label": "handleBackPress()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/home/screens/HomeScreen.tsx",
+      "source_location": "L115",
+      "id": "homescreen_handlebackpress",
+      "community": 1,
+      "norm_label": "handlebackpress()"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/professional/types/index.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_professional_types_index_ts",
+      "community": 36,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "mockProfessionalDetails.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/professional/data/mockProfessionalDetails.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_professional_data_mockprofessionaldetails_ts",
+      "community": 7,
+      "norm_label": "mockprofessionaldetails.ts"
+    },
+    {
+      "label": "getProfessionalDetail()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/professional/data/mockProfessionalDetails.ts",
+      "source_location": "L12",
+      "id": "mockprofessionaldetails_getprofessionaldetail",
+      "community": 7,
+      "norm_label": "getprofessionaldetail()"
+    },
+    {
+      "label": "mockReviews.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/professional/data/mockReviews.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_professional_data_mockreviews_ts",
+      "community": 37,
+      "norm_label": "mockreviews.ts"
+    },
+    {
+      "label": "mockProfessionals.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/professional/data/mockProfessionals.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_professional_data_mockprofessionals_ts",
+      "community": 38,
+      "norm_label": "mockprofessionals.ts"
+    },
+    {
+      "label": "AboutSection.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/professional/components/AboutSection.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_professional_components_aboutsection_tsx",
+      "community": 8,
+      "norm_label": "aboutsection.tsx"
+    },
+    {
+      "label": "handleTextLayout()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/professional/components/AboutSection.tsx",
+      "source_location": "L22",
+      "id": "aboutsection_handletextlayout",
+      "community": 8,
+      "norm_label": "handletextlayout()"
+    },
+    {
+      "label": "ActionButtons.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/professional/components/ActionButtons.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_professional_components_actionbuttons_tsx",
+      "community": 9,
+      "norm_label": "actionbuttons.tsx"
+    },
+    {
+      "label": "ActionButtons()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/professional/components/ActionButtons.tsx",
+      "source_location": "L17",
+      "id": "actionbuttons_actionbuttons",
+      "community": 9,
+      "norm_label": "actionbuttons()"
+    },
+    {
+      "label": "TabSelector.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/professional/components/TabSelector.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_professional_components_tabselector_tsx",
+      "community": 39,
+      "norm_label": "tabselector.tsx"
+    },
+    {
+      "label": "HeroSection.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/professional/components/HeroSection.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_professional_components_herosection_tsx",
+      "community": 40,
+      "norm_label": "herosection.tsx"
+    },
+    {
+      "label": "ReviewSummary.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/professional/components/ReviewSummary.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_professional_components_reviewsummary_tsx",
+      "community": 41,
+      "norm_label": "reviewsummary.tsx"
+    },
+    {
+      "label": "StatsRow.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/professional/components/StatsRow.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_professional_components_statsrow_tsx",
+      "community": 10,
+      "norm_label": "statsrow.tsx"
+    },
+    {
+      "label": "StatsRow()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/professional/components/StatsRow.tsx",
+      "source_location": "L14",
+      "id": "statsrow_statsrow",
+      "community": 10,
+      "norm_label": "statsrow()"
+    },
+    {
+      "label": "ReviewCard.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/professional/components/ReviewCard.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_professional_components_reviewcard_tsx",
+      "community": 42,
+      "norm_label": "reviewcard.tsx"
+    },
+    {
+      "label": "ProfessionalDetailScreen.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/professional/screens/ProfessionalDetailScreen.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_professional_screens_professionaldetailscreen_tsx",
+      "community": 43,
+      "norm_label": "professionaldetailscreen.tsx"
+    },
+    {
+      "label": "MessagingScreens.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/messaging/screens/MessagingScreens.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_messaging_screens_messagingscreens_tsx",
+      "community": 11,
+      "norm_label": "messagingscreens.tsx"
+    },
+    {
+      "label": "MessagingScreen()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/messaging/screens/MessagingScreens.tsx",
+      "source_location": "L5",
+      "id": "messagingscreens_messagingscreen",
+      "community": 11,
+      "norm_label": "messagingscreen()"
+    },
+    {
+      "label": "FavoritesScreens.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/favorites/screens/FavoritesScreens.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_favorites_screens_favoritesscreens_tsx",
+      "community": 12,
+      "norm_label": "favoritesscreens.tsx"
+    },
+    {
+      "label": "FavoritesScreen()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/favorites/screens/FavoritesScreens.tsx",
+      "source_location": "L5",
+      "id": "favoritesscreens_favoritesscreen",
+      "community": 12,
+      "norm_label": "favoritesscreen()"
+    },
+    {
+      "label": "SearchScreen.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/search/screens/SearchScreen.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_search_screens_searchscreen_tsx",
+      "community": 13,
+      "norm_label": "searchscreen.tsx"
+    },
+    {
+      "label": "SearchScreen()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/search/screens/SearchScreen.tsx",
+      "source_location": "L5",
+      "id": "searchscreen_searchscreen",
+      "community": 13,
+      "norm_label": "searchscreen()"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/annonce/types/index.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_annonce_types_index_ts",
+      "community": 44,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "mockAnnonces.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/annonce/data/mockAnnonces.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_annonce_data_mockannonces_ts",
+      "community": 14,
+      "norm_label": "mockannonces.ts"
+    },
+    {
+      "label": "getAnnonceById()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/annonce/data/mockAnnonces.ts",
+      "source_location": "L9",
+      "id": "mockannonces_getannoncebyid",
+      "community": 14,
+      "norm_label": "getannoncebyid()"
+    },
+    {
+      "label": "mockComments.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/annonce/data/mockComments.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_annonce_data_mockcomments_ts",
+      "community": 15,
+      "norm_label": "mockcomments.ts"
+    },
+    {
+      "label": "getCommentsByAnnonceId()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/annonce/data/mockComments.ts",
+      "source_location": "L7",
+      "id": "mockcomments_getcommentsbyannonceid",
+      "community": 15,
+      "norm_label": "getcommentsbyannonceid()"
+    },
+    {
+      "label": "CommentsModal.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/annonce/screens/CommentsModal.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_annonce_screens_commentsmodal_tsx",
+      "community": 16,
+      "norm_label": "commentsmodal.tsx"
+    },
+    {
+      "label": "handleSend()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/annonce/screens/CommentsModal.tsx",
+      "source_location": "L112",
+      "id": "commentsmodal_handlesend",
+      "community": 16,
+      "norm_label": "handlesend()"
+    },
+    {
+      "label": "AnnonceDetailScreen.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/annonce/screens/AnnonceDetailScreen.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_annonce_screens_annoncedetailscreen_tsx",
+      "community": 45,
+      "norm_label": "annoncedetailscreen.tsx"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/profile/types/index.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_profile_types_index_ts",
+      "community": 46,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "ProfileStackNavigator.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/profile/navigation/ProfileStackNavigator.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_profile_navigation_profilestacknavigator_tsx",
+      "community": 17,
+      "norm_label": "profilestacknavigator.tsx"
+    },
+    {
+      "label": "ProfileStackNavigator()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/profile/navigation/ProfileStackNavigator.tsx",
+      "source_location": "L14",
+      "id": "profilestacknavigator_profilestacknavigator",
+      "community": 17,
+      "norm_label": "profilestacknavigator()"
+    },
+    {
+      "label": "mockReviews.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/profile/data/mockReviews.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_profile_data_mockreviews_ts",
+      "community": 47,
+      "norm_label": "mockreviews.ts"
+    },
+    {
+      "label": "mockUser.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/profile/data/mockUser.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_profile_data_mockuser_ts",
+      "community": 48,
+      "norm_label": "mockuser.ts"
+    },
+    {
+      "label": "ProfileHeader.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/profile/components/ProfileHeader.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_profile_components_profileheader_tsx",
+      "community": 49,
+      "norm_label": "profileheader.tsx"
+    },
+    {
+      "label": "ProfileMenuItem.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/profile/components/ProfileMenuItem.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_profile_components_profilemenuitem_tsx",
+      "community": 18,
+      "norm_label": "profilemenuitem.tsx"
+    },
+    {
+      "label": "ProfileMenuItem()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/profile/components/ProfileMenuItem.tsx",
+      "source_location": "L13",
+      "id": "profilemenuitem_profilemenuitem",
+      "community": 18,
+      "norm_label": "profilemenuitem()"
+    },
+    {
+      "label": "ProfileInfoItem.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/profile/components/ProfileInfoItem.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_profile_components_profileinfoitem_tsx",
+      "community": 50,
+      "norm_label": "profileinfoitem.tsx"
+    },
+    {
+      "label": "ProfileSection.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/profile/components/ProfileSection.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_profile_components_profilesection_tsx",
+      "community": 51,
+      "norm_label": "profilesection.tsx"
+    },
+    {
+      "label": "EditProfileScreen.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/profile/screens/EditProfileScreen.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_profile_screens_editprofilescreen_tsx",
+      "community": 19,
+      "norm_label": "editprofilescreen.tsx"
+    },
+    {
+      "label": "EditProfileScreen()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/profile/screens/EditProfileScreen.tsx",
+      "source_location": "L11",
+      "id": "editprofilescreen_editprofilescreen",
+      "community": 19,
+      "norm_label": "editprofilescreen()"
+    },
+    {
+      "label": "ProfileScreen.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/profile/screens/ProfileScreen.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_profile_screens_profilescreen_tsx",
+      "community": 52,
+      "norm_label": "profilescreen.tsx"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/offer/types/index.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_offer_types_index_ts",
+      "community": 53,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "mockOffers.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/offer/data/mockOffers.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_offer_data_mockoffers_ts",
+      "community": 20,
+      "norm_label": "mockoffers.ts"
+    },
+    {
+      "label": "getOfferById()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/offer/data/mockOffers.ts",
+      "source_location": "L9",
+      "id": "mockoffers_getofferbyid",
+      "community": 20,
+      "norm_label": "getofferbyid()"
+    },
+    {
+      "label": "offerDetailScreen.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/offer/screens/offerDetailScreen.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_features_offer_screens_offerdetailscreen_tsx",
+      "community": 4,
+      "norm_label": "offerdetailscreen.tsx"
+    },
+    {
+      "label": "handleProfessionalPress()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/offer/screens/offerDetailScreen.tsx",
+      "source_location": "L27",
+      "id": "offerdetailscreen_handleprofessionalpress",
+      "community": 4,
+      "norm_label": "handleprofessionalpress()"
+    },
+    {
+      "label": "handleCallPress()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/offer/screens/offerDetailScreen.tsx",
+      "source_location": "L34",
+      "id": "offerdetailscreen_handlecallpress",
+      "community": 4,
+      "norm_label": "handlecallpress()"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/types/index.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_types_index_ts",
+      "community": 54,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/constants/index.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_constants_index_ts",
+      "community": 55,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "spacing.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/constants/spacing.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_constants_spacing_ts",
+      "community": 56,
+      "norm_label": "spacing.ts"
+    },
+    {
+      "label": "colors.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/constants/colors.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_constants_colors_ts",
+      "community": 57,
+      "norm_label": "colors.ts"
+    },
+    {
+      "label": "strings.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/constants/strings.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_constants_strings_ts",
+      "community": 58,
+      "norm_label": "strings.ts"
+    },
+    {
+      "label": "typography.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/constants/typography.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_constants_typography_ts",
+      "community": 59,
+      "norm_label": "typography.ts"
+    },
+    {
+      "label": "geolocation.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/utils/geolocation.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_utils_geolocation_ts",
+      "community": 2,
+      "norm_label": "geolocation.ts"
+    },
+    {
+      "label": "toRadians()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/utils/geolocation.ts",
+      "source_location": "L9",
+      "id": "geolocation_toradians",
+      "community": 2,
+      "norm_label": "toradians()"
+    },
+    {
+      "label": "calculateDistance()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/utils/geolocation.ts",
+      "source_location": "L15",
+      "id": "geolocation_calculatedistance",
+      "community": 2,
+      "norm_label": "calculatedistance()"
+    },
+    {
+      "label": "formatDistance()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/utils/geolocation.ts",
+      "source_location": "L38",
+      "id": "geolocation_formatdistance",
+      "community": 2,
+      "norm_label": "formatdistance()"
+    },
+    {
+      "label": "formatDate.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/utils/formatDate.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_utils_formatdate_ts",
+      "community": 5,
+      "norm_label": "formatdate.ts"
+    },
+    {
+      "label": "formatRelativeDate()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/utils/formatDate.ts",
+      "source_location": "L7",
+      "id": "formatdate_formatrelativedate",
+      "community": 5,
+      "norm_label": "formatrelativedate()"
+    },
+    {
+      "label": "formatAbsoluteDate()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/utils/formatDate.ts",
+      "source_location": "L44",
+      "id": "formatdate_formatabsolutedate",
+      "community": 5,
+      "norm_label": "formatabsolutedate()"
+    },
+    {
+      "label": "useUserLocation.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/hooks/useUserLocation.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_hooks_useuserlocation_ts",
+      "community": 21,
+      "norm_label": "useuserlocation.ts"
+    },
+    {
+      "label": "useUserLocation()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/hooks/useUserLocation.ts",
+      "source_location": "L16",
+      "id": "useuserlocation_useuserlocation",
+      "community": 21,
+      "norm_label": "useuserlocation()"
+    },
+    {
+      "label": "useKeyboardHeight.ts",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/hooks/useKeyboardHeight.ts",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_hooks_usekeyboardheight_ts",
+      "community": 22,
+      "norm_label": "usekeyboardheight.ts"
+    },
+    {
+      "label": "useKeyboardHeight()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/hooks/useKeyboardHeight.ts",
+      "source_location": "L5",
+      "id": "usekeyboardheight_usekeyboardheight",
+      "community": 22,
+      "norm_label": "usekeyboardheight()"
+    },
+    {
+      "label": "AnnonceCard.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/AnnonceCard.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_annoncecard_tsx",
+      "community": 60,
+      "norm_label": "annoncecard.tsx"
+    },
+    {
+      "label": "CategoryCard.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/CategoryCard.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_categorycard_tsx",
+      "community": 61,
+      "norm_label": "categorycard.tsx"
+    },
+    {
+      "label": "ProfessionalCard.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/ProfessionalCard.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_professionalcard_tsx",
+      "community": 62,
+      "norm_label": "professionalcard.tsx"
+    },
+    {
+      "label": "AnimatedTabBarButton.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/AnimatedTabBarButton.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_animatedtabbarbutton_tsx",
+      "community": 23,
+      "norm_label": "animatedtabbarbutton.tsx"
+    },
+    {
+      "label": "AnimatedTabBarButton()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/AnimatedTabBarButton.tsx",
+      "source_location": "L11",
+      "id": "animatedtabbarbutton_animatedtabbarbutton",
+      "community": 23,
+      "norm_label": "animatedtabbarbutton()"
+    },
+    {
+      "label": "OfferCard.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/OfferCard.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_offercard_tsx",
+      "community": 63,
+      "norm_label": "offercard.tsx"
+    },
+    {
+      "label": "SearchBar.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/SearchBar.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_searchbar_tsx",
+      "community": 24,
+      "norm_label": "searchbar.tsx"
+    },
+    {
+      "label": "handleBackPress()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/SearchBar.tsx",
+      "source_location": "L23",
+      "id": "searchbar_handlebackpress",
+      "community": 24,
+      "norm_label": "handlebackpress()"
+    },
+    {
+      "label": "button.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/button.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_button_tsx",
+      "community": 0,
+      "norm_label": "button.tsx"
+    },
+    {
+      "label": "getVariantStyle()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/button.tsx",
+      "source_location": "L34",
+      "id": "button_getvariantstyle",
+      "community": 0,
+      "norm_label": "getvariantstyle()"
+    },
+    {
+      "label": "getVariantTextStyle()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/button.tsx",
+      "source_location": "L48",
+      "id": "button_getvarianttextstyle",
+      "community": 0,
+      "norm_label": "getvarianttextstyle()"
+    },
+    {
+      "label": "getSizeStyle()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/button.tsx",
+      "source_location": "L62",
+      "id": "button_getsizestyle",
+      "community": 0,
+      "norm_label": "getsizestyle()"
+    },
+    {
+      "label": "getSizeTextSize()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/button.tsx",
+      "source_location": "L74",
+      "id": "button_getsizetextsize",
+      "community": 0,
+      "norm_label": "getsizetextsize()"
+    },
+    {
+      "label": "getSpinnerColor()",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/button.tsx",
+      "source_location": "L86",
+      "id": "button_getspinnercolor",
+      "community": 0,
+      "norm_label": "getspinnercolor()"
+    },
+    {
+      "label": "FormInput.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/FormInput.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_forminput_tsx",
+      "community": 64,
+      "norm_label": "forminput.tsx"
+    },
+    {
+      "label": "AnnonceGridCard.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/AnnonceGridCard.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_annoncegridcard_tsx",
+      "community": 65,
+      "norm_label": "annoncegridcard.tsx"
+    },
+    {
+      "label": "ProfessionalCoverCard.tsx",
+      "file_type": "code",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/ProfessionalCoverCard.tsx",
+      "source_location": "L1",
+      "id": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_professionalcovercard_tsx",
+      "community": 66,
+      "norm_label": "professionalcovercard.tsx"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/App.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_app_tsx",
+      "_tgt": "app_app",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_app_tsx",
+      "target": "app_app",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/home/components/PromoBanner.tsx",
+      "source_location": "L46",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_features_home_components_promobanner_tsx",
+      "_tgt": "promobanner_handlescroll",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_features_home_components_promobanner_tsx",
+      "target": "promobanner_handlescroll",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/home/components/PromoBanner.tsx",
+      "source_location": "L53",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_features_home_components_promobanner_tsx",
+      "_tgt": "promobanner_renderbannercontent",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_features_home_components_promobanner_tsx",
+      "target": "promobanner_renderbannercontent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/home/screens/HomeScreen.tsx",
+      "source_location": "L105",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_features_home_screens_homescreen_tsx",
+      "_tgt": "homescreen_handleclearhistory",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_features_home_screens_homescreen_tsx",
+      "target": "homescreen_handleclearhistory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/home/screens/HomeScreen.tsx",
+      "source_location": "L110",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_features_home_screens_homescreen_tsx",
+      "_tgt": "homescreen_handlerecentsearchpress",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_features_home_screens_homescreen_tsx",
+      "target": "homescreen_handlerecentsearchpress",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/home/screens/HomeScreen.tsx",
+      "source_location": "L115",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_features_home_screens_homescreen_tsx",
+      "_tgt": "homescreen_handlebackpress",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_features_home_screens_homescreen_tsx",
+      "target": "homescreen_handlebackpress",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/professional/data/mockProfessionalDetails.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_features_professional_data_mockprofessionaldetails_ts",
+      "_tgt": "mockprofessionaldetails_getprofessionaldetail",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_features_professional_data_mockprofessionaldetails_ts",
+      "target": "mockprofessionaldetails_getprofessionaldetail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/professional/components/AboutSection.tsx",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_features_professional_components_aboutsection_tsx",
+      "_tgt": "aboutsection_handletextlayout",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_features_professional_components_aboutsection_tsx",
+      "target": "aboutsection_handletextlayout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/professional/components/ActionButtons.tsx",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_features_professional_components_actionbuttons_tsx",
+      "_tgt": "actionbuttons_actionbuttons",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_features_professional_components_actionbuttons_tsx",
+      "target": "actionbuttons_actionbuttons",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/professional/components/StatsRow.tsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_features_professional_components_statsrow_tsx",
+      "_tgt": "statsrow_statsrow",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_features_professional_components_statsrow_tsx",
+      "target": "statsrow_statsrow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/messaging/screens/MessagingScreens.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_features_messaging_screens_messagingscreens_tsx",
+      "_tgt": "messagingscreens_messagingscreen",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_features_messaging_screens_messagingscreens_tsx",
+      "target": "messagingscreens_messagingscreen",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/favorites/screens/FavoritesScreens.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_features_favorites_screens_favoritesscreens_tsx",
+      "_tgt": "favoritesscreens_favoritesscreen",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_features_favorites_screens_favoritesscreens_tsx",
+      "target": "favoritesscreens_favoritesscreen",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/search/screens/SearchScreen.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_features_search_screens_searchscreen_tsx",
+      "_tgt": "searchscreen_searchscreen",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_features_search_screens_searchscreen_tsx",
+      "target": "searchscreen_searchscreen",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/annonce/data/mockAnnonces.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_features_annonce_data_mockannonces_ts",
+      "_tgt": "mockannonces_getannoncebyid",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_features_annonce_data_mockannonces_ts",
+      "target": "mockannonces_getannoncebyid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/annonce/data/mockComments.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_features_annonce_data_mockcomments_ts",
+      "_tgt": "mockcomments_getcommentsbyannonceid",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_features_annonce_data_mockcomments_ts",
+      "target": "mockcomments_getcommentsbyannonceid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/annonce/screens/CommentsModal.tsx",
+      "source_location": "L112",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_features_annonce_screens_commentsmodal_tsx",
+      "_tgt": "commentsmodal_handlesend",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_features_annonce_screens_commentsmodal_tsx",
+      "target": "commentsmodal_handlesend",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/profile/navigation/ProfileStackNavigator.tsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_features_profile_navigation_profilestacknavigator_tsx",
+      "_tgt": "profilestacknavigator_profilestacknavigator",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_features_profile_navigation_profilestacknavigator_tsx",
+      "target": "profilestacknavigator_profilestacknavigator",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/profile/components/ProfileMenuItem.tsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_features_profile_components_profilemenuitem_tsx",
+      "_tgt": "profilemenuitem_profilemenuitem",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_features_profile_components_profilemenuitem_tsx",
+      "target": "profilemenuitem_profilemenuitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/profile/screens/EditProfileScreen.tsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_features_profile_screens_editprofilescreen_tsx",
+      "_tgt": "editprofilescreen_editprofilescreen",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_features_profile_screens_editprofilescreen_tsx",
+      "target": "editprofilescreen_editprofilescreen",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/offer/data/mockOffers.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_features_offer_data_mockoffers_ts",
+      "_tgt": "mockoffers_getofferbyid",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_features_offer_data_mockoffers_ts",
+      "target": "mockoffers_getofferbyid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/offer/screens/offerDetailScreen.tsx",
+      "source_location": "L27",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_features_offer_screens_offerdetailscreen_tsx",
+      "_tgt": "offerdetailscreen_handleprofessionalpress",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_features_offer_screens_offerdetailscreen_tsx",
+      "target": "offerdetailscreen_handleprofessionalpress",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/features/offer/screens/offerDetailScreen.tsx",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_features_offer_screens_offerdetailscreen_tsx",
+      "_tgt": "offerdetailscreen_handlecallpress",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_features_offer_screens_offerdetailscreen_tsx",
+      "target": "offerdetailscreen_handlecallpress",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/utils/geolocation.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_utils_geolocation_ts",
+      "_tgt": "geolocation_toradians",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_utils_geolocation_ts",
+      "target": "geolocation_toradians",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/utils/geolocation.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_utils_geolocation_ts",
+      "_tgt": "geolocation_calculatedistance",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_utils_geolocation_ts",
+      "target": "geolocation_calculatedistance",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/utils/geolocation.ts",
+      "source_location": "L38",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_utils_geolocation_ts",
+      "_tgt": "geolocation_formatdistance",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_utils_geolocation_ts",
+      "target": "geolocation_formatdistance",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/utils/geolocation.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_src": "geolocation_calculatedistance",
+      "_tgt": "geolocation_toradians",
+      "source": "geolocation_toradians",
+      "target": "geolocation_calculatedistance",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/utils/formatDate.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_utils_formatdate_ts",
+      "_tgt": "formatdate_formatrelativedate",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_utils_formatdate_ts",
+      "target": "formatdate_formatrelativedate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/utils/formatDate.ts",
+      "source_location": "L44",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_utils_formatdate_ts",
+      "_tgt": "formatdate_formatabsolutedate",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_utils_formatdate_ts",
+      "target": "formatdate_formatabsolutedate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/hooks/useUserLocation.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_hooks_useuserlocation_ts",
+      "_tgt": "useuserlocation_useuserlocation",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_hooks_useuserlocation_ts",
+      "target": "useuserlocation_useuserlocation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/hooks/useKeyboardHeight.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_hooks_usekeyboardheight_ts",
+      "_tgt": "usekeyboardheight_usekeyboardheight",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_hooks_usekeyboardheight_ts",
+      "target": "usekeyboardheight_usekeyboardheight",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/AnimatedTabBarButton.tsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_animatedtabbarbutton_tsx",
+      "_tgt": "animatedtabbarbutton_animatedtabbarbutton",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_animatedtabbarbutton_tsx",
+      "target": "animatedtabbarbutton_animatedtabbarbutton",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/SearchBar.tsx",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_searchbar_tsx",
+      "_tgt": "searchbar_handlebackpress",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_searchbar_tsx",
+      "target": "searchbar_handlebackpress",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/button.tsx",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_button_tsx",
+      "_tgt": "button_getvariantstyle",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_button_tsx",
+      "target": "button_getvariantstyle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/button.tsx",
+      "source_location": "L48",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_button_tsx",
+      "_tgt": "button_getvarianttextstyle",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_button_tsx",
+      "target": "button_getvarianttextstyle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/button.tsx",
+      "source_location": "L62",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_button_tsx",
+      "_tgt": "button_getsizestyle",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_button_tsx",
+      "target": "button_getsizestyle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/button.tsx",
+      "source_location": "L74",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_button_tsx",
+      "_tgt": "button_getsizetextsize",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_button_tsx",
+      "target": "button_getsizetextsize",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/afas/desktop/develop/projects/sialty/frontend/src/shared/components/button.tsx",
+      "source_location": "L86",
+      "weight": 1.0,
+      "_src": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_button_tsx",
+      "_tgt": "button_getspinnercolor",
+      "source": "home_afas_desktop_develop_projects_sialty_frontend_src_shared_components_button_tsx",
+      "target": "button_getspinnercolor",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": []
+}

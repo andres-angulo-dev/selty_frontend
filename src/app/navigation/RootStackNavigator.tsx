@@ -1,12 +1,12 @@
 import React from 'react';
 import { Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing } from '@/shared/constants';
+import { Colors, Spacing, Strings } from '@/shared/constants';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from './types';
 import { TabNavigator }  from './TabNavigator';
 import { ProfessionalDetailScreen } from '@/features/professional/screens/ProfessionalDetailScreen';
-import { OfferDetailScreen } from '@/features/offer/screens/offerDetailScreen';
+import { OfferDetailScreen } from '@/features/offer/screens/OfferDetailScreen';
 import { AnnonceDetailScreen } from '@/features/annonce/screens/AnnonceDetailScreen';
 import { CommentsModal } from '@/features/annonce/screens/CommentsModal';
 
@@ -44,7 +44,8 @@ export const RootStackNavigator: React.FC = () => {
                 component={OfferDetailScreen}
                 options={({ navigation }) => ({
                     headerShown: true,
-                    headerTitle: '',
+                    headerTitle: Strings.offer.headerTitle,
+                    headerTitleStyle: { fontSize: 16, fontWeight: '600', color: Colors.text.primary },
                     headerShadowVisible: false,
                     headerStyle: { backgroundColor: Colors.neutral.background },
                     headerLeft: () => (

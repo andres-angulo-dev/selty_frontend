@@ -18,8 +18,10 @@ export const mockOffers: Offer[] = [
       discount: '-30%',
       image: 'https://picsum.photos/seed/plomberie-offer/400/200',
       startsAt: null,
-      expiresAt: new Date('2025-06-30'),
+      expiresAt: new Date('2027-06-30'),
       isActive: true,
+      conditions: ['free_quote', 'fast_response', 'no_commitment'],
+      likesCount: 24,
       professionalId: 'pro-1',
       categoryId: 'cat-1',
       professional: mockProfessionals[0],    // Jean Dupont
@@ -35,6 +37,8 @@ export const mockOffers: Offer[] = [
       startsAt: null,
       expiresAt: null,
       isActive: true,
+      conditions: ['free_quote', 'no_commitment'],
+      likesCount: 8,
       professionalId: 'pro-5',
       categoryId: 'cat-1',
       professional: mockProfessionals[4],    // Lucas Bernard
@@ -48,8 +52,10 @@ export const mockOffers: Offer[] = [
       discount: 'Offert',
       image: 'https://picsum.photos/seed/coiffure-offer/400/200',
       startsAt: null,
-      expiresAt: new Date('2025-08-31'),
+      expiresAt: new Date('2027-08-31'),
       isActive: true,
+      conditions: ['first_session_free'],
+      likesCount: 41,
       professionalId: 'pro-2',
       categoryId: 'cat-2',
       professional: mockProfessionals[1],    // Marie Martin
@@ -62,9 +68,12 @@ export const mockOffers: Offer[] = [
       description: 'Réduction de 15% sur votre première consultation en droit immobilier.',
       discount: '-15%',
       image: 'https://picsum.photos/seed/avocat-offer/400/200',
+      // Dates intentionally in the past: test case for the "Offre expirée" state
       startsAt: new Date('2025-03-01'),
       expiresAt: new Date('2025-05-31'),
       isActive: true,
+      conditions: ['free_quote'],
+      likesCount: 5,
       professionalId: 'pro-3',
       categoryId: 'cat-3',
       professional: mockProfessionals[2],    // Paul Leblanc
@@ -80,6 +89,8 @@ export const mockOffers: Offer[] = [
       startsAt: null,
       expiresAt: null,
       isActive: true,
+      conditions: ['first_session_free', 'no_commitment'],
+      likesCount: 17,
       professionalId: 'pro-4',
       categoryId: 'cat-5',
       professional: mockProfessionals[3],    // Sophie Durand
