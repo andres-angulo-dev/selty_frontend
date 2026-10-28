@@ -8,7 +8,9 @@ import { getAnnonceById } from '../data/mockAnnonces';
 import { formatRelativeDate } from '@/shared/utils/formatDate';
 import { ProfessionalRowCard } from '@/shared/components/ProfessionalRowCard';
 import { MapPlaceholder } from '@/shared/components/MapPlaceholder';
+import { MapPreview } from '@/shared/components/MapPreview';
 import { DetailCtaBar } from '@/shared/components/DetailCtaBar';
+import { getProfessionalMapData } from '@/shared/utils/professionalMap';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AnnonceDetail'>;
 
@@ -68,6 +70,8 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     }
 
     const categoryLabel = annonce.category?.name ?? null;
+    const mapData = annonce.professional ? getProfessionalMapData(annonce.professional) : null;
+    const locationCaption = `${annonce.city} — ${Strings.annonce.department} ${annonce.department}`;
     const imageUrl = annonce.images[0] ?? null;
 
     // Stat items with icons derived from pricing fields
@@ -190,12 +194,24 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
                         </>
                     )}
 
-                    {/* Location section (shared placeholder until the real map lands) */}
+                    {/* Location: real map when coordinates exist, placeholder otherwise */}
                     <Text style={styles.sectionTitle}>{Strings.annonce.location}</Text>
-                    <MapPlaceholder
-                        caption={`${annonce.city} — ${Strings.annonce.department} ${annonce.department}`}
-                        captionIcon='location-outline'
-                    />
+                    {mapData && annonce.professional ? (
+                        <MapPreview
+                            markers={mapData.markers}
+                            zones={mapData.zones}
+                            caption={locationCaption}
+                            captionIcon='location-outline'
+                            onPress={() => navigation.navigate('LocationMap', {
+                                title: `${annonce.professional?.firstName} ${annonce.professional?.lastName}`,
+                                caption: locationCaption,
+                                markers: mapData.markers,
+                                zones: mapData.zones,
+                            })}
+                        />
+                    ) : (
+                        <MapPlaceholder caption={locationCaption} captionIcon='location-outline' />
+                    )}
                 </View>
             </ScrollView>
 

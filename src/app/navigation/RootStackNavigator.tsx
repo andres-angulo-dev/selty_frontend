@@ -9,6 +9,7 @@ import { ProfessionalDetailScreen } from '@/features/professional/screens/Profes
 import { OfferDetailScreen } from '@/features/offer/screens/OfferDetailScreen';
 import { AnnonceDetailScreen } from '@/features/annonce/screens/AnnonceDetailScreen';
 import { CommentsModal } from '@/features/annonce/screens/CommentsModal';
+import { LocationMapScreen } from '@/features/map/screens/LocationMapScreen';
 
 const BACK_ICON_SIZE = 22;
 
@@ -68,6 +69,26 @@ export const RootStackNavigator: React.FC = () => {
                     headerLeft: () => (
                         <Pressable onPress={() => navigation.goBack()} style={{ paddingRight: Spacing.sm }}>
                             <Ionicons name='chevron-back' size={BACK_ICON_SIZE} color={Colors.text.primary} />
+                        </Pressable>
+                    ),
+                })}
+            />
+
+            <Stack.Screen
+                name='LocationMap'
+                component={LocationMapScreen}
+                options={({ navigation, route }) => ({
+                    presentation: 'modal',
+                    animation: 'slide_from_bottom',
+                    headerShown: true,
+                    headerTitle: route.params.title,
+                    headerTitleStyle: { fontSize: 16, fontWeight: '600', color: Colors.text.primary },
+                    headerShadowVisible: false,
+                    headerStyle: { backgroundColor: Colors.neutral.background },
+                    // Modal: close with a cross, not a back chevron
+                    headerLeft: () => (
+                        <Pressable onPress={() => navigation.goBack()} style={{ paddingRight: Spacing.sm }}>
+                            <Ionicons name='close' size={BACK_ICON_SIZE} color={Colors.text.primary} />
                         </Pressable>
                     ),
                 })}
