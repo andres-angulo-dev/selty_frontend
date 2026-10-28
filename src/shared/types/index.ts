@@ -146,6 +146,11 @@ export interface Comment {
 // OFFER
 // ============================================
 
+// Offer highlight rendered as a stat card on the detail screen.
+// Union instead of { icon, label }: icons are a view concern and labels go through i18n,
+// so the data stays presentation-agnostic (same pattern as Annonce.priceType).
+export type OfferCondition = 'free_quote' | 'fast_response' | 'no_commitment' | 'first_session_free';
+
 // Promotional offer created by a professional
 export interface Offer {
   // Identity
@@ -161,6 +166,10 @@ export interface Offer {
   startsAt: Date | null;           // null = immediate
   expiresAt: Date | null;          // null = no limit
   isActive: boolean;
+
+  // Highlights & social proof (optional: sections are hidden when absent)
+  conditions?: OfferCondition[];   // Max 3 rendered as stat cards
+  likesCount?: number;             // "24 personnes ont aimé cette offre"
 
   // Relations (IDs for backend)
   professionalId: string;

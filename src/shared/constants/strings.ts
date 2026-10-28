@@ -208,10 +208,37 @@ export const Strings = {
     // ------------------------------
     offer: {
         notFound: 'Offre non trouvée',
-        validity: 'Validité',
-        startsAt: 'Du',
-        expiresAt: 'Jusqu\'au',
+        headerTitle: 'Offre',
+        // Validity meta row
+        validUntil: 'Valable jusqu\'au',
+        validFrom: 'Du',
+        validTo: 'au',
+        noExpiry: 'Sans date limite',
+        // Countdown pill on the hero image
+        expiresIn: 'Expire dans',
+        expiresToday: 'Expire aujourd\'hui',
+        expired: 'Offre expirée',
+        day: 'jour',
+        days: 'jours',
+        // Stat cards — keys must match the OfferCondition union in shared/types
+        conditions: 'Conditions de l\'offre',
+        conditionLabels: {
+            free_quote: 'Devis gratuit',
+            fast_response: 'Sous 24h',
+            no_commitment: 'Sans engagement',
+            first_session_free: '1ère séance offerte',
+        },
+        // Professional card
         professional: 'Proposé par',
+        verified: 'Pro vérifié',
+        reviews: 'avis',
+        // Location
+        location: 'Localisation',
+        locationSuffix: 'et alentours',
+        // Social proof
+        likes: 'personnes ont aimé cette offre',
+        // CTA bar
+        message: 'Envoyer un message',
         call: 'Appeler',
     },
     
@@ -247,6 +274,14 @@ export const Strings = {
       viewReply: 'Voir la réponse',
       viewReplies: (n: number) => `Voir les ${n} réponses`,
       collapseReplies: 'Réduire',
+    },
+
+    // ------------------------------
+    // Messaging (feature not built yet — shared "coming soon" alert)
+    // ------------------------------
+    messaging: {
+        comingSoonTitle: 'Messagerie',
+        comingSoonMessage: 'La messagerie sera disponible prochainement.',
     },
 
     // ------------------------------
