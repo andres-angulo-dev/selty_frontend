@@ -7,8 +7,10 @@ import { Colors, Typography, Spacing, Strings, BorderRadius } from '@/shared/con
 import { OfferCondition } from '@/shared/types';
 import { ProfessionalRowCard } from '@/shared/components/ProfessionalRowCard';
 import { MapPlaceholder } from '@/shared/components/MapPlaceholder';
+import { MapPreview } from '@/shared/components/MapPreview';
 import { DetailCtaBar } from '@/shared/components/DetailCtaBar';
 import { formatAbsoluteDate, getDaysUntil } from '@/shared/utils/formatDate';
+import { getProfessionalMapData } from '@/shared/utils/professionalMap';
 import { RootStackParamList } from '@/app/navigation/types';
 import { getOfferById } from '../data/mockOffers';
 
@@ -102,6 +104,7 @@ export const OfferDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     const validityLabel = getValidityLabel(offer.startsAt, offer.expiresAt);
     const conditions = (offer.conditions ?? []).slice(0, MAX_CONDITIONS);
     const professional = offer.professional;
+    const mapData = professional ? getProfessionalMapData(professional) : null;
 
     const handleProfessionalPress = () => {
         if (professional) {
@@ -219,11 +222,25 @@ export const OfferDetailScreen: React.FC<Props> = ({ route, navigation }) => {
                         </View>
                     )}
 
-                    {/* Location */}
+                    {/* Location: real map when coordinates exist, placeholder otherwise */}
                     {professional && (
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>{Strings.offer.location}</Text>
-                            <MapPlaceholder caption={`${professional.city} ${Strings.offer.locationSuffix}`} />
+                            {mapData ? (
+                                <MapPreview
+                                    markers={mapData.markers}
+                                    zones={mapData.zones}
+                                    caption={`${professional.city} ${Strings.offer.locationSuffix}`}
+                                    onPress={() => navigation.navigate('LocationMap', {
+                                        title: `${professional.firstName} ${professional.lastName}`,
+                                        caption: `${professional.city} ${Strings.offer.locationSuffix}`,
+                                        markers: mapData.markers,
+                                        zones: mapData.zones,
+                                    })}
+                                />
+                            ) : (
+                                <MapPlaceholder caption={`${professional.city} ${Strings.offer.locationSuffix}`} />
+                            )}
                         </View>
                     )}
 

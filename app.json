@@ -25,6 +25,12 @@
       "expo-status-bar",
       "expo-font",
       [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Sialty utilise votre position pour afficher les professionnels proches de vous et la distance qui vous sépare."
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "image": "./assets/splash-icon.png",

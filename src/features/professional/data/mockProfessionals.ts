@@ -24,6 +24,8 @@ export const mockProfessionals: Professional[] = [
       reviewsCount: 2,
       isCertified: true,
       isAvailable: true,
+      locationType: 'mobile',          // Plumber: travels to customers
+      interventionRadiusKm: 20,
       phone: '06 12 34 56 78',
       email: 'jean.dupont@email.com',
       createdAt: new Date('2023-03-15'),
@@ -52,6 +54,8 @@ export const mockProfessionals: Professional[] = [
       reviewsCount: 2,
       isCertified: true,
       isAvailable: true,
+      locationType: 'both',            // Hairdresser: salon + home visits around it
+      interventionRadiusKm: 10,
       phone: '06 98 76 54 32',
       email: 'marie.martin@email.com',
       createdAt: new Date('2023-06-20'),
@@ -80,6 +84,7 @@ export const mockProfessionals: Professional[] = [
       reviewsCount: 1,
       isCertified: true,
       isAvailable: false,
+      locationType: 'fixed',           // Lawyer: customers come to the office
       phone: '01 64 12 34 56',
       email: 'paul.leblanc@cabinet.com',
       createdAt: new Date('2022-11-10'),
@@ -108,6 +113,8 @@ export const mockProfessionals: Professional[] = [
       reviewsCount: 2,
       isCertified: false,
       isAvailable: true,
+      locationType: 'mobile',          // Sports coach: travels to customers
+      interventionRadiusKm: 15,
       phone: '06 55 44 33 22',
       email: 'sophie.durand@email.com',
       createdAt: new Date('2024-01-05'),
@@ -136,6 +143,8 @@ export const mockProfessionals: Professional[] = [
       reviewsCount: 0,
       isCertified: true,
       isAvailable: true,
+      locationType: 'mobile',          // Electrician: travels to customers
+      interventionRadiusKm: 25,
       phone: '06 11 22 33 44',
       email: 'lucas.bernard@email.com',
       createdAt: new Date('2024-03-18'),

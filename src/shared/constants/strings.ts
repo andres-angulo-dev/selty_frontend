@@ -294,6 +294,21 @@ export const Strings = {
     },
 
     // ------------------------------
+    // Full-screen map (LocationMapScreen)
+    // ------------------------------
+    map: {
+        title: 'Localisation',
+        locating: 'Localisation en cours…',
+        distanceFromYou: (distance: string) => `À ${distance} de vous`,
+        inZone: 'dans sa zone d\'intervention',
+        directions: 'Itinéraire',
+        openSettings: 'Réglages',
+        fitAll: 'Voir tout',
+        directionsErrorTitle: 'Itinéraire indisponible',
+        directionsErrorMessage: 'Aucune application de navigation n\'a pu être ouverte.',
+    },
+
+    // ------------------------------
     // Date formatting
     // ------------------------------
     dates: {

@@ -16,10 +16,14 @@ export type ProfileStackParamList = {
     ChangePassword: undefined;
 };
 
+import type { MapPoint, MapZone } from '@/shared/components/MapPreview';
+
 export type RootStackParamList = {
     MainTabs: undefined;
     ProfessionalDetail: { professionalId: string };
     OfferDetail: { offerId: string };
     AnnonceDetail: { annonceId: string };
     CommentsModal: { annonceId: string };
+    // Full-screen map. Params stay serializable (plain coordinates, no business object, no callback)
+    LocationMap: { title: string; caption?: string; markers: MapPoint[]; zones: MapZone[] };
 }

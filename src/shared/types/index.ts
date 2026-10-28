@@ -21,6 +21,12 @@ export interface Category {
 // PROFESSIONAL
 // ============================================
 
+// Where the professional works:
+// - 'fixed'  → customers come to a place (salon, office) → pin on the map
+// - 'mobile' → the professional travels within a radius → zone circle on the map
+// - 'both'   → a place AND home visits around it → pin + circle
+export type ProfessionalLocationType = 'fixed' | 'mobile' | 'both';
+
 // Professional profile for display (card, list, search results)
 export interface Professional {
   // Identity
@@ -42,6 +48,8 @@ export interface Professional {
   latitude: number | null;         // For distance calculation
   longitude: number | null;
   distance: string | null;         // Calculated client-side (e.g. "500m")
+  locationType: ProfessionalLocationType;
+  interventionRadiusKm?: number;   // Required when locationType is 'mobile' or 'both'
 
   // Ratings
   rating: number;                  // Average rating
