@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, Pressable, StyleSheet, NativeSyntheticEvent, TextLayoutEventData } from 'react-native';
+import { View, Text, Pressable, StyleSheet, TextLayoutEvent } from 'react-native';
 import { Colors, Typography, Spacing, BorderRadius, Strings } from '@/shared/constants';
 
 type AboutSectionProps = {
@@ -16,7 +16,8 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
     const [needsTruncation, setNeedsTruncation] = useState(false);
     const lines = 5;
 
-    const handleTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
+    // RN 0.88: TextLayoutEvent already wraps NativeSyntheticEvent<TextLayoutEventData>
+    const handleTextLayout = (event: TextLayoutEvent) => {
         if (!hasChecked.current) {
             hasChecked.current = true;
             if (event.nativeEvent.lines.length > lines) setNeedsTruncation(true);

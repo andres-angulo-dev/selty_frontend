@@ -17,7 +17,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     ...textInputProps
 }) => {
 
-    const inputRef = useRef<TextInput>(null); // Ref to control the TextInput (blur on back press)
+    // Ref to control the TextInput (blur on back press).
+    // ComponentRef<typeof TextInput> resolves to the instance type whatever RN version is installed
+    const inputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
     const hasText = value !== undefined && value?.length > 0 // Check if search is active (text entered)
     const isActive = isActiveProp ?? hasText;
     const handleBackPress = () => {
