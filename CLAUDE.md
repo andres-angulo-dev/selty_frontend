@@ -27,6 +27,12 @@ And only implement if you are 100% sure it will work.
 ## Dev Commands
 
 ```bash
+# Node 24 (reads .nvmrc)
+nvm use
+
+# One-time: CLI must be logged into the same Expo account as Expo Go (afas-dev)
+npx expo login --no-browser
+
 # Start app (WSL — tunnel required, never --lan)
 npx expo start --tunnel
 
@@ -35,9 +41,13 @@ npx expo install <package>
 
 # Install standard npm dependency
 npm install <package>
+
+# Health checks
+npx expo-doctor
+npx tsc --noEmit
 ```
 
-No test runner or linter configured yet.
+Stack: Expo SDK 58, React Native 0.88, TypeScript 6.0, Node 24. No test runner or linter configured yet.
 
 ---
 
