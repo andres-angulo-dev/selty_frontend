@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
     },
 
     heroGradient: {
-        ...StyleSheet.absoluteFillObject,
+        ...StyleSheet.absoluteFill,
     },
 
     discountPill: {

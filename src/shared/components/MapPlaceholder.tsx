@@ -7,8 +7,8 @@ import { Colors, Typography, Spacing, BorderRadius } from '@/shared/constants';
 // MAP PLACEHOLDER
 // Static stand-in for a map (no SDK, no API key): grey block with a pin
 // in a brand-colored circle, plus an optional caption underneath.
-// Replace by a real MapView later without touching the callers: keep the
-// same `height` / `caption` contract.
+// Used as a fallback when no coordinates are available; the real map
+// (MapPreview) keeps the same `height` / `caption` contract.
 // ============================================
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
