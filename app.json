@@ -38,6 +38,15 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      "@react-native-community/datetimepicker",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Sialty a besoin d'accéder à vos photos pour illustrer vos annonces et offres.",
+          "cameraPermission": "Sialty a besoin de l'appareil photo pour photographier vos réalisations.",
+          "microphonePermission": false
+        }
       ]
     ]
   }
