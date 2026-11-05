@@ -1,11 +1,9 @@
 import type { RequestAuthor, RequestStatus, ServiceRequest } from '@/shared/types';
+import { REQUEST_RULES } from '@/shared/constants/requestRules';
 
 // ============================================
 // Service request helpers (status, lifetime, public author name)
 // ============================================
-
-/** A request stays in the feed 30 days at most */
-export const REQUEST_LIFETIME_DAYS = 30;
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -24,10 +22,10 @@ export const getRequestStatus = (request: ServiceRequest, now: Date = new Date()
 
 /**
  * Expiry date of a request published at `createdAt`.
- * @returns ISO date, createdAt + 30 days
+ * @returns ISO date, createdAt + the lifetime set in REQUEST_RULES
  */
 export const computeRequestExpiry = (createdAt: Date): string =>
-    new Date(createdAt.getTime() + REQUEST_LIFETIME_DAYS * DAY_MS).toISOString();
+    new Date(createdAt.getTime() + REQUEST_RULES.lifetimeDays * DAY_MS).toISOString();
 
 /**
  * Whole days left before expiry (0 when it expires today or already did).

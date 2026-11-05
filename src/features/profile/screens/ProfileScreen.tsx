@@ -14,6 +14,7 @@ import { MenuSection } from '@/shared/components/MenuSection';
 import { MenuRow } from '@/shared/components/MenuRow';
 import { MenuSwitchRow } from '@/shared/components/MenuSwitchRow';
 import { useAccountType } from '@/app/providers/AccountTypeProvider';
+import { useServiceArea } from '@/shared/hooks/useServiceArea';
 import { ProfileIdentityCard, ProfileIdentityAction } from '../components/ProfileIdentityCard';
 import { ProfileStatsStrip } from '../components/ProfileStatsStrip';
 import { HighlightCtaCard } from '../components/HighlightCtaCard';
@@ -54,6 +55,7 @@ export const ProfileScreen: React.FC = () => {
     // App-wide role (seeded from the mock user, switchable in development)
     const { isProfessional: isPro, setAccountType } = useAccountType();
     const pro = mockProfessionalSummary;
+    const serviceArea = useServiceArea();
 
     const fullName = `${mockUser.firstName} ${mockUser.lastName}`;
     const memberSince = mockUser.createdAt.toLocaleDateString(Strings.locale, {
@@ -134,6 +136,18 @@ export const ProfileScreen: React.FC = () => {
                 {isPro ? (
                     <>
                         <MenuSection title={Strings.profile.sections.activity}>
+                            <MenuRow
+                                icon="briefcase-outline"
+                                label={Strings.serviceArea.trades}
+                                badge={Strings.serviceArea.count(serviceArea.tradeIds.length, Strings.serviceArea.tradeUnit.one, Strings.serviceArea.tradeUnit.many)}
+                                onPress={() => navigation.navigate('ServiceTrades')}
+                            />
+                            <MenuRow
+                                icon="map-outline"
+                                label={Strings.serviceArea.zones}
+                                badge={Strings.serviceArea.count(serviceArea.zones.length, Strings.serviceArea.zoneUnit.one, Strings.serviceArea.zoneUnit.many)}
+                                onPress={() => navigation.navigate('ServiceZones')}
+                            />
                             <MenuRow icon="megaphone-outline" label={Strings.profile.menu.myAnnonces} onPress={noDestinationYet} />
                             <MenuRow icon="pricetag-outline" label={Strings.profile.menu.myOffers} onPress={noDestinationYet} />
                             <MenuRow icon="star-outline" label={Strings.profile.menu.receivedReviews} onPress={noDestinationYet} />

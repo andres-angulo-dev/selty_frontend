@@ -122,6 +122,8 @@ export const LocationFields: React.FC<LocationFieldsProps> = ({
             department: commune.department,
             latitude: commune.latitude,
             longitude: commune.longitude,
+            communeCode: commune.code,
+            surfaceHectares: commune.surfaceHectares,
         });
     };
 
@@ -138,6 +140,8 @@ export const LocationFields: React.FC<LocationFieldsProps> = ({
             department: isManual && isComplete ? departmentFromPostalCode(postalCode) : '',
             latitude: null,
             longitude: null,
+            communeCode: null,
+            surfaceHectares: null,
         });
         if (!isComplete) {
             return;
@@ -155,6 +159,8 @@ export const LocationFields: React.FC<LocationFieldsProps> = ({
                 department: departmentFromPostalCode(postalCode),
                 latitude: null,
                 longitude: null,
+                communeCode: null,
+                surfaceHectares: null,
             });
             return;
         }
@@ -180,7 +186,7 @@ export const LocationFields: React.FC<LocationFieldsProps> = ({
             onChange({ ...value, city });
             return;
         }
-        onChange({ postalCode: '', city, department: '', latitude: null, longitude: null });
+        onChange({ postalCode: '', city, department: '', latitude: null, longitude: null, communeCode: null, surfaceHectares: null });
 
         const query = city.trim();
         if (query.length < CITY_SEARCH_MIN_LENGTH) {

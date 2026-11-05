@@ -104,6 +104,68 @@ export const Strings = {
         cityMax: 'La ville ne peut pas dépasser 60 caractères.',
       },
     },
+    // Professionals: their trades and zones ("Mon activité")
+    serviceArea: {
+      tradesIntro: 'Vous pouvez répondre aux demandes de ces métiers, dans vos zones.',
+      zonesIntro: 'Vous pouvez répondre aux demandes de vos métiers, dans ces zones. Tout le monde voit toutes les demandes.',
+      trades: 'Mes métiers',
+      addTrade: 'Ajouter un métier',
+      tradeSearch: 'Rechercher un métier',
+      tradeEmpty: 'Aucun métier trouvé',
+      removeTrade: (trade: string) => `Retirer ${trade}`,
+      zones: 'Mes zones',
+      zonesCounter: (count: number, max: number) => `Mes zones · ${count} / ${max}`,
+      addZone: 'Ajouter une zone',
+      removeZone: (zone: string) => `Retirer ${zone}`,
+      manageTrades: 'Gérer mes métiers',
+      manageZones: 'Gérer mes zones',
+      count: (count: number, one: string, many: string) => `${count} ${count > 1 ? many : one}`,
+      tradeUnit: { one: 'métier', many: 'métiers' },
+      zoneUnit: { one: 'zone', many: 'zones' },
+      zoneKinds: {
+        department: 'Département',
+        region: 'Région',
+        country: 'Pour vos métiers à distance',
+      },
+      country: 'Toute la France',
+      radius: (km: number, city: string) => (km === 0 ? `${city} uniquement` : `${km} km autour de ${city}`),
+      cityRow: (km: number) => (km === 0 ? 'Cette ville uniquement' : `Et ${km} km autour`),
+      limits: {
+        title: 'Action impossible',
+        lastZone: 'Gardez au moins une zone : sans zone, vous ne pourriez répondre à aucune demande.',
+        lastTrade: 'Gardez au moins un métier : sans métier, vous ne pourriez répondre à aucune demande.',
+        countryOnly: "« Toute la France » est votre seule zone et elle ne vaut que pour les métiers à distance. Ajoutez d'abord une autre zone.",
+        countryRemoved: "« Toute la France » a été retirée : vous n'avez plus de métier à distance.",
+      },
+      add: {
+        title: 'Ajouter une zone',
+        kind: 'Type de zone',
+        kinds: {
+          city: { title: "Autour d'une ville", description: 'Une ville et les kilomètres autour' },
+          department: { title: 'Département', description: 'Tout un département' },
+          region: { title: 'Région', description: 'Toute une région' },
+          country: { title: 'Toute la France', description: 'Pour vos métiers à distance' },
+        },
+        city: 'Ville',
+        radiusSection: 'Kilomètres autour de la ville',
+        department: 'Département',
+        departmentPlaceholder: 'Choisir un département',
+        departmentSearch: 'Rechercher un département',
+        region: 'Région',
+        regionPlaceholder: 'Choisir une région',
+        regionSearch: 'Rechercher une région',
+        empty: 'Aucun résultat',
+        countryHint: 'Vous pourrez répondre partout en France, seulement pour vos métiers à distance.',
+        submit: 'Ajouter cette zone',
+        missing: 'Complétez pour continuer :',
+        cityUnavailable: "Cette ville n'a pas pu être vérifiée. Réessayez avec du réseau.",
+        duplicate: 'Cette zone est déjà dans votre liste.',
+        limitReached: (max: number) => `Vous avez atteint le maximum de ${max} zones. Retirez-en une pour en ajouter une autre.`,
+        coveredByRegion: (region: string) => `Cette zone est déjà incluse dans ${region}.`,
+        updated: 'Le rayon de cette ville a été mis à jour.',
+        replaced: (names: string, region: string) => `${names} : inclus dans ${region}, retirés de votre liste.`,
+      },
+    },
     // Individuals: a REQUEST ("J'ai besoin d'un peintre"), not an annonce
     request: {
       placeholder: {
@@ -112,7 +174,7 @@ export const Strings = {
         message: 'Décrivez votre besoin et recevez les réponses des professionnels près de chez vous.',
       },
       badge: 'DEMANDE',
-      tradeMatch: 'Votre métier',        // Pro: the request targets their trade
+      tradeMatch: 'Pour vous',           // Pro: right trade, inside their zone (short: card strip)
       myRequests: {
         title: 'Mes demandes',
         emptyTitle: 'Aucune demande pour le moment',
@@ -130,6 +192,10 @@ export const Strings = {
         memberSince: (year: number) => `Membre depuis ${year}`,
         privacyNotice: (firstName: string) =>
           `L'adresse exacte vous sera communiquée en privé si ${firstName} choisit votre proposition.`,
+        tradeMatchPill: 'Votre métier, dans votre zone',
+        ownRequestNotice: 'Vous avez publié cette demande : vous ne pouvez pas y répondre.',
+        outOfZonesNotice: (place: string) =>
+          `Cette demande à ${place} n'est dans aucune de vos zones.`,
         otherTradeNotice: (trade: string) =>
           `Cette demande recherche : ${trade}. Seuls les professionnels de ce métier peuvent y répondre.`,
         reply: 'Répondre en privé',

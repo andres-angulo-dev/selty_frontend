@@ -20,19 +20,21 @@ import type { RequestStatus } from '@/shared/types';
 import { Button } from '@/shared/components/button';
 import { useRequest, useRequestActions } from '@/shared/hooks/useRequests';
 import { useUserLocation } from '@/shared/hooks/useUserLocation';
+import { useServiceArea } from '@/shared/hooks/useServiceArea';
 import { useAccountType } from '@/app/providers/AccountTypeProvider';
 import { calculateDistance, formatDistance } from '@/shared/utils/geolocation';
 import { formatRelativeDate } from '@/shared/utils/formatDate';
 import { formatAuthorName, getDaysUntilExpiry, getRequestStatus } from '@/shared/utils/requestStatus';
-import { getTradeById } from '@/__mocks__/mockTrades';
-import { CURRENT_PRO_TRADE_IDS, CURRENT_USER_ID } from '@/__mocks__/mockSession';
+import { getTradeById, isTradeRemoteCapable } from '@/__mocks__/mockTrades';
+import { CURRENT_USER_ID } from '@/__mocks__/mockSession';
+import { getProAnswerEligibility, ProAnswerEligibility } from '@/shared/utils/requestEligibility';
 
 // ============================================
 // REQUEST DETAIL SCREEN
 // A need published by an individual. The bottom action depends on who looks:
 // - the author: "J'ai trouvé un pro" (open requests only)
-// - a professional of the requested trade: "Répondre en privé" (open requests only)
-// - a professional of another trade: no action, a note explains why
+// - a professional of the requested trade, inside their zone: "Répondre en privé"
+// - any other professional (other trade, out of zone, own request): a note explains why
 // - another individual: no action, reading only
 // Privacy: first name + initial and city only; no phone, no address.
 // Moderation: "···" → "Signaler" (App Store guideline 1.2, public content).
@@ -53,22 +55,43 @@ const STATUS_COLORS: Record<RequestStatus, string> = {
     expired: Colors.text.tertiary,
 };
 
+/** Tells the professional why they can, or cannot, answer */
+const getEligibilityNotice = (
+    eligibility: ProAnswerEligibility,
+    firstName: string,
+    tradeLabel: string,
+    place: string,
+): string => {
+    switch (eligibility) {
+        case 'can_answer':
+            return texts.privacyNotice(firstName);
+        case 'own_request':
+            return texts.ownRequestNotice;
+        case 'other_trade':
+            return texts.otherTradeNotice(tradeLabel);
+        case 'out_of_zones':
+            return texts.outOfZonesNotice(place);
+    }
+};
+
 export const RequestDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     const { requestId } = route.params;
     const request = useRequest(requestId);
     const { markFulfilled } = useRequestActions();
     const { isProfessional } = useAccountType();
+    const serviceArea = useServiceArea();
     const { userLocation } = useUserLocation();
     const insets = useSafeAreaInsets();
     const { width: screenWidth } = useWindowDimensions();
     const [photoIndex, setPhotoIndex] = useState(0);
 
-    // A request belongs to the individual side of an account: in professional mode the
-    // author's actions are off. Whether one account can hold both roles is still to
-    // decide; today the dev switch keeps the same user ID in both modes.
-    const isOwner = !isProfessional && request?.author.id === CURRENT_USER_ID;
-    // A plumber does not answer a painting request
-    const isTradeMatch = request !== undefined && CURRENT_PRO_TRADE_IDS.includes(request.tradeId);
+    // One account, two modes: "J'ai trouvé un pro" belongs to the individual mode,
+    // but the author stays the author in professional mode (no answer, no report).
+    const isAuthor = request?.author.id === CURRENT_USER_ID;
+    const isOwner = !isProfessional && isAuthor;
+    const answerStatus = request
+        ? getProAnswerEligibility(serviceArea, request, isTradeRemoteCapable(request.tradeId))
+        : null;
 
     /**
      * Report: confirmation, then acknowledgement.
@@ -89,7 +112,7 @@ export const RequestDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     // "···" menu in the header. Nobody reports their own request
     useEffect(() => {
         navigation.setOptions({
-            headerRight: isOwner || !request ? undefined : () => (
+            headerRight: isAuthor || !request ? undefined : () => (
                 <Pressable
                     onPress={handleReport}
                     hitSlop={Spacing.sm}
@@ -100,7 +123,7 @@ export const RequestDetailScreen: React.FC<Props> = ({ route, navigation }) => {
                 </Pressable>
             ),
         });
-    }, [navigation, isOwner, request, handleReport]);
+    }, [navigation, isAuthor, request, handleReport]);
 
     if (!request) {
         return (
@@ -147,7 +170,7 @@ export const RequestDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     let action: { label: string; onPress: () => void } | null = null;
     if (isOpen && isOwner) {
         action = { label: texts.markFulfilled, onPress: handleMarkFulfilled };
-    } else if (isOpen && isProfessional && isTradeMatch) {
+    } else if (isOpen && isProfessional && answerStatus === 'can_answer') {
         action = { label: texts.reply, onPress: handleReply };
     }
 
@@ -189,10 +212,10 @@ export const RequestDetailScreen: React.FC<Props> = ({ route, navigation }) => {
                                 <Text style={styles.pillText}>{tradeLabel}</Text>
                             </View>
                         ) : null}
-                        {isProfessional && isTradeMatch ? (
+                        {isProfessional && answerStatus === 'can_answer' ? (
                             <View style={styles.badge}>
                                 <Ionicons name="checkmark-circle" size={12} color={Colors.text.inverse} />
-                                <Text style={styles.badgeText}>{Strings.request.tradeMatch}</Text>
+                                <Text style={styles.badgeText}>{texts.tradeMatchPill}</Text>
                             </View>
                         ) : null}
                         <View style={styles.pill}>
@@ -251,19 +274,31 @@ export const RequestDetailScreen: React.FC<Props> = ({ route, navigation }) => {
                 </View>
 
                 {/* What a pro needs to know before answering */}
-                {isProfessional && isOpen ? (
+                {isProfessional && isOpen && answerStatus ? (
                     <View style={styles.notice}>
                         <Ionicons
-                            name={isTradeMatch ? 'lock-closed-outline' : 'information-circle-outline'}
+                            name={answerStatus === 'can_answer' ? 'lock-closed-outline' : 'information-circle-outline'}
                             size={18}
                             color={Colors.primary.main}
                         />
                         <Text style={styles.noticeText}>
-                            {isTradeMatch
-                                ? texts.privacyNotice(request.author.firstName)
-                                : texts.otherTradeNotice(tradeLabel ?? '')}
+                            {getEligibilityNotice(answerStatus, request.author.firstName, tradeLabel ?? '', `${request.city} (${request.department})`)}
                         </Text>
                     </View>
+                ) : null}
+
+                {/* The refusal can be solved by the pro: direct way to their settings */}
+                {isProfessional && isOpen && (answerStatus === 'other_trade' || answerStatus === 'out_of_zones') ? (
+                    <Pressable
+                        onPress={() => navigation.navigate(answerStatus === 'other_trade' ? 'ServiceTrades' : 'ServiceZones')}
+                        style={({ pressed }) => [styles.manageLink, pressed && { opacity: 0.6 }]}
+                        accessibilityRole="button"
+                    >
+                        <Text style={styles.manageLinkText}>
+                            {answerStatus === 'other_trade' ? Strings.serviceArea.manageTrades : Strings.serviceArea.manageZones}
+                        </Text>
+                        <Ionicons name="chevron-forward" size={16} color={Colors.primary.main} />
+                    </Pressable>
                 ) : null}
             </ScrollView>
 
@@ -421,6 +456,18 @@ const styles = StyleSheet.create({
         ...Typography.caption,
         color: Colors.text.primary,
         flex: 1,
+    },
+    manageLink: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.xs,
+        minHeight: 44,
+        marginHorizontal: Spacing.md,
+    },
+    manageLinkText: {
+        ...Typography.label,
+        color: Colors.primary.main,
+        flexShrink: 1,
     },
     bottomBar: {
         paddingHorizontal: Spacing.md,

@@ -19,6 +19,7 @@ import { OfferCard } from '@/shared/components/OfferCard';
 import { AnnonceGridCard } from '@/shared/components/AnnonceGridCard';
 import { RequestGridCard } from '@/shared/components/RequestGridCard';
 import { useRequests } from '@/shared/hooks/useRequests';
+import { useServiceArea } from '@/shared/hooks/useServiceArea';
 import { useAccountType } from '@/app/providers/AccountTypeProvider';
 import { formatAuthorName, getRequestStatus } from '@/shared/utils/requestStatus';
 import { formatRelativeDate } from '@/shared/utils/formatDate';
@@ -31,8 +32,8 @@ import { mockBanners } from '../data/mockBanners';
 import { mockProfessionals } from '@/__mocks__/mockProfessionals';
 import { mockOffers } from '@/__mocks__/mockOffers';
 import { mockAnnonces } from '@/__mocks__/mockAnnonces';
-import { getTradeById } from '@/__mocks__/mockTrades';
-import { CURRENT_PRO_TRADE_IDS } from '@/__mocks__/mockSession';
+import { getTradeById, isTradeRemoteCapable } from '@/__mocks__/mockTrades';
+import { getProAnswerEligibility } from '@/shared/utils/requestEligibility';
 
 // Maps categoryId → display name for the grid card badge.
 // Kept local because this mapping is view-only logic, not business logic.
@@ -67,6 +68,7 @@ export const HomeScreen: React.FC = () => {
     // ============================================
     const requests = useRequests();
     const { isProfessional } = useAccountType();
+    const serviceArea = useServiceArea();
     const feedItems = useMemo<FeedItem[]>(() => {
         const annonceItems: FeedItem[] = mockAnnonces.map((annonce) => ({
             kind: 'annonce',
@@ -231,12 +233,12 @@ export const HomeScreen: React.FC = () => {
                 urgencyLabel={Strings.request.urgency[request.urgency]}
                 isUrgent={request.urgency === 'urgent'}
                 timeLabel={formatRelativeDate(new Date(request.createdAt), 'seconds')}
-                // A pro spots the requests of their trade at a glance
-                highlightLabel={isProfessional && CURRENT_PRO_TRADE_IDS.includes(request.tradeId) ? Strings.request.tradeMatch : undefined}
+                // A pro spots at a glance the requests they can answer
+                highlightLabel={isProfessional && getProAnswerEligibility(serviceArea, request, isTradeRemoteCapable(request.tradeId)) === 'can_answer' ? Strings.request.tradeMatch : undefined}
                 onPress={() => navigation.navigate('RequestDetail', { requestId: request.id })}
             />
         );
-    }, [navigation, userLocation, isProfessional]);
+    }, [navigation, userLocation, isProfessional, serviceArea]);
 
     // ============================================
     // MAIN RENDER

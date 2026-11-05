@@ -16,6 +16,9 @@ import { PublishSuccessScreen } from '@/features/add/screens/PublishSuccessScree
 import { RequestFormScreen } from '@/features/request/screens/RequestFormScreen';
 import { RequestDetailScreen } from '@/features/request/screens/RequestDetailScreen';
 import { MyRequestsScreen } from '@/features/request/screens/MyRequestsScreen';
+import { ServiceTradesScreen } from '@/features/serviceArea/screens/ServiceTradesScreen';
+import { ServiceZonesScreen } from '@/features/serviceArea/screens/ServiceZonesScreen';
+import { AddZoneScreen } from '@/features/serviceArea/screens/AddZoneScreen';
 
 const BACK_ICON_SIZE = 22;
 
@@ -106,6 +109,39 @@ export const RootStackNavigator: React.FC = () => {
             <Stack.Screen name='AnnonceForm' component={AnnonceFormScreen} />
             <Stack.Screen name='OfferForm' component={OfferFormScreen} />
             <Stack.Screen name='RequestForm' component={RequestFormScreen} />
+            <Stack.Screen name='AddZone' component={AddZoneScreen} />
+            <Stack.Screen
+                name='ServiceTrades'
+                component={ServiceTradesScreen}
+                options={({ navigation }) => ({
+                    headerShown: true,
+                    headerTitle: Strings.serviceArea.trades,
+                    headerTitleStyle: { fontSize: 16, fontWeight: '600', color: Colors.text.primary },
+                    headerShadowVisible: false,
+                    headerStyle: { backgroundColor: Colors.neutral.background },
+                    headerLeft: () => (
+                        <Pressable onPress={() => navigation.goBack()} style={{ paddingRight: Spacing.sm }}>
+                            <Ionicons name='chevron-back' size={BACK_ICON_SIZE} color={Colors.text.primary} />
+                        </Pressable>
+                    ),
+                })}
+            />
+            <Stack.Screen
+                name='ServiceZones'
+                component={ServiceZonesScreen}
+                options={({ navigation }) => ({
+                    headerShown: true,
+                    headerTitle: Strings.serviceArea.zones,
+                    headerTitleStyle: { fontSize: 16, fontWeight: '600', color: Colors.text.primary },
+                    headerShadowVisible: false,
+                    headerStyle: { backgroundColor: Colors.neutral.background },
+                    headerLeft: () => (
+                        <Pressable onPress={() => navigation.goBack()} style={{ paddingRight: Spacing.sm }}>
+                            <Ionicons name='chevron-back' size={BACK_ICON_SIZE} color={Colors.text.primary} />
+                        </Pressable>
+                    ),
+                })}
+            />
             <Stack.Screen
                 name='MyRequests'
                 component={MyRequestsScreen}

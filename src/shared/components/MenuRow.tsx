@@ -5,9 +5,10 @@ import { Colors, Typography, Spacing, BorderRadius } from '@/shared/constants';
 
 // ============================================
 // MENU ROW
-// One tappable line of a MenuSection: icon in a soft rounded square, label,
-// then an optional trailing value ("Français") or badge ("Gratuit"), and a
-// chevron. Every text comes from the caller, so the row has no copy of its own.
+// One tappable line of a MenuSection: icon in a soft rounded square, label with
+// an optional badge UNDER it ("Gratuit": the label keeps the full width), then an
+// optional trailing value ("Français") and a chevron.
+// Every text comes from the caller, so the row has no copy of its own.
 // ============================================
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
@@ -20,7 +21,7 @@ interface MenuRowProps {
     label: string;                      // Main text
     onPress: () => void;                // Tap action
     value?: string;                     // Current value shown before the chevron
-    badge?: string;                     // Short pill text shown before the chevron
+    badge?: string;                     // Short pill text shown under the label
     badgeVariant?: MenuRowBadgeVariant; // Default 'neutral'
     showChevron?: boolean;              // Default true
 }
@@ -51,21 +52,22 @@ export const MenuRow: React.FC<MenuRowProps> = ({
                 <View style={styles.iconBox}>
                     <Ionicons name={icon} size={18} color={Colors.primary.main} />
                 </View>
-                {/* No line limit: a long label wraps instead of ending with "…" */}
-                <Text style={styles.label}>{label}</Text>
+                <View style={styles.texts}>
+                    {/* No line limit: a long label wraps instead of ending with "…" */}
+                    <Text style={styles.label}>{label}</Text>
+                    {badge ? (
+                        <View style={[styles.badge, isPrimaryBadge && styles.badgePrimary]}>
+                            <Text style={[styles.badgeText, isPrimaryBadge && styles.badgeTextPrimary]}>
+                                {badge}
+                            </Text>
+                        </View>
+                    ) : null}
+                </View>
             </View>
 
-            {/* Right side: optional value or badge, then chevron */}
+            {/* Right side: optional value, then chevron */}
             <View style={styles.right}>
                 {value ? <Text style={styles.value}>{value}</Text> : null}
-
-                {badge ? (
-                    <View style={[styles.badge, isPrimaryBadge && styles.badgePrimary]}>
-                        <Text style={[styles.badgeText, isPrimaryBadge && styles.badgeTextPrimary]}>
-                            {badge}
-                        </Text>
-                    </View>
-                ) : null}
 
                 {showChevron ? (
                     <Ionicons name="chevron-forward" size={18} color={Colors.text.tertiary} />
@@ -107,11 +109,15 @@ const styles = StyleSheet.create({
         marginRight: Spacing.md - Spacing.xs, // 12px
     },
 
+    texts: {
+        flex: 1,
+        gap: Spacing.xs,
+    },
+
     // Regular body weight, same size as the former profile menu items
     label: {
         ...Typography.body,
         color: Colors.text.primary,
-        flexShrink: 1,
     },
 
     right: {
@@ -125,7 +131,9 @@ const styles = StyleSheet.create({
         color: Colors.text.secondary,
     },
 
+    // alignSelf: the pill hugs its text instead of stretching over the row
     badge: {
+        alignSelf: 'flex-start',
         backgroundColor: Colors.neutral.surface,
         borderRadius: BorderRadius.full,
         paddingHorizontal: Spacing.sm + 2,   // 10px

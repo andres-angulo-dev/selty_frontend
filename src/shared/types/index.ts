@@ -264,6 +264,7 @@ export interface Trade {
   id: string;
   label: string;
   categoryId: string;
+  isRemoteCapable?: boolean;     // Can be done at a distance: only then "Toute la France" applies
 }
 
 /**
@@ -298,4 +299,31 @@ export interface ServiceRequest {
   status: RequestStoredStatus;
   createdAt: string;             // ISO date
   expiresAt: string;             // ISO date — createdAt + 30 days
+}
+
+/**
+ * A place where a professional accepts requests. A request is accepted when it
+ * falls inside AT LEAST ONE zone: the rule is in shared/constants/requestRules.ts.
+ */
+export type ServiceZone =
+  | {
+      kind: 'city';
+      id: string;                // "city-<INSEE code>": one zone per commune
+      communeCode: string;
+      city: string;
+      department: string;
+      latitude: number;          // Center of the commune
+      longitude: number;
+      cityRadiusKm: number;      // Estimated size of the city, from its surface
+      radiusKm: number;          // Kilometers chosen AROUND the city (0 = the city only)
+    }
+  | { kind: 'department'; id: string; code: string; name: string }
+  | { kind: 'region'; id: string; code: string; name: string }
+  | { kind: 'country'; id: string };
+
+/** Trades and zones set by the professional */
+export interface ProServiceArea {
+  userId: string;
+  tradeIds: string[];
+  zones: ServiceZone[];
 }

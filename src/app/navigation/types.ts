@@ -34,6 +34,10 @@ export type RootStackParamList = {
     RequestForm: undefined;
     RequestDetail: { requestId: string };
     MyRequests: undefined;
+    // Professionals: their trades and zones
+    ServiceTrades: undefined;
+    ServiceZones: undefined;
+    AddZone: undefined;
     // Confirmation after publishing. Plain texts only (serializable), already formatted
     PublishSuccess: {
         kind: 'annonce' | 'offer' | 'request';

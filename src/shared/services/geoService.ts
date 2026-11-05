@@ -11,7 +11,7 @@ import { z } from 'zod';
 // ============================================
 
 const BASE_URL = 'https://geo.api.gouv.fr/communes';
-const FIELDS = 'nom,code,codesPostaux,codeDepartement,centre';
+const FIELDS = 'nom,code,codesPostaux,codeDepartement,centre,surface';
 const TIMEOUT_MS = 8000;
 const NAME_RESULTS_LIMIT = 5;
 
@@ -22,6 +22,7 @@ export interface Commune {
     postalCodes: string[];
     latitude: number | null;         // Center of the commune, never an address
     longitude: number | null;
+    surfaceHectares: number | null;  // Used to estimate the size of the city
 }
 
 // Shape expected from the API. `centre` is [longitude, latitude] (GeoJSON order)
@@ -32,6 +33,7 @@ const apiCommunesSchema = z.array(
         codeDepartement: z.string(),
         codesPostaux: z.array(z.string()),
         centre: z.object({ coordinates: z.tuple([z.number(), z.number()]) }).optional(),
+        surface: z.number().optional(),
     }),
 );
 
@@ -63,6 +65,7 @@ const fetchCommunes = async (params: Record<string, string>, signal: AbortSignal
             postalCodes: commune.codesPostaux,
             longitude: commune.centre?.coordinates[0] ?? null,
             latitude: commune.centre?.coordinates[1] ?? null,
+            surfaceHectares: commune.surface ?? null,
         }));
     } finally {
         clearTimeout(timeout);

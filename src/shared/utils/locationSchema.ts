@@ -28,6 +28,9 @@ export const createLocationSchema = (messages: LocationErrorMessages) =>
         department: z.string().regex(DEPARTMENT_PATTERN, messages.city),
         latitude: z.number().nullable(),
         longitude: z.number().nullable(),
+        // Filled with the commune; null when the city was typed by hand (API unavailable)
+        communeCode: z.string().nullable(),
+        surfaceHectares: z.number().nullable(),
     });
 
 export const locationSchema = createLocationSchema(Strings.locationFields.errors);
@@ -40,4 +43,6 @@ export const EMPTY_LOCATION: LocationValue = {
     department: '',
     latitude: null,
     longitude: null,
+    communeCode: null,
+    surfaceHectares: null,
 };

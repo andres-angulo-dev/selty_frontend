@@ -106,4 +106,22 @@ export const mockRequests: ServiceRequest[] = [
         createdAt: daysAgo(35),
         expiresAt: daysAgo(5),
     },
+    {
+        id: 'request-6',
+        tradeId: 'trade-plumber',
+        categoryId: 'cat-1',
+        title: 'Remplacement d\'un chauffe-eau',
+        description: 'Chauffe-eau de 200 litres à remplacer dans un appartement, ancien appareil à évacuer.',
+        urgency: 'this_month',
+        photos: [],
+        city: 'Lyon',
+        department: '69',
+        latitude: 45.7578,
+        longitude: 4.8320,
+        author: { id: 'user_105', firstName: 'Inès', lastNameInitial: 'T', memberSince: '2025-05-12T00:00:00.000Z' },
+        // Test case: right trade for the mock plumber, but far outside their zone
+        status: 'open',
+        createdAt: hoursAgo(5),
+        expiresAt: daysAgo(-29.8),
+    },
 ];
