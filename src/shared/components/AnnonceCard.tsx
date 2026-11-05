@@ -10,7 +10,8 @@ interface AnnonceCardProps {
     onPress: (annonce: Annonce) => void;
     onLikePress: (annonce: Annonce) => void;
     onCommentPress: (annonce: Annonce) => void;
-    onFavoritePress: (annonce: Annonce) => void; 
+    onFavoritePress: (annonce: Annonce) => void;
+    isFavorite: boolean;        // Saved by the current user (favorites store, passed by the caller)
 }
 
 export const AnnonceCard: React.FC<AnnonceCardProps> = ({
@@ -19,6 +20,7 @@ export const AnnonceCard: React.FC<AnnonceCardProps> = ({
     onLikePress,
     onCommentPress,
     onFavoritePress,
+    isFavorite,
 }) => {
     return (
         <View style={styles.container}>
@@ -81,7 +83,7 @@ export const AnnonceCard: React.FC<AnnonceCardProps> = ({
 
                 {/* Favorite button */}
                 <Pressable onPress={() => onFavoritePress(annonce)} style={({ pressed }) => [styles.actionButton, pressed && styles.actionPressed]}>
-                    <Ionicons name={annonce.isFavorite ? 'bookmark' : 'bookmark-outline'} size={20} color={annonce.isFavorite ? Colors.primary.main : Colors.text.tertiary} />
+                    <Ionicons name={isFavorite ? 'bookmark' : 'bookmark-outline'} size={20} color={isFavorite ? Colors.primary.main : Colors.text.tertiary} />
                 </Pressable>
 
                 {/* Date */}

@@ -17,15 +17,22 @@ import { CategoryCard } from '@/shared/components/CategoryCard';
 import { ProfessionalCoverCard } from '@/shared/components/ProfessionalCoverCard';
 import { OfferCard } from '@/shared/components/OfferCard';
 import { AnnonceGridCard } from '@/shared/components/AnnonceGridCard';
+import { RequestGridCard } from '@/shared/components/RequestGridCard';
+import { useRequests } from '@/shared/hooks/useRequests';
+import { useAccountType } from '@/app/providers/AccountTypeProvider';
+import { formatAuthorName, getRequestStatus } from '@/shared/utils/requestStatus';
+import { formatRelativeDate } from '@/shared/utils/formatDate';
 import { useUserLocation } from '@/shared/hooks/useUserLocation';
 import { calculateDistance, formatDistance } from '@/shared/utils/geolocation';
 
 // Mock data
-import { mockCategories } from '../data/mockCategories';
+import { mockCategories } from '@/__mocks__/mockCategories';
 import { mockBanners } from '../data/mockBanners';
-import { mockProfessionals } from '@/features/professional/data/mockProfessionals';
-import { mockOffers } from '@/features/offer/data/mockOffers';
-import { mockAnnonces } from '@/features/annonce/data/mockAnnonces';
+import { mockProfessionals } from '@/__mocks__/mockProfessionals';
+import { mockOffers } from '@/__mocks__/mockOffers';
+import { mockAnnonces } from '@/__mocks__/mockAnnonces';
+import { getTradeById } from '@/__mocks__/mockTrades';
+import { CURRENT_PRO_TRADE_IDS } from '@/__mocks__/mockSession';
 
 // Maps categoryId → display name for the grid card badge.
 // Kept local because this mapping is view-only logic, not business logic.
@@ -35,7 +42,12 @@ const CATEGORY_NAMES: Record<string, string> = mockCategories.reduce(
 );
 
 // Types
-import { Professional, Annonce } from '@/shared/types';
+import { Professional, Annonce, ServiceRequest } from '@/shared/types';
+
+// The feed mixes the pros' annonces and the individuals' requests
+type FeedItem =
+    | { kind: 'annonce'; id: string; date: number; annonce: Annonce }
+    | { kind: 'request'; id: string; date: number; request: ServiceRequest };
 
 export const HomeScreen: React.FC = () => {
     // Temporary state 
@@ -48,6 +60,30 @@ export const HomeScreen: React.FC = () => {
     // USER LOCATION
     // ============================================
     const { userLocation } = useUserLocation();
+
+    // ============================================
+    // FEED: annonces + open requests, most recent first
+    // Fulfilled and expired requests leave the feed (they stay in "Mes demandes").
+    // ============================================
+    const requests = useRequests();
+    const { isProfessional } = useAccountType();
+    const feedItems = useMemo<FeedItem[]>(() => {
+        const annonceItems: FeedItem[] = mockAnnonces.map((annonce) => ({
+            kind: 'annonce',
+            id: annonce.id,
+            date: annonce.createdAt.getTime(),
+            annonce,
+        }));
+        const requestItems: FeedItem[] = requests
+            .filter((request) => getRequestStatus(request) === 'open')
+            .map((request) => ({
+                kind: 'request',
+                id: request.id,
+                date: new Date(request.createdAt).getTime(),
+                request,
+            }));
+        return [...annonceItems, ...requestItems].sort((a, b) => b.date - a.date);
+    }, [requests]);
 
     // ============================================
     // HEADER ANIMATION
@@ -159,13 +195,48 @@ export const HomeScreen: React.FC = () => {
     // ============================================
     // FEED ITEM (Instagram-style grid card)
     // ============================================
-    const renderAnnonce = useCallback(({ item }: { item: Annonce }) => (
-        <AnnonceGridCard
-            annonce={item}
-            categoryName={CATEGORY_NAMES[item.categoryId]}
-            onPress={(annonce) => navigation.navigate('AnnonceDetail', { annonceId: annonce.id })}
-        />
-    ), [navigation]);
+    const renderFeedItem = useCallback(({ item }: { item: FeedItem }) => {
+        if (item.kind === 'annonce') {
+            return (
+                <AnnonceGridCard
+                    annonce={item.annonce}
+                    categoryName={CATEGORY_NAMES[item.annonce.categoryId]}
+                    onPress={(annonce) => navigation.navigate('AnnonceDetail', { annonceId: annonce.id })}
+                />
+            );
+        }
+
+        const { request } = item;
+        // City center distance (never an address); no distance without coordinates
+        const distance =
+            userLocation && request.latitude !== null && request.longitude !== null
+                ? formatDistance(calculateDistance(
+                    userLocation.latitude,
+                    userLocation.longitude,
+                    request.latitude,
+                    request.longitude,
+                ))
+                : null;
+        const place = `${request.city} (${request.department})`;
+
+        return (
+            <RequestGridCard
+                badgeLabel={Strings.request.badge}
+                tradeLabel={getTradeById(request.tradeId)?.label}
+                title={request.title}
+                description={request.description}
+                authorName={formatAuthorName(request.author)}
+                authorInitial={request.author.firstName.charAt(0)}
+                locationLabel={distance ? `${place} · ${distance}` : place}
+                urgencyLabel={Strings.request.urgency[request.urgency]}
+                isUrgent={request.urgency === 'urgent'}
+                timeLabel={formatRelativeDate(new Date(request.createdAt), 'seconds')}
+                // A pro spots the requests of their trade at a glance
+                highlightLabel={isProfessional && CURRENT_PRO_TRADE_IDS.includes(request.tradeId) ? Strings.request.tradeMatch : undefined}
+                onPress={() => navigation.navigate('RequestDetail', { requestId: request.id })}
+            />
+        );
+    }, [navigation, userLocation, isProfessional]);
 
     // ============================================
     // MAIN RENDER
@@ -211,9 +282,9 @@ export const HomeScreen: React.FC = () => {
                 ) : (
                     // Scrollable content
                     <FlatList
-                        data={mockAnnonces}
-                        renderItem={renderAnnonce}
-                        keyExtractor={(item) => item.id}
+                        data={feedItems}
+                        renderItem={renderFeedItem}
+                        keyExtractor={(item) => `${item.kind}-${item.id}`}
                         ListHeaderComponent={renderHeader}
                         showsVerticalScrollIndicator={false}
                         contentContainerStyle={styles.flatListContent}

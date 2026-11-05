@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
         paddingBottom: Spacing.xl,   // Extra space so StatsRow overlap doesn't hide content
         paddingHorizontal: Spacing.md,
         backgroundColor: Colors.neutral.white,
-        borderBottomLeftRadius: 24,  // rounded-b-3xl from design — hero floats over gray bg
+        borderBottomLeftRadius: 24,  // rounded-b-3xl from the design — hero floats over gray bg
         borderBottomRightRadius: 24,
     },
 

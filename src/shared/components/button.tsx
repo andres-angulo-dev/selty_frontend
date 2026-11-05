@@ -167,6 +167,7 @@ const styles = StyleSheet.create({
 
     // Base label style  
     labelBase: {
+        textAlign: 'center',            // A label wrapping on 2 lines (enlarged text) stays centered
         ...Typography.bodyBold,
     },
 

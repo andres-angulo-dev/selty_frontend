@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     chip: {
         paddingHorizontal: Spacing.md,
         paddingVertical: Spacing.xs + 2,
-        backgroundColor: '#EEF2F7',
+        backgroundColor: Colors.primary.subtle,
         borderRadius: BorderRadius.full,
     },
 

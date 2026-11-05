@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, ScrollView, StyleSheet, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ProfileStackParamList } from '@/app/navigation/types';
-import { Colors, Spacing, Strings } from '@/shared/constants'
+import { Colors, Typography, Spacing, Strings } from '@/shared/constants';
 import { FormInput } from '@/shared/components/FormInput';
 import { Button } from '@/shared/components/button';
+import { MenuSection } from '@/shared/components/MenuSection';
 import { mockUser } from '../data/mockUser';
 
 export const EditProfileScreen: React.FC = () => {
@@ -66,41 +67,66 @@ export const EditProfileScreen: React.FC = () => {
             return;
         }
 
-        // Just log the data (backend will come later)
-        console.log('Saving profile', { userName, firstName, lastName, email, phone });
-
+        // No backend yet: the values are not persisted, we only confirm
         Alert.alert(
             Strings.profile.alerts.profileUpdated.title,
             Strings.profile.alerts.profileUpdated.message,
-            [{ text: 'OK', onPress: () => navigation.goBack() }]
+            [{ text: Strings.buttons.ok, onPress: () => navigation.goBack() }]
         )
+    }
+
+    // Delete account: irreversible, so a destructive confirmation comes first.
+    // SECURITY / store rule: Apple requires in-app account deletion; the real
+    // call (re-authentication + backend deletion) comes with the auth feature.
+    const handleDeleteAccount = () => {
+        Alert.alert(
+            Strings.profile.alerts.deleteAccount.title,
+            Strings.profile.alerts.deleteAccount.message,
+            [
+                { text: Strings.buttons.cancel, style: 'cancel' },
+                { text: Strings.profile.alerts.deleteAccount.confirm, style: 'destructive', onPress: () => {} },
+            ]
+        );
     }
 
     return (
         // KeyboardAvoidingView pushes content up when keyboard opens so the save button stays visible
         <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <ScrollView>
-            <View style={styles.form}>
-                {/* Username */}
-                <FormInput label={Strings.profile.labels.userName} value={userName} onChangeText={setUserName} placeholder={Strings.profile.placeholders.userName} autoCapitalize='none' editable={editableFields.userName} showEditButton onEditPress={() => toggleEdit('userName')} error={errors.userName} />
+        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps='handled'>
+                <MenuSection title={Strings.profile.formSections.identity} cardStyle={styles.formCard}>
+                    {/* Username */}
+                    <FormInput label={Strings.profile.labels.userName} value={userName} onChangeText={setUserName} placeholder={Strings.profile.placeholders.userName} autoCapitalize='none' editable={editableFields.userName} showEditButton onEditPress={() => toggleEdit('userName')} error={errors.userName} />
                 
-                {/* First name */}
-                <FormInput label={Strings.profile.labels.firstName} value={firstName} onChangeText={setFirstName} placeholder={Strings.profile.placeholders.firstName} autoCapitalize='words' editable={editableFields.firstName} showEditButton onEditPress={() => toggleEdit('firstName')} error={errors.firstName} />
+                    {/* First name */}
+                    <FormInput label={Strings.profile.labels.firstName} value={firstName} onChangeText={setFirstName} placeholder={Strings.profile.placeholders.firstName} autoCapitalize='words' editable={editableFields.firstName} showEditButton onEditPress={() => toggleEdit('firstName')} error={errors.firstName} />
 
-                {/* Last name */}
-                <FormInput label={Strings.profile.labels.lastName} value={lastName} onChangeText={setLastName} placeholder={Strings.profile.placeholders.lastName} autoCapitalize='words'  editable={editableFields.lastName} showEditButton onEditPress={() => toggleEdit('lastName')} error={errors.lastName} />
+                    {/* Last name */}
+                    <FormInput label={Strings.profile.labels.lastName} value={lastName} onChangeText={setLastName} placeholder={Strings.profile.placeholders.lastName} autoCapitalize='words'  editable={editableFields.lastName} showEditButton onEditPress={() => toggleEdit('lastName')} error={errors.lastName} />
 
-                {/* Email */}
-                <FormInput label={Strings.profile.labels.email} value={email} onChangeText={setEmail} placeholder={Strings.profile.placeholders.email} keyboardType='email-address' autoCorrect={false}  editable={editableFields.email} showEditButton onEditPress={() => toggleEdit('email')} error={errors.email} />
+                </MenuSection>
 
-                {/* Phone */}
-                <FormInput label={Strings.profile.labels.phone} value={phone} onChangeText={setPhone} placeholder={Strings.profile.placeholders.phone} keyboardType='phone-pad' editable={editableFields.phone} showEditButton onEditPress={() => toggleEdit('phone')} error={errors.phone} />
+                <MenuSection title={Strings.profile.formSections.contact} cardStyle={styles.formCard}>
+                    {/* Email */}
+                    <FormInput label={Strings.profile.labels.email} value={email} onChangeText={setEmail} placeholder={Strings.profile.placeholders.email} keyboardType='email-address' autoCorrect={false}  editable={editableFields.email} showEditButton onEditPress={() => toggleEdit('email')} error={errors.email} />
+
+                    {/* Phone */}
+                    <FormInput label={Strings.profile.labels.phone} value={phone} onChangeText={setPhone} placeholder={Strings.profile.placeholders.phone} keyboardType='phone-pad' editable={editableFields.phone} showEditButton onEditPress={() => toggleEdit('phone')} error={errors.phone} />
+
+                </MenuSection>
 
                 {/* Save button */}
                 <View style={styles.buttonContainer}>
                     <Button label={Strings.buttons.save} onPress={handleSave} variant='primary' size="large" fullWidth />
                 </View>
-            </View>
+
+                {/* Delete account: discreet red text at the very bottom, away from Save */}
+                <Pressable
+                    onPress={handleDeleteAccount}
+                    accessibilityRole="button"
+                    style={({ pressed }) => [styles.deleteButton, pressed && styles.pressed]}
+                >
+                    <Text style={styles.deleteText}>{Strings.profile.menu.deleteAccount}</Text>
+                </Pressable>
 
         </ScrollView>
         </KeyboardAvoidingView>
@@ -110,14 +136,36 @@ export const EditProfileScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.neutral.background,
+        backgroundColor: Colors.neutral.surface,
     },
 
-    form: {
-        padding: Spacing.lg,
+    content: {
+        padding: Spacing.md + Spacing.xs,   // 20px, as on the profile tab
+        paddingBottom: Spacing.xxl,
+    },
+
+    // Form cards need more room than menu rows
+    // No bottom padding: the last FormInput already brings its 16px margin
+    formCard: {
+        padding: Spacing.md,
+        paddingBottom: 0,
     },
 
     buttonContainer: {
-        marginTop: Spacing.lg,
-    }
+        marginTop: Spacing.sm,
+    },
+
+    deleteButton: {
+        alignSelf: 'center',
+        marginTop: Spacing.xl,
+        paddingVertical: Spacing.sm,
+        paddingHorizontal: Spacing.md,
+    },
+    pressed: {
+        opacity: 0.6,
+    },
+    deleteText: {
+        ...Typography.bodyBold,
+        color: Colors.semantic.error,
+    },
 })

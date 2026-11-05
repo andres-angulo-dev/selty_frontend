@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/navigation/types';
@@ -16,6 +16,9 @@ import { AnnonceListCard } from '../components/AnnonceListCard';
 
 // Constants
 import { Colors, Typography, Spacing, Strings } from '@/shared/constants';
+import { useFavorite } from '@/shared/hooks/useFavorite';
+import { useAccountType } from '@/app/providers/AccountTypeProvider';
+import { snapshotFromProfessional } from '@/shared/utils/favoriteSnapshot';
 
 // Mocks
 import { getProfessionalDetail } from '../data/mockProfessionalDetails';
@@ -36,6 +39,15 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
     const flatListRef = useRef<FlatList>(null); // Ref to access FlatList methods (scroll to top on tab change)
     const { professionalId } = route.params; // Get the professionalId from navigation params
     const professional = getProfessionalDetail(professionalId); // Fetch professional data (simulates API call)
+    // Copy kept with the favorite (shown greyed if the profile disappears). Memoized: a new
+    // object at each render would recreate the toggle callback for nothing.
+    const favoriteSnapshot = useMemo(
+        () => (professional ? snapshotFromProfessional(professional) : undefined),
+        [professional],
+    );
+    const favorite = useFavorite('professional', professionalId, favoriteSnapshot); // Saved state, shared with the Favorites tab
+    // Favorites are for individuals: a professional does not save other people's content
+    const { isProfessional } = useAccountType();
 
     // Reset pagination and scroll to tabSelector when tab changes
     useEffect(() => {
@@ -94,9 +106,9 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
                     firstName={professional.firstName}
                     lastName={professional.lastName}
                     profession={professional.profession}
-                    isFavorite={false}
+                    isFavorite={favorite.isFavorite}
                     onMessagePress={() => console.log('Message')}
-                    onFavoriteToggle={(newValue) => console.log('Favorite:', newValue)}
+                    onFavoritePress={isProfessional ? undefined : favorite.toggle}
                 />
 
                 {/* About (description + services) */}
@@ -190,7 +202,7 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
 const styles = StyleSheet.create({
      container: {
       flex: 1,
-      backgroundColor: Colors.neutral.surface,   // Gray-cream page background (design: surface-container-low)
+      backgroundColor: Colors.neutral.surface,   // Gray-cream page background
     },
     
     contentContainer: {

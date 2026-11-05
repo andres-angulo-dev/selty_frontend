@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { View, Text, ScrollView, StyleSheet, Pressable, Linking, Image, Share, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -12,7 +12,10 @@ import { DetailCtaBar } from '@/shared/components/DetailCtaBar';
 import { formatAbsoluteDate, getDaysUntil } from '@/shared/utils/formatDate';
 import { getProfessionalMapData } from '@/shared/utils/professionalMap';
 import { RootStackParamList } from '@/app/navigation/types';
-import { getOfferById } from '../data/mockOffers';
+import { getOfferById } from '@/__mocks__/mockOffers';
+import { useFavorite } from '@/shared/hooks/useFavorite';
+import { useAccountType } from '@/app/providers/AccountTypeProvider';
+import { snapshotFromOffer } from '@/shared/utils/favoriteSnapshot';
 
 // Screen props: gives access to route.params.offerId and navigation
 type Props = NativeStackScreenProps<RootStackParamList, 'OfferDetail'>;
@@ -60,36 +63,45 @@ export const OfferDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     const offer = getOfferById(offerId);
 
     // ── All hooks must be declared before any conditional return ──────────
-    const [isSaved, setIsSaved] = useState(false);
-
-    const handleToggleSave = useCallback(() => {
-        setIsSaved(prev => !prev);
-    }, []);
+    // Saved state lives in the favorites store (shared with the Favorites tab)
+    const favoriteSnapshot = useMemo(() => (offer ? snapshotFromOffer(offer) : undefined), [offer]);
+    const { isFavorite: isSaved, toggle: handleToggleSave } = useFavorite('offer', offerId, favoriteSnapshot);
+    // Favorites are for individuals: no bookmark for a professional viewer
+    const { isProfessional } = useAccountType();
 
     const handleShare = useCallback(async () => {
         if (!offer) return;
         await Share.share({ message: `${offer.title} — ${offer.description}` });
     }, [offer]);
 
-    // Header actions: bookmark + share (design), synced with local saved state
+    // Header actions: bookmark + share (design), synced with the favorites store
     useEffect(() => {
         navigation.setOptions({
             headerRight: () => (
                 <View style={styles.headerActions}>
-                    <Pressable onPress={handleToggleSave} hitSlop={8}>
-                        <Ionicons
-                            name={isSaved ? 'bookmark' : 'bookmark-outline'}
-                            size={22}
-                            color={Colors.text.primary}
-                        />
-                    </Pressable>
+                    {/* Bookmark for individuals only (favorites) */}
+                    {isProfessional ? null : (
+                        <Pressable
+                            onPress={handleToggleSave}
+                            hitSlop={8}
+                            accessibilityRole="button"
+                            accessibilityLabel={isSaved ? Strings.favorites.remove : Strings.favorites.add}
+                            accessibilityState={{ selected: isSaved }}
+                        >
+                            <Ionicons
+                                name={isSaved ? 'bookmark' : 'bookmark-outline'}
+                                size={22}
+                                color={isSaved ? Colors.primary.main : Colors.text.primary}
+                            />
+                        </Pressable>
+                    )}
                     <Pressable onPress={handleShare} hitSlop={8}>
                         <Ionicons name='share-social-outline' size={22} color={Colors.text.primary} />
                     </Pressable>
                 </View>
             ),
         });
-    }, [navigation, isSaved, handleToggleSave, handleShare]);
+    }, [navigation, isProfessional, isSaved, handleToggleSave, handleShare]);
 
     // ── Guard — after hooks ────────────────────────────────────────────────
     if (!offer) {

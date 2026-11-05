@@ -10,8 +10,9 @@ export type { Review } from '@/shared/types';
 // USER TYPES — stay here (profile feature only)
 // ============================================
 
-// User account type
-export type AccountType = 'user' | 'professional';
+// User account type: moved to shared/types (read app-wide), re-exported here
+export type { AccountType } from '@/shared/types';
+import type { AccountType } from '@/shared/types';
 
 // Notification preferences
 export interface NotificationSettings {
@@ -63,4 +64,21 @@ export interface User {
 
   // Statistics
   reviewsCount: number;
+}
+
+// Subscription plan of a professional account (paid plans come post-MVP)
+export type SubscriptionPlan = 'free';
+
+// Professional data shown on the profile tab of a professional account.
+// Kept apart from User so an individual account carries none of it.
+export interface ProfessionalProfileSummary {
+  professionalId: string;          // Opens the public profile (ProfessionalDetail)
+  profession: string;
+  city: string;
+  rating: number;
+  reviewsCount: number;
+  isVerified: boolean;
+  annoncesCount: number;
+  activeOffersCount: number;
+  plan: SubscriptionPlan;
 }

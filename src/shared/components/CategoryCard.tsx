@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
 
-    // ── Circle variant (design / Airbnb style) ──
+    // ── Circle variant (Airbnb style) ──
     circleContainer: {
         alignItems: 'center',
         marginRight: Spacing.lg,

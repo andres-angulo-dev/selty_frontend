@@ -10,7 +10,8 @@ export const mockUser: User = {
     phone: '06 12 34 56 78',
     avatar: null,
 
-    // Account type
+    // Initial account type only: in development, switch it live from the
+    // "Développement" section of the profile tab (AccountTypeProvider)
     accountType: 'user',
     
     // Dates

@@ -6,6 +6,7 @@ export const Colors = {
       main: '#1E3A5F',       // Dark blue - main brand color
       light: '#2E5A8F',      // Lighter blue - hover states
       dark: '#0E2A4F',       // Darker blue - pressed states
+      subtle: '#EEF2F7',     // Very light blue - pills, success circle (same tint as the existing detail pills)
     },
 
     // ------------------------------
@@ -48,6 +49,17 @@ export const Colors = {
       error: '#DC3545',
       warning: '#FFC107',
       info: '#17A2B8',
+    },
+
+    // ------------------------------
+    // Overlays on dark or gradient backgrounds (navy banners, CTA cards)
+    // ------------------------------
+    overlay: {
+      whiteSubtle: 'rgba(255, 255, 255, 0.10)',  // Translucent fill (badges, decorative circles)
+      whiteBorder: 'rgba(255, 255, 255, 0.15)',  // Hairline border on dark surfaces
+      whiteMuted: 'rgba(255, 255, 255, 0.80)',   // Secondary text on dark surfaces
+      darkScrim: 'rgba(0, 0, 0, 0.55)',          // Small dark button over a photo (remove cross)
+      whiteVeil: 'rgba(255, 255, 255, 0.60)',    // "Greyed" photo of an unavailable item
     },
 
     // ------------------------------

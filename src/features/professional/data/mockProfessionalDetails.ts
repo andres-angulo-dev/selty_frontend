@@ -4,9 +4,9 @@
 // ============================================
 
 import { ProfessionalDetail } from "../types";
-import { mockProfessionals } from "./mockProfessionals";
+import { mockProfessionals } from "@/__mocks__/mockProfessionals";
 import { mockReviews } from "./mockReviews";
-import { mockAnnonces } from "@/features/annonce/data/mockAnnonces";
+import { mockAnnonces } from "@/__mocks__/mockAnnonces";
 
 // Find a professional by ID and build the full detail object
 export const getProfessionalDetail = (professionalId: string): ProfessionalDetail | null => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ImageBackground, StyleProp, ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, BorderRadius, FontSize } from '@/shared/constants';
 import { Offer } from '@/shared/types';
@@ -11,16 +11,20 @@ const BADGE_OVERLAP = 14; // px the badge overlaps below the image
 interface OfferCardProps {
     offer: Offer;
     onPress: (offer: Offer) => void;
+    width?: number;          // Default 175 (home carousel); grids pass their column width
+    style?: StyleProp<ViewStyle>;   // Container override (grids remove the carousel marginRight)
 }
 
 export const OfferCard: React.FC<OfferCardProps> = ({
     offer,
     onPress,
+    width = CARD_WIDTH,
+    style,
 }) => {
     return (
         <Pressable
             onPress={() => onPress(offer)}
-            style={({ pressed }) => [styles.card, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.card, { width }, style, pressed && styles.pressed]}
         >
             {/* Cover image — top of card */}
             <View style={styles.coverWrapper}>

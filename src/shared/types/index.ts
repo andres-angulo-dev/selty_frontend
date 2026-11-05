@@ -5,6 +5,14 @@
 // ============================================
 
 // ============================================
+// ACCOUNT TYPE
+// ============================================
+
+// Role of the signed-in account: drives the profile variant and, later,
+// the tab bar (the "Add" tab is for professionals only)
+export type AccountType = 'user' | 'professional';
+
+// ============================================
 // CATEGORY
 // ============================================
 
@@ -100,7 +108,6 @@ export interface Annonce {
   likesCount: number;              // Total likes
   commentsCount: number;           // Total comments
   isLiked: boolean;                // Liked by current user
-  isFavorite: boolean;             // Saved by current user
 
   // Relations (IDs for backend)
   professionalId: string;
@@ -113,6 +120,7 @@ export interface Annonce {
   // Pricing
   isFree?: boolean;                // true = "Gratuit" stat item
   priceType?: 'fixed' | 'quote';  // fixed = "Prix fixe", quote = "Devis gratuit"
+  price?: number;                  // Amount in euros, only when priceType is 'fixed'
 
   // Display
   isNew?: boolean;                 // "Nouveau" badge overlaid on hero image
@@ -220,4 +228,74 @@ export interface Review {
 export interface ProfessionalDetail extends Professional {
   annonces: Annonce[];             // List of annonces posted by this pro
   reviews: Review[];               // List of reviews for this professional
+}
+
+// Kinds of items a user can save in Favorites. Whether an item is saved
+// belongs to the user (favorites store), not to the item itself.
+export type FavoriteKind = 'professional' | 'annonce' | 'offer';
+
+// Small copy of a saved item, taken when it is saved. Lets the Favorites tab
+// still show a deleted / ended item (greyed) without its live data.
+export interface FavoriteSnapshot {
+  title: string;
+  subtitle?: string;
+  imageUrl?: string;
+}
+
+// ============================================
+// SERVICE REQUEST ("Demande") — an INDIVIDUAL's need that professionals answer
+// ("J'ai besoin d'un peintre"). NOT an Annonce (a pro's post): different
+// fields, audience and life cycle. Stored in Redux, so every field is
+// serializable (dates as ISO strings, no Date objects).
+// Named ServiceRequest, not Request: `Request` is the global fetch type.
+// ============================================
+
+/** How soon the individual needs the job done */
+export type RequestUrgency = 'urgent' | 'this_week' | 'this_month' | 'flexible';
+
+/** Stored status. "Expired" is NOT stored: it is computed from expiresAt (shared/utils/requestStatus) */
+export type RequestStoredStatus = 'open' | 'fulfilled';
+
+/** Status shown to users */
+export type RequestStatus = RequestStoredStatus | 'expired';
+
+/** A trade a request targets ("Peintre"), linked to a broad category ("Artisans") for filtering */
+export interface Trade {
+  id: string;
+  label: string;
+  categoryId: string;
+}
+
+/**
+ * Author as PUBLICLY shown: first name + last-name initial only.
+ * Privacy: the backend must never send the full name, phone or address of an
+ * individual to other users; the app only formats what it receives.
+ */
+export interface RequestAuthor {
+  id: string;
+  firstName: string;
+  lastNameInitial: string;       // "M" → "Sophie M."
+  memberSince: string;           // ISO date
+}
+
+export interface ServiceRequest {
+  id: string;
+  tradeId: string;
+  categoryId: string;            // Copied from the trade, for category filters
+  title: string;
+  description: string;
+  urgency: RequestUrgency;
+  photos: string[];              // 0 to 3 image URIs
+
+  // Location: city level only, never an address. Coordinates = city center
+  // (used for "à 3 km"), not the individual's home.
+  city: string;
+  department: string;
+  latitude: number | null;
+  longitude: number | null;
+
+  author: RequestAuthor;
+  status: RequestStoredStatus;
+  createdAt: string;             // ISO date
+  expiresAt: string;             // ISO date — createdAt + 30 days
 }

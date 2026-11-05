@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
         width: 160,
         height: 160,
         borderRadius: 80,
-        backgroundColor: 'rgba(255, 255, 255, 0.10)',
+        backgroundColor: Colors.overlay.whiteSubtle,
         top: -40,
         right: -40,
     },
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
 
     bannerSubtitle: {
         fontSize: 12,
-        color: 'rgba(255, 255, 255, 0.80)',
+        color: Colors.overlay.whiteMuted,
         fontWeight: '500',
     },
 

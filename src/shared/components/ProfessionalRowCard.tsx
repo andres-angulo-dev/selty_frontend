@@ -29,6 +29,7 @@ interface ProfessionalRowCardProps {
 
     // Interaction
     onPress?: () => void;            // Optional: without it the card is static (no chevron)
+    trailing?: React.ReactNode;      // Replaces the chevron (e.g. a bookmark button in Favorites)
     style?: StyleProp<ViewStyle>;    // Container override (margins from the parent)
 }
 
@@ -43,6 +44,7 @@ export const ProfessionalRowCard: React.FC<ProfessionalRowCardProps> = ({
     verifiedLabel,
     isOnline = false,
     onPress,
+    trailing,
     style,
 }) => {
     // Rating row only makes sense when both values exist
@@ -94,10 +96,10 @@ export const ProfessionalRowCard: React.FC<ProfessionalRowCardProps> = ({
                 )}
             </View>
 
-            {/* Chevron only when the card is actionable */}
-            {onPress && (
+            {/* Right side: custom action if given, else a chevron when the card is actionable */}
+            {trailing ?? (onPress && (
                 <Ionicons name='chevron-forward' size={18} color={Colors.text.tertiary} />
-            )}
+            ))}
         </Pressable>
     );
 };

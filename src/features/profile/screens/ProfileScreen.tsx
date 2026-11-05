@@ -1,155 +1,246 @@
-import React from "react";
-import Constants from "expo-constants";
-import { ScrollView, View, Text, StyleSheet } from 'react-native';
+import React from 'react';
+import Constants from 'expo-constants';
+import { ScrollView, View, Text, Pressable, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors, Typography, Spacing, Strings } from '@/shared/constants';
 
-// Navigation
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ProfileStackParamList } from "@/app/navigation/types";
+// Navigation: the profile stack, plus the root stack for the public profile modal
+import { useNavigation, CompositeNavigationProp } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ProfileStackParamList, RootStackParamList } from '@/app/navigation/types';
 
-import { ProfileHeader } from "../components/ProfileHeader";
-import { ProfileSection } from "../components/ProfileSection";
-import { ProfileInfoItem } from "../components/ProfileInfoItem";
-import { ProfileMenuItem } from "../components/ProfileMenuItem";
-import { Button } from "@/shared/components/button";
+import { MenuSection } from '@/shared/components/MenuSection';
+import { MenuRow } from '@/shared/components/MenuRow';
+import { MenuSwitchRow } from '@/shared/components/MenuSwitchRow';
+import { useAccountType } from '@/app/providers/AccountTypeProvider';
+import { ProfileIdentityCard, ProfileIdentityAction } from '../components/ProfileIdentityCard';
+import { ProfileStatsStrip } from '../components/ProfileStatsStrip';
+import { HighlightCtaCard } from '../components/HighlightCtaCard';
 
-import { mockUser } from "../data/mockUser";
+import { SubscriptionPlan } from '../types';
+import { mockUser } from '../data/mockUser';
+import { mockProfessionalSummary } from '../data/mockProfessionalSummary';
 
+// ============================================
+// PROFILE SCREEN
+// Profile tab, in two variants driven by the account type:
+// - individual: identity card + "become a professional" card + settings
+// - professional: identity card with rating and stats + activity and
+//   subscription sections + the same settings
+// Rows whose destination screen does not exist yet do nothing on tap.
+// ============================================
+
+type ProfileNavigation = CompositeNavigationProp<
+    NativeStackNavigationProp<ProfileStackParamList, 'Profile'>,
+    NativeStackNavigationProp<RootStackParamList>
+>;
+
+// Badge text for each plan: adding a plan to the union forces a label here
+const PLAN_LABELS: Record<SubscriptionPlan, string> = {
+    free: Strings.profile.plans.free,
+};
+
+// Placeholder for rows whose screen is not built yet (notifications, help...)
+const noDestinationYet = () => {};
+
+// Number formatting follows the app locale ("4,8" in French)
+const formatRating = (rating: number) =>
+    rating.toLocaleString(Strings.locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 export const ProfileScreen: React.FC = () => {
-    const navigation = useNavigation<NativeStackNavigationProp<ProfileStackParamList>>();   
-    
-    // Handlers for menu items (empty for now, will implement later)
-    const handleNotifications = () => console.log('Notifications pressed');   
-    const handleEditProfile = () => navigation.navigate('EditProfile');
-    const handleChangePassword = () => navigation.navigate('ChangePassword');                                                                     
-    const handleLanguage = () => console.log('Language pressed');                                                                               
-    const handleTheme = () => console.log('Theme pressed');                                                                                     
-    const handleHelp = () => console.log('Help pressed');                                                                                       
-    const handleTerms = () => console.log('Terms pressed');                                                                                     
-    const handlePrivacy = () => console.log('Privacy pressed');                                                                                 
-    const handleContact = () => console.log('Contact pressed');                                                                                 
-    const handleLogout = () => console.log('Logout pressed');                                                                                   
-    const handleDeleteAccount = () => console.log('Delete account pressed');
-    
+    const navigation = useNavigation<ProfileNavigation>();
+
+    // App-wide role (seeded from the mock user, switchable in development)
+    const { isProfessional: isPro, setAccountType } = useAccountType();
+    const pro = mockProfessionalSummary;
+
+    const fullName = `${mockUser.firstName} ${mockUser.lastName}`;
+    const memberSince = mockUser.createdAt.toLocaleDateString(Strings.locale, {
+        month: 'long',
+        year: 'numeric',
+    });
+
+    // Navigation handlers
+    const goToEditProfile = () => navigation.navigate('EditProfile');
+    const goToChangePassword = () => navigation.navigate('ChangePassword');
+    const goToPublicProfile = () =>
+        navigation.navigate('ProfessionalDetail', { professionalId: pro.professionalId });
+
+    // Identity card buttons: the professional also gets "Profil public"
+    const identityActions: ProfileIdentityAction[] = isPro
+        ? [
+              { label: Strings.profile.menu.editProfile, onPress: goToEditProfile },
+              { label: Strings.profile.menu.publicProfile, onPress: goToPublicProfile, icon: 'eye-outline' },
+          ]
+        : [{ label: Strings.profile.menu.editProfile, onPress: goToEditProfile }];
+
     return (
         <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
-        <ScrollView style={styles.container}>
-            
+            <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+                {/* Large left-aligned title */}
+                <Text style={styles.title} accessibilityRole="header">
+                    {Strings.tabs.profile}
+                </Text>
 
-            {/* Header with avatar, name, email */}
-            <ProfileHeader
-                userName={mockUser.userName}
-                avatar={mockUser.avatar}
-                createdAt={mockUser.createdAt}
-            />
+                {/* Identity card: pro props are passed only for a professional */}
+                <ProfileIdentityCard
+                    name={fullName}
+                    avatarUrl={mockUser.avatar}
+                    subtitle={
+                        isPro
+                            ? `${pro.profession} · ${pro.city}`
+                            : `${Strings.profile.memberSince} ${memberSince}`
+                    }
+                    isVerified={isPro && pro.isVerified}
+                    verifiedLabel={Strings.profile.verified}
+                    ratingText={isPro ? formatRating(pro.rating) : undefined}
+                    reviewsText={isPro ? Strings.profile.reviewsCount(pro.reviewsCount) : undefined}
+                    actions={identityActions}
+                >
+                    {isPro ? (
+                        <ProfileStatsStrip
+                            stats={[
+                                { value: String(pro.annoncesCount), label: Strings.profile.stats.annonces },
+                                { value: String(pro.activeOffersCount), label: Strings.profile.stats.activeOffers },
+                                { value: String(pro.reviewsCount), label: Strings.profile.stats.reviews },
+                            ]}
+                        />
+                    ) : null}
+                </ProfileIdentityCard>
 
-            {/* Personal information section */}
-            <ProfileSection title={Strings.profile.sections.personalInfo} paddingIsActive={false}>
-                <ProfileInfoItem label={Strings.profile.labels.lastName} value={`${mockUser.firstName} ${mockUser.lastName}`} />
-                <ProfileInfoItem label={Strings.profile.labels.email} value={`${mockUser.email}`} />
-                <ProfileInfoItem label={Strings.profile.labels.phone} value={`${mockUser.phone}`} isLast/>
+                {/* Individual only: invitation to become a professional */}
+                {!isPro ? (
+                    <HighlightCtaCard
+                        title={Strings.profile.becomePro.title}
+                        description={Strings.profile.becomePro.description}
+                        ctaLabel={Strings.profile.becomePro.cta}
+                        onPress={noDestinationYet}
+                    />
+                ) : null}
 
-                <View style={{ padding: Spacing.md }}>
-                    <Button label={Strings.profile.menu.editProfile} onPress={handleEditProfile} variant="secondary" size="medium" />
+                {/* Individual only: their published requests */}
+                {!isPro ? (
+                    <MenuSection title={Strings.profile.sections.activity}>
+                        <MenuRow
+                            icon="create-outline"
+                            label={Strings.profile.menu.myRequests}
+                            onPress={() => navigation.navigate('MyRequests')}
+                        />
+                    </MenuSection>
+                ) : null}
+
+                {/* Professional only: activity and subscription */}
+                {isPro ? (
+                    <>
+                        <MenuSection title={Strings.profile.sections.activity}>
+                            <MenuRow icon="megaphone-outline" label={Strings.profile.menu.myAnnonces} onPress={noDestinationYet} />
+                            <MenuRow icon="pricetag-outline" label={Strings.profile.menu.myOffers} onPress={noDestinationYet} />
+                            <MenuRow icon="star-outline" label={Strings.profile.menu.receivedReviews} onPress={noDestinationYet} />
+                        </MenuSection>
+
+                        <MenuSection title={Strings.profile.sections.subscription}>
+                            <MenuRow
+                                icon="card-outline"
+                                label={Strings.profile.menu.mySubscription}
+                                badge={PLAN_LABELS[pro.plan]}
+                                badgeVariant="primary"
+                                onPress={noDestinationYet}
+                            />
+                        </MenuSection>
+                    </>
+                ) : null}
+
+                {/* Shared sections */}
+                <MenuSection title={Strings.profile.sections.account}>
+                    <MenuRow icon="person-outline" label={Strings.profile.menu.personalInfo} onPress={goToEditProfile} />
+                    <MenuRow icon="lock-closed-outline" label={Strings.profile.menu.passwordSecurity} onPress={goToChangePassword} />
+                    <MenuRow icon="notifications-outline" label={Strings.profile.menu.notifications} onPress={noDestinationYet} />
+                </MenuSection>
+
+                <MenuSection title={Strings.profile.sections.preferences}>
+                    <MenuRow icon="globe-outline" label={Strings.profile.menu.language} value={Strings.profile.values.languageFrench} onPress={noDestinationYet} />
+                    <MenuRow icon="moon-outline" label={Strings.profile.menu.theme} value={Strings.profile.values.themeSystem} onPress={noDestinationYet} />
+                </MenuSection>
+
+                <MenuSection title={Strings.profile.sections.support}>
+                    <MenuRow icon="help-circle-outline" label={Strings.profile.menu.helpCenter} onPress={noDestinationYet} />
+                    <MenuRow icon="mail-outline" label={Strings.profile.menu.contact} onPress={noDestinationYet} />
+                    <MenuRow icon="document-text-outline" label={Strings.profile.menu.terms} onPress={noDestinationYet} />
+                    <MenuRow icon="shield-checkmark-outline" label={Strings.profile.menu.privacy} onPress={noDestinationYet} />
+                </MenuSection>
+
+                {/* Development only: __DEV__ is false in store builds, so this
+                    section and its switch are stripped from production */}
+                {__DEV__ ? (
+                    <MenuSection title={Strings.dev.section}>
+                        <MenuSwitchRow
+                            icon="construct-outline"
+                            label={Strings.dev.professionalAccount}
+                            hint={Strings.dev.professionalAccountHint}
+                            value={isPro}
+                            onValueChange={(on) => setAccountType(on ? 'professional' : 'user')}
+                        />
+                    </MenuSection>
+                ) : null}
+
+                {/* Footer: logout (wired with auth later) + app version */}
+                <View style={styles.footer}>
+                    <Pressable
+                        onPress={noDestinationYet}
+                        accessibilityRole="button"
+                        style={({ pressed }) => [styles.logoutButton, pressed && styles.pressed]}
+                    >
+                        <Ionicons name="log-out-outline" size={20} color={Colors.primary.main} />
+                        <Text style={styles.logoutText}>{Strings.profile.menu.logout}</Text>
+                    </Pressable>
+
+                    <Text style={styles.version}>
+                        {Strings.profile.version} {Constants.expoConfig?.version ?? '1.0.0'}
+                    </Text>
                 </View>
-            </ProfileSection>
-
-            {/* Settings section */}
-            <ProfileSection title={Strings.profile.sections.settings}>
-                <ProfileMenuItem icon="lock-closed-outline" label={Strings.profile.menu.password} onPress={handleChangePassword} />
-                <ProfileMenuItem icon="notifications-outline" label={Strings.profile.menu.notifications}  onPress={handleNotifications} />
-                <ProfileMenuItem icon="language-outline" label={Strings.profile.menu.language}  onPress={handleLanguage} />
-                <ProfileMenuItem icon="moon-outline" label={Strings.profile.menu.theme}  onPress={handleTheme} isLast/>
-            </ProfileSection>
-
-            {/* Support section */}
-            <ProfileSection title={Strings.profile.sections.support}>
-                <ProfileMenuItem icon="help-circle-outline" label={Strings.profile.menu.helpCenter} onPress={handleHelp} />
-                <ProfileMenuItem icon="document-text-outline" label={Strings.profile.menu.terms} onPress={handleTerms} />
-                <ProfileMenuItem icon="shield-checkmark-outline" label={Strings.profile.menu.privacy} onPress={handlePrivacy} />
-                <ProfileMenuItem icon="mail-outline" label={Strings.profile.menu.contact} onPress={handleContact} isLast/>
-            </ProfileSection>
-
-            {/* Account Section - Buttons */}
-                <View style={styles.buttonContainer}>
-                    <Button label={Strings.profile.menu.logout} onPress={handleLogout} variant="secondary" size="medium" />
-                    {/* <Pressable onPress={handleLogout} style={({ pressed }) => [styles.button, styles.logoutButton, pressed && styles.buttonPressed]}>
-                        <Text style={styles.logoutText}>Déconnexion</Text>
-                    </Pressable> */}
-
-                    <Button label={Strings.profile.menu.deleteAccount}onPress={handleDeleteAccount} variant='danger' size="medium" />
-                    {/* <Pressable onPress={handleDeleteAccount} style={({ pressed }) => [styles.button, styles.deleteButton, pressed && styles.buttonPressed]}>
-                        <Text style={styles.deleteText}>Supprimer mon compte</Text>
-                    </Pressable> */}
-                </View>
-
-            {/* Button spacing */}
-            <View style={styles.bottomSpacer} />
-
-            {/* App version */}
-            <Text style={styles.version}>{Strings.profile.version} {Constants.expoConfig?.version ?? '1.0.0'}</Text>
-        </ScrollView>
+            </ScrollView>
         </SafeAreaView>
     );
-  };                                                                                                                                
-                                                                                                                                    
+};
+
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: Colors.neutral.background,
+        backgroundColor: Colors.neutral.surface,
     },
-
-    container: {
-        flex: 1,
-    },       
-
-    buttonContainer: {
-        padding: Spacing.md,
-        gap: Spacing.sm,
+    content: {
+        paddingHorizontal: Spacing.md + Spacing.xs, // 20px, as in the design
+        paddingBottom: Spacing.xl,
     },
-    
-    button: {
-        paddingVertical: Spacing.md,
-        borderRadius: 8, 
+    // h2 (24px) like a native large title: h1 (32px) crowded the screen
+    title: {
+        ...Typography.h2,
+        color: Colors.primary.main,
+        marginTop: Spacing.sm,
+        marginBottom: Spacing.md + Spacing.xs,
+    },
+    footer: {
         alignItems: 'center',
-        borderWidth: 1,
+        gap: Spacing.sm,
+        marginTop: Spacing.sm,
     },
-
     logoutButton: {
-        backgroundColor: Colors.neutral.white,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.sm,
+        paddingVertical: Spacing.sm,
+        paddingHorizontal: Spacing.md,
     },
-
-    deleteButton: {
-        backgroundColor: Colors.neutral.white,
-        borderColor: Colors.semantic.error,
+    pressed: {
+        opacity: 0.6,
     },
-
-    buttonPressed: {
-        opacity: 0.7,
-    },
-
     logoutText: {
         ...Typography.bodyBold,
-        color:  Colors.primary.main,
+        color: Colors.primary.main,
     },
-
-    deleteText: {
-        ...Typography.bodyBold, 
-        color: Colors.semantic.error,
-    },
-
-    bottomSpacer: {
-        height: Spacing.lg,
-    },
-
     version: {
         ...Typography.caption,
         color: Colors.text.tertiary,
-        textAlign: 'center',
-        paddingBottom: Spacing.md,
-    }
-});                                                                                                                               
-             
+    },
+});

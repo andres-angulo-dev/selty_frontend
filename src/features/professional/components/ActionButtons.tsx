@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, Pressable, StyleSheet, Linking, Share, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Typography, Strings, Spacing, BorderRadius } from '@/shared/constants';
@@ -8,9 +8,9 @@ type ActionButtonsProps = {
     firstName: string;
     lastName: string;
     profession: string;
-    isFavorite: boolean;
+    isFavorite?: boolean;           // Saved by the current user (read from the favorites store by the screen)
     onMessagePress: () => void;
-    onFavoriteToggle: (newValue: boolean) => void;
+    onFavoritePress?: () => void;   // Save / unsave — the parent owns the state. Omit to hide the button (professional viewers)
 };
 
 export const ActionButtons: React.FC<ActionButtonsProps> = ({
@@ -18,11 +18,10 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
     firstName,
     lastName,
     profession,
-    isFavorite,
+    isFavorite = false,
     onMessagePress,
-    onFavoriteToggle,
+    onFavoritePress,
 }) => {
-    const [favorite, setFavorite] = useState(isFavorite);
 
     const handleCall = () => {
         if (!phone) {
@@ -45,12 +44,6 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
         }
     };
 
-    const handleFavorite = () => {
-        const newValue = !favorite;
-        setFavorite(newValue);
-        onFavoriteToggle(newValue);
-    };
-
     return (
         <View style={styles.container}>
             {/* Call button */}
@@ -69,17 +62,25 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
                 <Text style={styles.buttonText}>{Strings.professional.actions.message}</Text>
             </Pressable>
 
-            {/* Favorite button */}
-            <Pressable style={({ pressed }) => [styles.button, pressed && styles.pressed]} onPress={handleFavorite}>
-                <View style={[styles.iconContainer, favorite && styles.iconContainerFavorite]}>
-                    <Ionicons
-                        name={favorite ? 'heart' : 'heart-outline'}
-                        size={22}
-                        color={favorite ? Colors.semantic.error : Colors.primary.main}
-                    />
-                </View>
-                <Text style={styles.buttonText}>{Strings.professional.actions.favorite}</Text>
-            </Pressable>
+            {/* Favorite button — hidden when the parent gives no handler (professional viewers) */}
+            {onFavoritePress ? (
+                <Pressable
+                    style={({ pressed }) => [styles.button, pressed && styles.pressed]}
+                    onPress={onFavoritePress}
+                    accessibilityRole="button"
+                    accessibilityLabel={isFavorite ? Strings.favorites.remove : Strings.favorites.add}
+                    accessibilityState={{ selected: isFavorite }}
+                >
+                    <View style={[styles.iconContainer, isFavorite && styles.iconContainerFavorite]}>
+                        <Ionicons
+                            name={isFavorite ? 'bookmark' : 'bookmark-outline'}
+                            size={22}
+                            color={Colors.primary.main}
+                        />
+                    </View>
+                    <Text style={styles.buttonText}>{Strings.professional.actions.favorite}</Text>
+                </Pressable>
+            ) : null}
 
             {/* Share button */}
             <Pressable style={({ pressed }) => [styles.button, pressed && styles.pressed]} onPress={handleShare}>
@@ -109,7 +110,7 @@ const styles = StyleSheet.create({
         opacity: 0.7,
     },
 
-    // Gray rounded square container — matches the design design
+    // Gray rounded square container — matches the design
     iconContainer: {
         width: 48,
         height: 48,
@@ -119,9 +120,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
 
-    // Light red tint when favorited
+    // Light blue tint when saved
     iconContainerFavorite: {
-        backgroundColor: 'rgba(235,87,87,0.10)',
+        backgroundColor: Colors.primary.subtle,
     },
 
     buttonText: {

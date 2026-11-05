@@ -1,16 +1,19 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { View, Text, ScrollView, StyleSheet, Pressable, Linking, Image, Share, Alert } from 'react-native';
 import { Colors, Typography, Spacing, Strings, BorderRadius } from '@/shared/constants';
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/navigation/types';
-import { getAnnonceById } from '../data/mockAnnonces';
+import { getAnnonceById } from '@/__mocks__/mockAnnonces';
 import { formatRelativeDate } from '@/shared/utils/formatDate';
 import { ProfessionalRowCard } from '@/shared/components/ProfessionalRowCard';
 import { MapPlaceholder } from '@/shared/components/MapPlaceholder';
 import { MapPreview } from '@/shared/components/MapPreview';
 import { DetailCtaBar } from '@/shared/components/DetailCtaBar';
 import { getProfessionalMapData } from '@/shared/utils/professionalMap';
+import { useFavorite } from '@/shared/hooks/useFavorite';
+import { useAccountType } from '@/app/providers/AccountTypeProvider';
+import { snapshotFromAnnonce } from '@/shared/utils/favoriteSnapshot';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AnnonceDetail'>;
 
@@ -21,6 +24,11 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     // ── All hooks must be declared before any conditional return ──────────
     const [isLiked, setIsLiked] = useState(annonce?.isLiked ?? false);
     const [likesCount, setLikesCount] = useState(annonce?.likesCount ?? 0);
+    // Saved state lives in the favorites store (shared with the Favorites tab)
+    const favoriteSnapshot = useMemo(() => (annonce ? snapshotFromAnnonce(annonce) : undefined), [annonce]);
+    const { isFavorite: isSaved, toggle: handleToggleSave } = useFavorite('annonce', annonceId, favoriteSnapshot);
+    // Favorites are for individuals: no bookmark for a professional viewer
+    const { isProfessional } = useAccountType();
 
     const handleToggleLike = useCallback(() => {
         setIsLiked(prev => {
@@ -40,7 +48,7 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
         Alert.alert(Strings.messaging.comingSoonTitle, Strings.messaging.comingSoonMessage);
     }, []);
 
-    // Sync header heart with isLiked state — same action as the in-content like button
+    // Header actions: like (heart, synced with the in-content like button), save (bookmark), share
     useEffect(() => {
         navigation.setOptions({
             headerRight: () => (
@@ -52,13 +60,28 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
                             color={isLiked ? Colors.semantic.error : Colors.text.primary}
                         />
                     </Pressable>
+                    {/* Bookmark for individuals only (favorites) */}
+                    {isProfessional ? null : (
+                        <Pressable
+                            onPress={handleToggleSave}
+                            accessibilityRole="button"
+                            accessibilityLabel={isSaved ? Strings.favorites.remove : Strings.favorites.add}
+                            accessibilityState={{ selected: isSaved }}
+                        >
+                            <Ionicons
+                                name={isSaved ? 'bookmark' : 'bookmark-outline'}
+                                size={22}
+                                color={isSaved ? Colors.primary.main : Colors.text.primary}
+                            />
+                        </Pressable>
+                    )}
                     <Pressable onPress={handleShare}>
                         <Ionicons name='share-social-outline' size={22} color={Colors.text.primary} />
                     </Pressable>
                 </View>
             ),
         });
-    }, [navigation, isLiked, handleToggleLike, handleShare]);
+    }, [navigation, isLiked, handleToggleLike, isProfessional, isSaved, handleToggleSave, handleShare]);
 
     // ── Guard — after hooks ────────────────────────────────────────────────
     if (!annonce) {
@@ -291,7 +314,7 @@ const styles = StyleSheet.create({
 
     categoryPill: {
         alignSelf: 'flex-start',
-        backgroundColor: '#EEF2F7',
+        backgroundColor: Colors.primary.subtle,
         borderRadius: BorderRadius.full,
         paddingHorizontal: Spacing.sm,
         paddingVertical: 4,
@@ -348,7 +371,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: Spacing.xs,
-        backgroundColor: '#EEF2F7',
+        backgroundColor: Colors.primary.subtle,
         borderRadius: BorderRadius.lg,
         padding: Spacing.sm,
     },

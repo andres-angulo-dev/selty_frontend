@@ -11,7 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/navigation/types';
 import { Comment } from '../types';
-import { getCommentsByAnnonceId } from '../data/mockComments';
+import { getCommentsByAnnonceId } from '@/__mocks__/mockComments';
 import { formatRelativeDate } from '@/shared/utils/formatDate';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useKeyboardHeight } from '@/shared/hooks/useKeyboardHeight';

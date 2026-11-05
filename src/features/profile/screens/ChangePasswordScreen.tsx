@@ -6,6 +6,7 @@ import { ProfileStackParamList } from '@/app/navigation/types';
 import { Colors, Spacing, Strings } from '@/shared/constants';
 import { FormInput } from '@/shared/components/FormInput';
 import { Button } from '@/shared/components/button';
+import { MenuSection } from '@/shared/components/MenuSection';
 
 export const ChangePasswordScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<ProfileStackParamList>>();
@@ -58,51 +59,57 @@ export const ChangePasswordScreen: React.FC = () => {
         // Validate before saving
         if (!validateForm()) return;
 
-        // Just log the data (backend will come later)
-        console.log('Changing password...');
+        // No backend yet: the password is not sent anywhere, we only confirm
 
         Alert.alert(
             Strings.profile.alerts.passwordChanged.title,
             Strings.profile.alerts.passwordChanged.message,
-            [{ text: 'OK', onPress: () => navigation.goBack() }]
+            [{ text: Strings.buttons.ok, onPress: () => navigation.goBack() }]
         );
     }
 
     return (
         // KeyboardAvoidingView pushes content up when keyboard opens so the save button stays visible
         <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <ScrollView>
-            <View style={styles.form}>
-                {/* Current password */}
-                <FormInput label={Strings.profile.labels.currentPassword} value={currentPassword} onChangeText={setCurrentPassword} placeholder={Strings.profile.placeholders.currentPassword} secureTextEntry autoCapitalize='none' autoCorrect={false} error={errors.currentPassword} />
+        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps='handled'>
+                <MenuSection cardStyle={styles.formCard}>
+                    {/* Current password */}
+                    <FormInput label={Strings.profile.labels.currentPassword} value={currentPassword} onChangeText={setCurrentPassword} placeholder={Strings.profile.placeholders.currentPassword} secureTextEntry textContentType='password' autoComplete='current-password' autoCapitalize='none' autoCorrect={false} error={errors.currentPassword} />
 
-                {/* New password */}
-                <FormInput label={Strings.profile.labels.newPassword} value={newPassword} onChangeText={setNewPassword} placeholder={Strings.profile.placeholders.newPassword} secureTextEntry autoCapitalize='none' autoCorrect={false} error={errors.newPassword} />
+                    {/* New password */}
+                    <FormInput label={Strings.profile.labels.newPassword} value={newPassword} onChangeText={setNewPassword} placeholder={Strings.profile.placeholders.newPassword} secureTextEntry textContentType='newPassword' autoComplete='new-password' autoCapitalize='none' autoCorrect={false} error={errors.newPassword} />
             
-                {/* Confirm new password */}
-                <FormInput label={Strings.profile.labels.confirmNewPassword} value={confirmNewPassword} onChangeText={setConfirmNewPassword} placeholder={Strings.profile.placeholders.confirmNewPassword} secureTextEntry autoCapitalize='none' autoCorrect={false} error={errors.confirmNewPassword} />
+                    {/* Confirm new password */}
+                    <FormInput label={Strings.profile.labels.confirmNewPassword} value={confirmNewPassword} onChangeText={setConfirmNewPassword} placeholder={Strings.profile.placeholders.confirmNewPassword} secureTextEntry textContentType='newPassword' autoComplete='new-password' autoCapitalize='none' autoCorrect={false} error={errors.confirmNewPassword} />
+
+                </MenuSection>
 
                 {/* Save button */}
                 <View style={styles.buttonContainer}>
-                    <Button label={Strings.buttons.edit} onPress={handleSave} variant='primary' size='large' fullWidth />
+                    <Button label={Strings.buttons.save} onPress={handleSave} variant='primary' size='large' fullWidth />
                 </View>
-            </View>
         </ScrollView>
         </KeyboardAvoidingView>
     )
 }
 
-const styles = StyleSheet.create ({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.neutral.background,
+        backgroundColor: Colors.neutral.surface,
     },
 
-    form: {
-        padding: Spacing.lg,
+    content: {
+        padding: Spacing.md + Spacing.xs,   // 20px, as on the profile tab
+    },
+
+    // No bottom padding: the last FormInput already brings its 16px margin
+    formCard: {
+        padding: Spacing.md,
+        paddingBottom: 0,
     },
 
     buttonContainer: {
-        marginTop: Spacing.lg,
-    }
+        marginTop: Spacing.sm,
+    },
 })

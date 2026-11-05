@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, Strings } from '@/shared/constants';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -10,8 +10,15 @@ import { OfferDetailScreen } from '@/features/offer/screens/OfferDetailScreen';
 import { AnnonceDetailScreen } from '@/features/annonce/screens/AnnonceDetailScreen';
 import { CommentsModal } from '@/features/annonce/screens/CommentsModal';
 import { LocationMapScreen } from '@/features/map/screens/LocationMapScreen';
+import { AnnonceFormScreen } from '@/features/add/screens/AnnonceFormScreen';
+import { OfferFormScreen } from '@/features/add/screens/OfferFormScreen';
+import { PublishSuccessScreen } from '@/features/add/screens/PublishSuccessScreen';
+import { RequestFormScreen } from '@/features/request/screens/RequestFormScreen';
+import { RequestDetailScreen } from '@/features/request/screens/RequestDetailScreen';
+import { MyRequestsScreen } from '@/features/request/screens/MyRequestsScreen';
 
 const BACK_ICON_SIZE = 22;
+
 
 // Create the root stack navigator
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -93,6 +100,45 @@ export const RootStackNavigator: React.FC = () => {
                     ),
                 })}
             />
+
+            {/* Add feature (professionals): above the tabs, so no tab bar on the forms */}
+            {/* The forms draw their own header (FormHeader): centered title on iOS too */}
+            <Stack.Screen name='AnnonceForm' component={AnnonceFormScreen} />
+            <Stack.Screen name='OfferForm' component={OfferFormScreen} />
+            <Stack.Screen name='RequestForm' component={RequestFormScreen} />
+            <Stack.Screen
+                name='MyRequests'
+                component={MyRequestsScreen}
+                options={({ navigation }) => ({
+                    headerShown: true,
+                    headerTitle: Strings.request.myRequests.title,
+                    headerTitleStyle: { fontSize: 16, fontWeight: '600', color: Colors.text.primary },
+                    headerShadowVisible: false,
+                    headerStyle: { backgroundColor: Colors.neutral.background },
+                    headerLeft: () => (
+                        <Pressable onPress={() => navigation.goBack()} style={{ paddingRight: Spacing.sm }}>
+                            <Ionicons name='chevron-back' size={BACK_ICON_SIZE} color={Colors.text.primary} />
+                        </Pressable>
+                    ),
+                })}
+            />
+            <Stack.Screen
+                name='RequestDetail'
+                component={RequestDetailScreen}
+                options={({ navigation }) => ({
+                    headerShown: true,
+                    headerTitle: Strings.request.detail.headerTitle,
+                    headerTitleStyle: { fontSize: 16, fontWeight: '600', color: Colors.text.primary },
+                    headerShadowVisible: false,
+                    headerStyle: { backgroundColor: Colors.neutral.background },
+                    headerLeft: () => (
+                        <Pressable onPress={() => navigation.goBack()} style={{ paddingRight: Spacing.sm }}>
+                            <Ionicons name='chevron-back' size={BACK_ICON_SIZE} color={Colors.text.primary} />
+                        </Pressable>
+                    ),
+                })}
+            />
+            <Stack.Screen name='PublishSuccess' component={PublishSuccessScreen} />
 
             <Stack.Screen
                 name='CommentsModal'

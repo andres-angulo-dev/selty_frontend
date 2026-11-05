@@ -1,10 +1,12 @@
+import type { NavigatorScreenParams } from '@react-navigation/native';
 // Global navigation types for the app
 
 // Root tab navigator toures
 export type RootTabParamList = {
     Home: undefined;
-    Search: undefined;
-    Favorites: undefined;
+    Favorites: undefined;       // Individuals only
+    MyPublications: undefined;  // Professionals only (same slot as Favorites)
+    Add: undefined;             // Both roles, content depends on the role (request / annonce or offer)
     Messages: undefined;
     Profile: undefined;
 };
@@ -19,11 +21,27 @@ export type ProfileStackParamList = {
 import type { MapPoint, MapZone } from '@/shared/components/MapPreview';
 
 export type RootStackParamList = {
-    MainTabs: undefined;
+    // Optional nested params let a screen open a given tab: navigate('MainTabs', { screen: 'Home' })
+    MainTabs: NavigatorScreenParams<RootTabParamList> | undefined;
     ProfessionalDetail: { professionalId: string };
     OfferDetail: { offerId: string };
     AnnonceDetail: { annonceId: string };
     CommentsModal: { annonceId: string };
+    // Add feature (professionals): above the tabs, so the tab bar is hidden on the forms
+    AnnonceForm: undefined;
+    OfferForm: undefined;
+    // Individuals: "Publier une demande" (opened by the central tab, tab bar hidden)
+    RequestForm: undefined;
+    RequestDetail: { requestId: string };
+    MyRequests: undefined;
+    // Confirmation after publishing. Plain texts only (serializable), already formatted
+    PublishSuccess: {
+        kind: 'annonce' | 'offer' | 'request';
+        title: string;           // Title typed by the professional
+        subtitle: string;        // "Artisans · Melun (77)"
+        tag?: string;            // "80,00 €", "Devis gratuit", "-30 %"
+        coverUri?: string;       // Local URI of the cover / offer image
+    };
     // Full-screen map. Params stay serializable (plain coordinates, no business object, no callback)
     LocationMap: { title: string; caption?: string; markers: MapPoint[]; zones: MapZone[] };
 }
