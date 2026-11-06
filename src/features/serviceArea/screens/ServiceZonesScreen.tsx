@@ -32,14 +32,6 @@ export const ServiceZonesScreen: React.FC<Props> = ({ navigation }) => {
         }
     };
 
-    const handleAddZone = () => {
-        if (area.zones.length >= REQUEST_RULES.maxZones) {
-            Alert.alert(texts.limits.title, texts.add.limitReached(REQUEST_RULES.maxZones));
-            return;
-        }
-        navigation.navigate('AddZone');
-    };
-
     return (
         <ScrollView style={styles.screen} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
             <Text style={styles.intro}>{texts.zonesIntro}</Text>
@@ -69,7 +61,9 @@ export const ServiceZonesScreen: React.FC<Props> = ({ navigation }) => {
                         </View>
                     );
                 })}
-                <Button label={texts.addZone} onPress={handleAddZone} variant="secondary" fullWidth />
+                {/* Never blocked at the maximum: changing a radius or adding a region that replaces
+                    its departments stays possible; addZone refuses only what would exceed it */}
+                <Button label={texts.addZone} onPress={() => navigation.navigate('AddZone')} variant="secondary" fullWidth />
             </MenuSection>
 
         </ScrollView>

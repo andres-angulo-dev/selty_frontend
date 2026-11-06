@@ -5,8 +5,6 @@
 // - Category badge with frosted glass effect (expo-blur)
 // - Rating displayed as ★ 4.9 (Airbnb style)
 // - Distance with pin icon, fallback to city name
-// Does NOT replace AnnonceCard (still used in ProfessionalDetailScreen
-// and CommentsModal).
 // ============================================
 
 import React from 'react';
@@ -178,7 +176,7 @@ const styles = StyleSheet.create({
         borderRadius: BorderRadius.full,
         overflow: 'hidden',
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.3)',
+        borderColor: Colors.overlay.whiteOutline,
         paddingHorizontal: 8,
         paddingVertical: 3,
         marginBottom: 5,
@@ -220,7 +218,7 @@ const styles = StyleSheet.create({
     ratingText: {
         fontSize: FontSize.xxs,
         fontWeight: '600',
-        color: 'rgba(255,255,255,0.9)',
+        color: Colors.overlay.whiteStrong,
     },
 
     // maxWidth 45% prevents long city names from overflowing onto the rating.
@@ -233,7 +231,7 @@ const styles = StyleSheet.create({
 
     distanceText: {
         fontSize: FontSize.xxs,
-        color: 'rgba(255,255,255,0.85)',
+        color: Colors.overlay.whiteStrong,
         flexShrink: 1,          // Truncates with ellipsis if still too long
     },
 });

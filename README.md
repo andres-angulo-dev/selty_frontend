@@ -64,7 +64,7 @@ Detail screens (offer, annonce) are built from the same blocks:
 - `ProfessionalRowCard` — "proposed by" row: avatar, online dot, optional badge, rating, chevron
 - `MapPreview` — real map with pins and zones; `MapPlaceholder` is its stand-in when nothing can be drawn
 - `DetailCtaBar` — bottom action bar: square secondary button + full-width primary button
-- `OfferCard`, `AnnonceCard`, `ProfessionalCard`, `CategoryCard`, `SearchBar`, `FormInput`, `Button`
+- `OfferCard`, `AnnonceGridCard`, `ProfessionalCoverCard`, `CategoryCard`, `SearchBar`, `FormInput`, `Button`
 
 ## Known limitations
 

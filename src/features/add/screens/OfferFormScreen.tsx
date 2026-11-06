@@ -84,6 +84,7 @@ export const OfferFormScreen: React.FC = () => {
         control,
         handleSubmit,
         watch,
+        trigger,
         formState: { errors, isDirty, isSubmitted },
     } = useForm({
         resolver: zodResolver(offerSchema),
@@ -98,6 +99,13 @@ export const OfferFormScreen: React.FC = () => {
     const today = startOfDay(new Date());
     const startsAt = watch('startsAt');
     const conditionsCount = watch('conditions').length;
+
+    // The two dates are checked against each other, but a change only re-checks its own
+    // field: after a refused submit, re-check both so a fixed error does not stay on screen.
+    // Not before: nothing should turn red while the form is being filled for the first time.
+    const recheckDates = () => {
+        if (isSubmitted) trigger(['startsAt', 'expiresAt']);
+    };
 
     /**
      * Called only with valid data. The offer is kept in memory, then the form
@@ -223,7 +231,10 @@ export const OfferFormScreen: React.FC = () => {
                             <DateField
                                 label={texts.fields.startsAt}
                                 value={field.value}
-                                onChange={field.onChange}
+                                onChange={(date) => {
+                                    field.onChange(date);
+                                    recheckDates();
+                                }}
                                 placeholder={texts.fields.startsAtPlaceholder}
                                 minimumDate={today}
                                 clearable
@@ -238,7 +249,10 @@ export const OfferFormScreen: React.FC = () => {
                             <DateField
                                 label={texts.fields.expiresAt}
                                 value={field.value}
-                                onChange={field.onChange}
+                                onChange={(date) => {
+                                    field.onChange(date);
+                                    recheckDates();
+                                }}
                                 placeholder={texts.fields.expiresAtPlaceholder}
                                 minimumDate={startsAt ?? today}
                                 clearable

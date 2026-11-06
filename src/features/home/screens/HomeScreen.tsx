@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/navigation/types';
-import { View, StyleSheet, FlatList, ScrollView, Animated, KeyboardAvoidingView, Platform } from 'react-native';
+import { Alert, View, StyleSheet, FlatList, ScrollView, Animated, KeyboardAvoidingView, Platform } from 'react-native';
 import { Colors, Spacing, Strings } from '@/shared/constants';
 
 // Home components
@@ -50,6 +50,12 @@ import { Professional, Annonce, ServiceRequest } from '@/shared/types';
 type FeedItem =
     | { kind: 'annonce'; id: string; date: number; annonce: Annonce }
     | { kind: 'request'; id: string; date: number; request: ServiceRequest };
+
+// Answer for the buttons whose destination does not exist yet (search by category, banners,
+// notifications, full lists): a tap must never look broken
+const showComingSoon = () => {
+    Alert.alert(Strings.home.comingSoonTitle, Strings.home.comingSoonMessage);
+};
 
 export const HomeScreen: React.FC = () => {
     // Temporary state 
@@ -164,22 +170,23 @@ export const HomeScreen: React.FC = () => {
     // HEADER SECTIONS (above the feed)
     // ============================================    
     // ListHeaderComponent: everything above the vertical feed
-    // This is rendered once at the top of the FlatList
-    const renderHeader = useCallback(() => (
+    // An element, not a function: a function changing when the data changes counts as a new
+    // component, so React would rebuild the header and reset the position of the carousels
+    const listHeader = useMemo(() => (
         <View>
             {/* Promo banner carousel — shown first (design order) */}
-            <PromoBanner banners={mockBanners} onBannerPress={(Banner) => console.log('Banner', Banner.title)} />
+            <PromoBanner banners={mockBanners} onBannerPress={showComingSoon} />
 
             {/* Categories */}
             <SectionHeader title={Strings.home.categories} containerStyle={{ marginTop: 0 }} />
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0, marginBottom: Spacing.md }} contentContainerStyle={{ paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm }}>
                 {mockCategories.map((category) => (
-                    <CategoryCard key={category.id} category={category} onPress={(cat) => console.log('Pressed:', cat.name)} variant="circle" />
+                    <CategoryCard key={category.id} category={category} onPress={showComingSoon} variant="circle" />
                 ))}
             </ScrollView> 
         
             {/* Pour vous — Horizontal scroll of cover cards */}
-            <SectionHeader title={Strings.home.forYou} onSeeAllPress={() => console.log('SeeAll')} />
+            <SectionHeader title={Strings.home.forYou} onSeeAllPress={showComingSoon} />
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={{ paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm, marginBottom: Spacing.xs }}>
                 {professionalsWithDistance.map((pro) => (
                     <ProfessionalCoverCard key={pro.id} professional={pro} onPress={(pro) => navigation.navigate('ProfessionalDetail', { professionalId: pro.id })} />
@@ -187,7 +194,7 @@ export const HomeScreen: React.FC = () => {
             </ScrollView>
 
             {/* Offres spéciales - Horizontal scroll */}
-            <SectionHeader title={Strings.home.specialOffers} onSeeAllPress={() => console.log('SeeAll')} />
+            <SectionHeader title={Strings.home.specialOffers} onSeeAllPress={showComingSoon} />
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalList} contentContainerStyle={styles.horizontalListContent}>
                 {offers.map((offer) => (
                     <OfferCard key={offer.id} offer={offer} onPress={(offer) => navigation.navigate('OfferDetail', { offerId: offer.id })} />
@@ -259,7 +266,7 @@ export const HomeScreen: React.FC = () => {
                 }),
                 overflow: 'hidden',
             }}>
-                <HomeHeader onNotificationPress={() => console.log('Notification')} notificationCount={1}/>
+                <HomeHeader onNotificationPress={showComingSoon} notificationCount={1}/>
             </Animated.View>
             
             {/* Search bar */}
@@ -283,7 +290,7 @@ export const HomeScreen: React.FC = () => {
                         professionalResults={filteredProfessionals}
                         onRecentSearchPress={handleRecentSearchPress}
                         onClearHistory={handleClearHistory}
-                        onCategoryPress={(cat) => console.log('Category:', cat.name)}
+                        onCategoryPress={showComingSoon}
                         onProfessionalPress={(pro) => navigation.navigate('ProfessionalDetail', { professionalId: pro.id })}
                     />
                 ) : (
@@ -292,7 +299,7 @@ export const HomeScreen: React.FC = () => {
                         data={feedItems}
                         renderItem={renderFeedItem}
                         keyExtractor={(item) => `${item.kind}-${item.id}`}
-                        ListHeaderComponent={renderHeader}
+                        ListHeaderComponent={listHeader}
                         showsVerticalScrollIndicator={false}
                         contentContainerStyle={styles.flatListContent}
                         numColumns={2}

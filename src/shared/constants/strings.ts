@@ -570,6 +570,8 @@ export const Strings = {
     // Home screen                                                                                                                            
     // ------------------------------                                                                                                         
     home: {
+        comingSoonTitle: 'Bientôt disponible',
+        comingSoonMessage: 'Cette fonctionnalité arrive prochainement.',
         searchPlaceholder: 'Rechercher un professionnel...',
         categories: 'Catégories',
         forYou: 'Pour vous',
@@ -607,6 +609,8 @@ export const Strings = {
           message: 'Message',
           favorite: 'Favoris',
           share: 'Partager',
+          callErrorTitle: 'Appel impossible',
+          callErrorMessage: 'Cet appareil ne peut pas lancer d\'appel téléphonique.',
           noPhoneTitle: 'Numéro indisponible',
           noPhoneMessage: 'Ce professionnel n\'a pas renseigné de numéro de téléphone.',
           shareMessage: 'Découvre',
@@ -676,6 +680,7 @@ export const Strings = {
     // ------------------------------
     annonce: {
       notFound: 'Annonce non trouvée',
+      newBadge: 'Nouveau',
       location: 'Localisation',
       department: 'Dép.',
       publishedAt: 'Publié',

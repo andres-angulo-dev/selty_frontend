@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
+import { Alert, View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/navigation/types';
 import { Annonce, Review } from '@/shared/types';
@@ -44,7 +44,9 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
 
     const flatListRef = useRef<FlatList>(null); // Ref to access FlatList methods (scroll to top on tab change)
     const { professionalId } = route.params; // Get the professionalId from navigation params
-    const professional = getProfessionalDetail(professionalId); // Fetch professional data (simulates API call)
+    // Fetch professional data (simulates API call). Memoized: this call builds a new object each
+    // time, which would make every useMemo depending on it useless.
+    const professional = useMemo(() => getProfessionalDetail(professionalId), [professionalId]);
     // Copy kept with the favorite (shown greyed if the profile disappears). Memoized: a new
     // object at each render would recreate the toggle callback for nothing.
     const favoriteSnapshot = useMemo(
@@ -87,10 +89,10 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
         );
     }, [activeTab, navigation]);
 
-    // Static header content (rendered once above the list)
-    // useCallback: stable reference prevents FlatList from re-rendering the header on every state change
+    // Header content above the list. A plain function called below at each render: React updates
+    // what changed without rebuilding it, and it can never show an outdated favorite state.
     // Guard inside: professional may be undefined before the early return check below
-    const renderHeader = useCallback(() => {
+    const renderHeader = () => {
         if (!professional) return null;
         const mapData = getProfessionalMapData(professional, serviceArea.zones);
         return (
@@ -121,7 +123,7 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
                     lastName={professional.lastName}
                     profession={getProfessionLabel(serviceArea.tradeIds)}
                     isFavorite={favorite.isFavorite}
-                    onMessagePress={() => console.log('Message')}
+                    onMessagePress={() => Alert.alert(Strings.messaging.comingSoonTitle, Strings.messaging.comingSoonMessage)}
                     onFavoritePress={isProfessional ? undefined : favorite.toggle}
                 />
 
@@ -176,7 +178,7 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
                 )}
             </>
         );
-    }, [professional, activeTab, serviceArea, navigation, annonces.length]);
+    };
 
     // Handle case where professional is not found
     if (!professional) {

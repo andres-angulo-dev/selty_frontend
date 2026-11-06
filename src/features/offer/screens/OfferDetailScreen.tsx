@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { View, Text, ScrollView, StyleSheet, Pressable, Linking, Image, Share, Alert } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Pressable, Image, Share, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -9,6 +9,7 @@ import { ProfessionalRowCard } from '@/shared/components/ProfessionalRowCard';
 import { MapPlaceholder } from '@/shared/components/MapPlaceholder';
 import { MapPreview } from '@/shared/components/MapPreview';
 import { DetailCtaBar } from '@/shared/components/DetailCtaBar';
+import { callPhone } from '@/shared/utils/callPhone';
 import { formatAbsoluteDate, getDaysUntil } from '@/shared/utils/formatDate';
 import { getProfessionalMapData } from '@/shared/utils/professionalMap';
 import { getProfessionLabel } from '@/shared/utils/professionLabel';
@@ -133,14 +134,7 @@ export const OfferDetailScreen: React.FC<Props> = ({ route, navigation }) => {
         }
     };
 
-    // Open the native phone dialer, or explain why we can't
-    const handleCallPress = () => {
-        if (professional?.phone) {
-            Linking.openURL(`tel:${professional.phone}`);
-            return;
-        }
-        Alert.alert(Strings.professional.actions.noPhoneTitle, Strings.professional.actions.noPhoneMessage);
-    };
+    const handleCallPress = () => callPhone(professional?.phone);
 
     const handleMessagePress = () => {
         Alert.alert(Strings.messaging.comingSoonTitle, Strings.messaging.comingSoonMessage);

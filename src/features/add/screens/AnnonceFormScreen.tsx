@@ -85,6 +85,7 @@ export const AnnonceFormScreen: React.FC = () => {
         control,
         handleSubmit,
         watch,
+        trigger,
         formState: { errors, isDirty, isSubmitted },
     } = useForm({
         resolver: zodResolver(annonceSchema),
@@ -232,7 +233,14 @@ export const AnnonceFormScreen: React.FC = () => {
                             <ChipSelector
                                 options={PRICE_OPTIONS}
                                 selected={field.value}
-                                onChange={field.onChange}
+                                onChange={(value) => {
+                                    field.onChange(value);
+                                    // The amount depends on this choice, but a change only re-checks its
+                                    // own field: after a refused submit, moving to "Devis" must also clear
+                                    // the error of the amount, now hidden. Not before the first submit:
+                                    // "Prix fixe" must not turn the empty amount red straight away.
+                                    if (isSubmitted) trigger('price');
+                                }}
                                 error={errors.priceType?.message}
                             />
                         )}

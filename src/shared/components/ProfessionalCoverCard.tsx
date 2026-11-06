@@ -29,7 +29,7 @@ export const ProfessionalCoverCard: React.FC<ProfessionalCoverCardProps> = ({
                 {coverSource ? (
                     <ImageBackground source={coverSource} style={styles.cover}>
                         <View style={styles.ratingBadge}>
-                            <Ionicons name="star" size={10} color="#FFD700" />
+                            <Ionicons name="star" size={10} color={Colors.semantic.warning} />
                             <Text style={styles.ratingText}>{professional.rating.toFixed(1)}</Text>
                         </View>
                     </ImageBackground>
@@ -37,7 +37,7 @@ export const ProfessionalCoverCard: React.FC<ProfessionalCoverCardProps> = ({
                     <View style={[styles.cover, styles.coverFallback]}>
                         <Ionicons name="person-outline" size={32} color={Colors.neutral.border} />
                         <View style={styles.ratingBadge}>
-                            <Ionicons name="star" size={10} color="#FFD700" />
+                            <Ionicons name="star" size={10} color={Colors.semantic.warning} />
                             <Text style={styles.ratingText}>{professional.rating.toFixed(1)}</Text>
                         </View>
                     </View>
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 3,
-        backgroundColor: 'rgba(0, 0, 0, 0.55)',
+        backgroundColor: Colors.overlay.darkScrim,
         paddingHorizontal: 7,
         paddingVertical: 3,
         borderRadius: BorderRadius.full,

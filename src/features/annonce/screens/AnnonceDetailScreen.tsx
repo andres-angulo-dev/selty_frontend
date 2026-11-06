@@ -1,10 +1,11 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { View, Text, ScrollView, StyleSheet, Pressable, Linking, Image, Share, Alert } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Pressable, Image, Share, Alert } from 'react-native';
 import { Colors, Typography, Spacing, Strings, BorderRadius } from '@/shared/constants';
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/navigation/types';
 import { useAnnonce } from '@/shared/hooks/usePublications';
+import { callPhone } from '@/shared/utils/callPhone';
 import { formatEuros } from '@/shared/utils/formatPrice';
 import { formatRelativeDate } from '@/shared/utils/formatDate';
 import { ProfessionalRowCard } from '@/shared/components/ProfessionalRowCard';
@@ -20,6 +21,9 @@ import { useAccountType } from '@/app/providers/AccountTypeProvider';
 import { snapshotFromAnnonce } from '@/shared/utils/favoriteSnapshot';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AnnonceDetail'>;
+
+// Same wording as the form: the customer reads what the professional chose
+const priceLabels = Strings.add.annonceForm.priceTypes;
 
 export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     const { annonceId } = route.params;
@@ -107,16 +111,16 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     const imageUrl = annonce.images[0] ?? null;
 
     // Stat items with icons derived from pricing fields
-    const statItems: { icon: string; label: string }[] = [];
-    if (annonce.isFree) statItems.push({ icon: 'gift-outline', label: 'Gratuit' });
+    const statItems: { icon: React.ComponentProps<typeof Ionicons>['name']; label: string }[] = [];
+    if (annonce.isFree) statItems.push({ icon: 'gift-outline', label: priceLabels.free });
     if (annonce.priceType === 'fixed') {
         // The amount when known: it is what the customer wants to read
         statItems.push({
             icon: 'pricetag-outline',
-            label: annonce.price !== undefined ? formatEuros(annonce.price) : 'Prix fixe',
+            label: annonce.price !== undefined ? formatEuros(annonce.price) : priceLabels.fixed,
         });
     }
-    if (annonce.priceType === 'quote') statItems.push({ icon: 'document-text-outline', label: 'Devis gratuit' });
+    if (annonce.priceType === 'quote') statItems.push({ icon: 'document-text-outline', label: priceLabels.quote });
 
     const handleProfessionalPress = () => {
         if (annonce.professional) {
@@ -124,14 +128,7 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
         }
     };
 
-    // Open the native phone dialer, or explain why we can't
-    const handleCallPress = () => {
-        if (annonce.professional?.phone) {
-            Linking.openURL(`tel:${annonce.professional.phone}`);
-            return;
-        }
-        Alert.alert(Strings.professional.actions.noPhoneTitle, Strings.professional.actions.noPhoneMessage);
-    };
+    const handleCallPress = () => callPhone(annonce.professional?.phone);
 
     return (
         <View style={styles.container}>
@@ -147,7 +144,7 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
                     )}
                     {annonce.isNew && (
                         <View style={styles.heroBadge}>
-                            <Text style={styles.heroBadgeText}>Nouveau</Text>
+                            <Text style={styles.heroBadgeText}>{Strings.annonce.newBadge}</Text>
                         </View>
                     )}
                 </View>
@@ -181,7 +178,7 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
                         <View style={styles.statsRow}>
                             {statItems.map((item) => (
                                 <View key={item.label} style={styles.statItem}>
-                                    <Ionicons name={item.icon as any} size={18} color={Colors.primary.main} />
+                                    <Ionicons name={item.icon} size={18} color={Colors.primary.main} />
                                     <Text style={styles.statLabel}>{item.label}</Text>
                                 </View>
                             ))}

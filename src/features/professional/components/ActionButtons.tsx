@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, Pressable, StyleSheet, Linking, Share, Alert } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Share } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Typography, Strings, Spacing, BorderRadius } from '@/shared/constants';
+import { callPhone } from '@/shared/utils/callPhone';
 
 type ActionButtonsProps = {
     phone: string | null;
@@ -23,17 +24,6 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
     onFavoritePress,
 }) => {
 
-    const handleCall = () => {
-        if (!phone) {
-            Alert.alert(
-                Strings.professional.actions.noPhoneTitle,
-                Strings.professional.actions.noPhoneMessage,
-            );
-            return;
-        }
-        Linking.openURL(`tel:${phone}`);
-    };
-
     const handleShare = async () => {
         try {
             await Share.share({
@@ -47,7 +37,7 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
     return (
         <View style={styles.container}>
             {/* Call button */}
-            <Pressable style={({ pressed }) => [styles.button, pressed && styles.pressed]} onPress={handleCall}>
+            <Pressable style={({ pressed }) => [styles.button, pressed && styles.pressed]} onPress={() => callPhone(phone)}>
                 <View style={styles.iconContainer}>
                     <Ionicons name='call-outline' size={22} color={Colors.primary.main} />
                 </View>
