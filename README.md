@@ -27,6 +27,8 @@ Health checks before a commit:
 ```bash
 npx expo-doctor
 npx tsc --noEmit
+npm test                 # Unit tests of the business rules (in __tests__ folders)
+npm run test:coverage    # Same, with the coverage report
 ```
 
 ## Stack

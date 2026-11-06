@@ -2,6 +2,8 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+    // Global test functions (describe, it, expect) in the __tests__ folders
+    "types": ["jest"],
     // Path alias: @/ = src/ (avoids ../../../ in imports)
     // No baseUrl: deprecated in TypeScript 6, paths now resolve relative to this file
     "paths": {
