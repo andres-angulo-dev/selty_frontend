@@ -26,6 +26,20 @@ export const getOfferAvailability = (offer: Offer | undefined | null): Availabil
     return !offer.isActive || isExpired ? 'ended' : 'available';
 };
 
+/** Offer whose start date is after today: an offer starting today has started */
+export const isOfferUpcoming = (offer: Offer): boolean => {
+    if (!offer.startsAt) {
+        return false;
+    }
+    const tomorrow = startOfToday();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return offer.startsAt >= tomorrow;
+};
+
+/** Offer running right now: the only ones customers see in a list and that count as active */
+export const isOfferLive = (offer: Offer): boolean =>
+    getOfferAvailability(offer) === 'available' && !isOfferUpcoming(offer);
+
 /** Annonce: disabled by the pro */
 export const getAnnonceAvailability = (annonce: Annonce | undefined | null): Availability => {
     if (!annonce) {

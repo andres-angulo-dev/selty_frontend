@@ -1,11 +1,14 @@
 import type { NavigatorScreenParams } from '@react-navigation/native';
 // Global navigation types for the app
 
+// Segments of the "Mes publications" tab
+export type PublicationSegment = 'annonce' | 'offer';
+
 // Root tab navigator toures
 export type RootTabParamList = {
     Home: undefined;
     Favorites: undefined;       // Individuals only
-    MyPublications: undefined;  // Professionals only (same slot as Favorites)
+    MyPublications: { segment?: PublicationSegment } | undefined;  // Professionals only (same slot as Favorites)
     Add: undefined;             // Both roles, content depends on the role (request / annonce or offer)
     Messages: undefined;
     Profile: undefined;

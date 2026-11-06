@@ -146,5 +146,6 @@ const styles = StyleSheet.create({
     caption: {
         ...Typography.bodySmall,
         color: Colors.text.secondary,
+        flexShrink: 1,             // A long caption wraps instead of leaving the screen
     },
 });

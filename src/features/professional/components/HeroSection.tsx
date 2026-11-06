@@ -10,7 +10,6 @@ type HeroSectionProps = {
     profession: string;
     city: string;
     department: string;
-    isCertified: boolean;
     isAvailable: boolean;
 };
 
@@ -21,7 +20,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     profession,
     city,
     department,
-    isCertified,
     isAvailable,
 }) => {
     const statusColor = isAvailable ? Colors.semantic.success : Colors.neutral.disabled;
@@ -49,13 +47,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 </View>
             </View>
 
-            {/* Name + Certified badge */}
-            <View style={styles.nameRow}>
-                <Text style={styles.name}>{firstName} {lastName}</Text>
-                {isCertified && (
-                    <Ionicons name='checkmark-circle' size={20} color={Colors.secondary.main} style={styles.certifiedIcon} />
-                )}
-            </View>
+            {/* Name */}
+            <Text style={styles.name}>{firstName} {lastName}</Text>
 
             {/* Profession */}
             <Text style={styles.profession}>{profession}</Text>
@@ -122,19 +115,10 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
 
-    nameRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: Spacing.xs,
-    },
-
     name: {
         ...Typography.h2,
         color: Colors.text.primary,
-    },
-
-    certifiedIcon: {
-        marginLeft: Spacing.xs,
+        marginBottom: Spacing.xs,
     },
 
     profession: {

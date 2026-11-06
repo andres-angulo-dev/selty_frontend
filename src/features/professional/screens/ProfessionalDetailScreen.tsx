@@ -9,6 +9,7 @@ import { HeroSection } from '../components/HeroSection';
 import { ActionButtons } from '../components/ActionButtons';
 import { StatsRow } from '../components/StatsRow';
 import { AboutSection } from '../components/AboutSection';
+import { ServiceZonesSection } from '../components/ServiceZonesSection';
 import { TabSelector, TabName } from '../components/TabSelector'
 import { ReviewSummary } from '../components/ReviewSummary';
 import { ReviewCard } from '../components/ReviewCard';
@@ -19,6 +20,11 @@ import { Colors, Typography, Spacing, Strings } from '@/shared/constants';
 import { useFavorite } from '@/shared/hooks/useFavorite';
 import { useAccountType } from '@/app/providers/AccountTypeProvider';
 import { snapshotFromProfessional } from '@/shared/utils/favoriteSnapshot';
+import { getProfessionLabel } from '@/shared/utils/professionLabel';
+import { getProfessionalMapData } from '@/shared/utils/professionalMap';
+import { withUndrawableZones } from '@/shared/utils/zoneLabels';
+import { useProfessionalServiceArea } from '@/shared/hooks/useProfessionalServiceArea';
+import { useAnnonces } from '@/shared/hooks/usePublications';
 
 // Mocks
 import { getProfessionalDetail } from '../data/mockProfessionalDetails';
@@ -48,6 +54,14 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
     const favorite = useFavorite('professional', professionalId, favoriteSnapshot); // Saved state, shared with the Favorites tab
     // Favorites are for individuals: a professional does not save other people's content
     const { isProfessional } = useAccountType();
+    // Real trades and zones; the signed-in pro's own page follows "Mes zones" at once
+    const serviceArea = useProfessionalServiceArea(professional);
+    // Their annonces, published ones first: the count on the page always matches the list
+    const allAnnonces = useAnnonces();
+    const annonces = useMemo(
+        () => allAnnonces.filter((annonce) => annonce.professionalId === professionalId),
+        [allAnnonces, professionalId],
+    );
 
     // Reset pagination and scroll to tabSelector when tab changes
     useEffect(() => {
@@ -78,17 +92,17 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
     // Guard inside: professional may be undefined before the early return check below
     const renderHeader = useCallback(() => {
         if (!professional) return null;
+        const mapData = getProfessionalMapData(professional, serviceArea.zones);
         return (
             <>
-                {/* Hero: avatar, name, profession, badge, location */}
+                {/* Hero: avatar, name, profession, location */}
                 <HeroSection
                     avatar={professional.avatar}
                     firstName={professional.firstName}
                     lastName={professional.lastName}
-                    profession={professional.profession}
+                    profession={getProfessionLabel(serviceArea.tradeIds)}
                     city={professional.city}
                     department={professional.department}
-                    isCertified={professional.isCertified}
                     isAvailable={professional.isAvailable}
                 />
 
@@ -96,7 +110,7 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
                 <StatsRow
                     rating={professional.rating}
                     reviewsCount={professional.reviewsCount}
-                    annoncesCount={professional.annoncesCount}
+                    annoncesCount={annonces.length}
                     createdAt={professional.createdAt}
                 />
 
@@ -105,7 +119,7 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
                     phone={professional.phone}
                     firstName={professional.firstName}
                     lastName={professional.lastName}
-                    profession={professional.profession}
+                    profession={getProfessionLabel(serviceArea.tradeIds)}
                     isFavorite={favorite.isFavorite}
                     onMessagePress={() => console.log('Message')}
                     onFavoritePress={isProfessional ? undefined : favorite.toggle}
@@ -117,12 +131,30 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
                     services={professional.services}
                 />
 
+                {/* Where they work: the list below the map names every zone, so the caption
+                    stays short here; the full-screen map has no list and names them all */}
+                <ServiceZonesSection
+                    title={Strings.professional.zones.title}
+                    zones={serviceArea.zones}
+                    caption={professional.city}
+                    mapData={mapData}
+                    onMapPress={() => {
+                        if (!mapData) return;
+                        navigation.navigate('LocationMap', {
+                            title: `${professional.firstName} ${professional.lastName}`,
+                            caption: withUndrawableZones(professional.city, serviceArea.zones),
+                            markers: mapData.markers,
+                            zones: mapData.zones,
+                        });
+                    }}
+                />
+
                 {/* Tab selector (Annonces | Avis) */}
                 <View onLayout={(event) => { tableSelectorY.current = event.nativeEvent.layout.y; }}>
                     <TabSelector
                         activeTab={activeTab}
                         onTabChange={setActiveTab}
-                        annoncesCount={professional.annoncesCount}
+                        annoncesCount={annonces.length}
                         reviewsCount={professional.reviewsCount}
                     />
                 </View>
@@ -144,7 +176,7 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
                 )}
             </>
         );
-    }, [professional, activeTab]);
+    }, [professional, activeTab, serviceArea, navigation, annonces.length]);
 
     // Handle case where professional is not found
     if (!professional) {
@@ -156,10 +188,10 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
     }
 
     // Slice data based on current tab and displayed count
-    const currentData: ListItem[] = activeTab === 'annonces' ? professional.annonces.slice(0, displayedCount) : professional.reviews.slice(0, displayedCount);
+    const currentData: ListItem[] = activeTab === 'annonces' ? annonces.slice(0, displayedCount) : professional.reviews.slice(0, displayedCount);
 
     // Total items for the current tab
-    const totalItems = activeTab === 'annonces' ? professional.annonces.length : professional.reviews.length;
+    const totalItems = activeTab === 'annonces' ? annonces.length : professional.reviews.length;
 
     // Load more items when reaching the end of the list
     const handleLoadMore = () => {
@@ -188,7 +220,9 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
                 data={currentData} // Data to display (annonces OR reviews)
                 keyExtractor={(item) => item.id}
                 renderItem={renderItem}  // Function called for each item in data
-                ListHeaderComponent={renderHeader}  // Rendered ONCE above the list, displayed before renderItem
+                // An element, not the function: a function changing at each render counts as a new
+                // component, so React would rebuild the header (and reload the map) on every tab change
+                ListHeaderComponent={renderHeader() ?? undefined}
                 ListFooterComponent={renderFooter} // Rendered ONCE below the list, displayed after renderItem
                 onEndReached={handleLoadMore} // At xx% of the end, triggers the display of 10 additional items
                 onEndReachedThreshold={0.5} // xx% to trigger display of 10 additional items

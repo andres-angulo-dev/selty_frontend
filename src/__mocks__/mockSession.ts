@@ -5,6 +5,9 @@ import type { ProServiceArea, RequestAuthor } from '@/shared/types';
 // by hand with features/profile/data/mockUser (same id 'user_001').
 export const CURRENT_USER_ID = 'user_001';
 
+/** Public professional page of the current user, when in professional mode */
+export const CURRENT_PROFESSIONAL_ID = 'pro-1';
+
 /** Public author card of the current user (first name + initial only) */
 export const CURRENT_USER_AUTHOR: RequestAuthor = {
     id: CURRENT_USER_ID,

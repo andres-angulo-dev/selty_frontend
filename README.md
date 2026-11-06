@@ -43,13 +43,13 @@ Feature-based, singular feature names, `@/` alias to `src/`:
 ```
 src/
 ├── app/navigation/     # RootStackNavigator (tabs + full-screen modals), TabNavigator
-├── features/           # home, professional, annonce, offer, profile, favorites, messaging, search
+├── features/           # home, professional, annonce, offer, add, publication, request, serviceArea, favorite, profile, messaging, search
 │   └── <feature>/      # components, screens, services, hooks, data (mocks), types
 ├── shared/
 │   ├── components/     # Reusable, prop-driven components (no business types inside)
 │   ├── constants/      # colors, typography, spacing, strings (all user-facing text)
 │   ├── hooks/ utils/ types/
-└── stores/             # Redux (not implemented yet)
+└── stores/             # Redux Toolkit: favorites, publications, requests, serviceArea (in memory)
 ```
 
 Rules: a feature never imports from another feature (except types); user-facing text lives in
@@ -59,13 +59,15 @@ Rules: a feature never imports from another feature (except types); user-facing 
 
 Detail screens (offer, annonce) are built from the same blocks:
 
-- `ProfessionalRowCard` — "proposed by" row: avatar, online dot, verified pill, rating, chevron
-- `MapPlaceholder` — static map stand-in (to be replaced by a real map, same `height` / `caption` contract)
+- `ProfessionalRowCard` — "proposed by" row: avatar, online dot, optional badge, rating, chevron
+- `MapPreview` — real map with pins and zones; `MapPlaceholder` is its stand-in when nothing can be drawn
 - `DetailCtaBar` — bottom action bar: square secondary button + full-width primary button
 - `OfferCard`, `AnnonceCard`, `ProfessionalCard`, `CategoryCard`, `SearchBar`, `FormInput`, `Button`
 
 ## Known limitations
 
-- Likes, favorites and comments live in local screen state (lost on unmount) until the Redux store lands.
+- No backend yet: favorites, publications, requests, trades and zones live in memory (lost on restart). Likes and comments live in local screen state.
+- Rules such as publishing only in the professional's trades are enforced by the app only; the server must apply them too.
+- Publications cannot be edited, disabled or deleted yet.
 - Messaging opens a "coming soon" alert.
 - `npm audit` reports 10 advisories, all inside Expo CLI / ngrok tooling, none shipped in the app bundle.

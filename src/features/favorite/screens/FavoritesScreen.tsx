@@ -14,6 +14,7 @@ import { ProfessionalRowCard } from '@/shared/components/ProfessionalRowCard';
 import { MediaRowCard } from '@/shared/components/MediaRowCard';
 import { UnavailableCard } from '@/shared/components/UnavailableCard';
 import { useRemoveFavorite } from '@/shared/hooks/useFavorite';
+import { getProfessionLabel } from '@/shared/utils/professionLabel';
 import { useFavoriteItems, FavoriteListItem } from '../hooks/useFavoriteItems';
 
 // ============================================
@@ -99,13 +100,11 @@ export const FavoritesScreen: React.FC = () => {
         return (
             <ProfessionalRowCard
                 name={name}
-                subtitle={`${item.profession} · ${item.city} (${item.department})`}
+                subtitle={`${getProfessionLabel(item.tradeIds)} · ${item.city} (${item.department})`}
                 avatarUrl={item.avatar}
                 rating={item.rating}
                 reviewsCount={item.reviewsCount}
                 reviewsLabel={texts.reviews}
-                isVerified={item.isCertified}
-                verifiedLabel={texts.verified}
                 onPress={() => navigation.navigate('ProfessionalDetail', { professionalId: item.id })}
                 trailing={renderBookmark('professional', item.id, name)}
             />
@@ -140,7 +139,7 @@ export const FavoritesScreen: React.FC = () => {
                 subtitle={item.professional ? `${item.professional.firstName} ${item.professional.lastName}` : undefined}
                 imageUrl={item.image}
                 placeholderIcon="pricetag-outline"
-                badge={{ label: item.discount, tone: 'danger' }}
+                badge={item.discount ? { label: item.discount, tone: 'danger' } : undefined}
                 onPress={() => navigation.navigate('OfferDetail', { offerId: item.id })}
                 trailing={renderBookmark('offer', item.id, item.title)}
             />

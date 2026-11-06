@@ -7,16 +7,15 @@ import {
     getOfferAvailability,
     getProfessionalAvailability,
 } from '@/shared/utils/availability';
+import { useAnnonces, useOffers } from '@/shared/hooks/usePublications';
 import { mockProfessionals } from '@/__mocks__/mockProfessionals';
-import { mockAnnonces } from '@/__mocks__/mockAnnonces';
-import { mockOffers } from '@/__mocks__/mockOffers';
 
 // ============================================
 // useFavoriteItems
 // Turns the saved entries (favorites store) into what the Favorites tab shows:
 // for each favorite, its availability, the live item when it is available,
 // and the copy taken at save time (used by the greyed card otherwise).
-// Today the live items come from the mocks; with a backend this hook becomes
+// Today the live items come from the mocks and the publications store; with a backend this hook becomes
 // the API call (e.g. GET /me/favorites) and the screen does not change.
 // ============================================
 
@@ -30,13 +29,12 @@ export interface FavoriteItems {
     offers: FavoriteListItem<Offer>[];
 }
 
-/** Index a list by ID once (module level: mocks never change at runtime) */
+/** Index a list by ID */
 const indexById = <T extends { id: string }>(items: T[]): Map<string, T> =>
     new Map(items.map((item) => [item.id, item]));
 
+// Module level: mock professionals never change at runtime
 const PROFESSIONALS_BY_ID = indexById(mockProfessionals);
-const ANNONCES_BY_ID = indexById(mockAnnonces);
-const OFFERS_BY_ID = indexById(mockOffers);
 
 /**
  * Keeps the saved order (most recent first). Unavailable favorites stay in
@@ -62,19 +60,22 @@ export const useFavoriteItems = (): FavoriteItems => {
     const professionalEntries = useFavoriteEntries('professional');
     const annonceEntries = useFavoriteEntries('annonce');
     const offerEntries = useFavoriteEntries('offer');
+    // Published items can be saved too: they must resolve like the mocks
+    const allAnnonces = useAnnonces();
+    const allOffers = useOffers();
 
-    // Recomputed only when a list of entries changes (same array reference otherwise)
+    // Recomputed only when a list of entries or of items changes (same array reference otherwise)
     const professionals = useMemo(
         () => resolve(professionalEntries, PROFESSIONALS_BY_ID, getProfessionalAvailability),
         [professionalEntries],
     );
     const annonces = useMemo(
-        () => resolve(annonceEntries, ANNONCES_BY_ID, getAnnonceAvailability),
-        [annonceEntries],
+        () => resolve(annonceEntries, indexById(allAnnonces), getAnnonceAvailability),
+        [annonceEntries, allAnnonces],
     );
     const offers = useMemo(
-        () => resolve(offerEntries, OFFERS_BY_ID, getOfferAvailability),
-        [offerEntries],
+        () => resolve(offerEntries, indexById(allOffers), getOfferAvailability),
+        [offerEntries, allOffers],
     );
 
     return { professionals, annonces, offers };

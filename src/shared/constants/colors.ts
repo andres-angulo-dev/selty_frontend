@@ -58,7 +58,7 @@ export const Colors = {
       whiteSubtle: 'rgba(255, 255, 255, 0.10)',  // Translucent fill (badges, decorative circles)
       whiteBorder: 'rgba(255, 255, 255, 0.15)',  // Hairline border on dark surfaces
       whiteMuted: 'rgba(255, 255, 255, 0.80)',   // Secondary text on dark surfaces
-      darkScrim: 'rgba(0, 0, 0, 0.55)',          // Small dark button over a photo (remove cross)
+      darkScrim: 'rgba(0, 0, 0, 0.55)',          // Small dark button over a photo (remove cross), backdrop behind a dialog
       whiteVeil: 'rgba(255, 255, 255, 0.60)',    // "Greyed" photo of an unavailable item
     },
 

@@ -16,7 +16,6 @@ export const OFFER_LIMITS = {
     imageMax: 1,
     titleMin: 5,
     titleMax: 60,
-    discountMin: 1,
     discountMax: 30,
     descriptionMin: 20,
     descriptionMax: 1000,
@@ -32,6 +31,10 @@ export const OFFER_CONDITIONS = [
 ] as const satisfies readonly OfferCondition[];
 
 type OfferErrorMessages = typeof Strings.add.offerForm.errors;
+
+// "0", "-0 %", "0,00 €": not an advantage, and a "0" badge on a card looks like a bug.
+// The field is free text ("2 pour 1"), so only this exact shape is refused.
+const ZERO_DISCOUNT = /^[-−–\s]*0+([.,]0+)?\s*(%|€)?$/;
 
 /** Midnight of the given day, so two dates compare by calendar day only. */
 export const startOfDay = (date: Date): Date =>
@@ -51,12 +54,16 @@ export const createOfferSchema = (messages: OfferErrorMessages) =>
                 .trim()
                 .min(OFFER_LIMITS.titleMin, messages.titleMin)
                 .max(OFFER_LIMITS.titleMax, messages.titleMax),
+            // Optional: an empty field becomes null, and no badge is shown
             discount: z
                 .string()
                 .trim()
-                .min(OFFER_LIMITS.discountMin, messages.discountMin)
-                .max(OFFER_LIMITS.discountMax, messages.discountMax),
-            categoryId: z.string().min(1, messages.category),
+                .max(OFFER_LIMITS.discountMax, messages.discountMax)
+                .refine((value) => !ZERO_DISCOUNT.test(value), messages.discountZero)
+                .transform((value) => value || null),
+            // Security: the form only offers the pro's trades, but this is comfort only.
+            // TODO(backend): the server must refuse a tradeId outside the pro's trades.
+            tradeId: z.string().min(1, messages.trade),
             description: z
                 .string()
                 .trim()

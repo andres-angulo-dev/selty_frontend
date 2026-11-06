@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Typography, Spacing } from '@/shared/constants';
 import { Professional } from '@/shared/types';
+import { getProfessionLabel } from '@/shared/utils/professionLabel';
 
 interface ProfessionalCardProps {
     professional: Professional;
@@ -29,7 +30,7 @@ export const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
                 
                 {/* Profession */}
                 <Text style={styles.profession} numberOfLines={1}>
-                    {professional.profession}
+                    {getProfessionLabel(professional.tradeIds)}
                 </Text>
 
                 {/* Rating + Distance */}
@@ -54,13 +55,6 @@ export const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
                     )}
                 </View>
             </View>
-
-            {/* Certified badge */}
-            {professional.isCertified && (
-                <View style={styles.badge}>
-                    <Ionicons name="checkmark-circle" size={18} color={Colors.semantic.success} />
-                </View>
-            )}
         </Pressable>
     )
 }
@@ -139,10 +133,4 @@ const styles = StyleSheet.create({
         ...Typography.caption,
         color: Colors.text.tertiary,
     },
-
-    badge: {
-        position: 'absolute',
-        top: Spacing.sm,
-        right: Spacing.sm,
-    }
 })

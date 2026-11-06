@@ -5,7 +5,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/navigation/types';
 import { BorderRadius, Colors, Spacing, Strings, Typography } from '@/shared/constants';
 import { REQUEST_RULES } from '@/shared/constants/requestRules';
-import type { ServiceZone } from '@/shared/types';
+import { describeZone, ZONE_ICONS } from '@/shared/utils/zoneLabels';
 import { Button } from '@/shared/components/button';
 import { MenuSection } from '@/shared/components/MenuSection';
 import { useServiceArea, useServiceAreaActions } from '@/shared/hooks/useServiceArea';
@@ -21,29 +21,6 @@ import { useServiceArea, useServiceAreaActions } from '@/shared/hooks/useService
 type Props = NativeStackScreenProps<RootStackParamList, 'ServiceZones'>;
 
 const texts = Strings.serviceArea;
-
-type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
-
-const ZONE_ICONS: Record<ServiceZone['kind'], IoniconName> = {
-    city: 'location-outline',
-    department: 'map-outline',
-    region: 'layers-outline',
-    country: 'globe-outline',
-};
-
-/** Title and subtitle of a zone row */
-const describeZone = (zone: ServiceZone): { title: string; subtitle: string } => {
-    switch (zone.kind) {
-        case 'city':
-            return { title: zone.city, subtitle: texts.cityRow(zone.radiusKm) };
-        case 'department':
-            return { title: `${zone.name} (${zone.code})`, subtitle: texts.zoneKinds.department };
-        case 'region':
-            return { title: zone.name, subtitle: texts.zoneKinds.region };
-        case 'country':
-            return { title: texts.country, subtitle: texts.zoneKinds.country };
-    }
-};
 
 export const ServiceZonesScreen: React.FC<Props> = ({ navigation }) => {
     const area = useServiceArea();

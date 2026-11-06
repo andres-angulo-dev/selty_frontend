@@ -7,10 +7,6 @@ import { mockProfessionals } from "@/__mocks__/mockProfessionals";
 import { mockCategories } from "@/__mocks__/mockCategories";
 import { mockComments } from "@/__mocks__/mockComments";
 
-export const getAnnonceById = (id: string): Annonce | undefined => {
-  return mockAnnonces.find((annonce) => annonce.id === id);
-};
-
 export const mockAnnonces: Annonce[] = [
     {
       id: 'annonce-1',
@@ -23,6 +19,7 @@ export const mockAnnonces: Annonce[] = [
       commentsCount: mockComments.filter((c) => c.annonceId === 'annonce-1').length,
       isLiked: false,
       professionalId: 'pro-1',
+      tradeId: 'trade-plumber',
       categoryId: 'cat-1',
       professional: mockProfessionals[0],    // Jean Dupont
       category: mockCategories[0],           // Artisans
@@ -42,6 +39,7 @@ export const mockAnnonces: Annonce[] = [
       commentsCount: mockComments.filter((c) => c.annonceId === 'annonce-6').length,
       isLiked: false,
       professionalId: 'pro-1',
+      tradeId: 'trade-plumber',
       categoryId: 'cat-1',
       professional: mockProfessionals[0],    // Jean Dupont
       category: mockCategories[0],           // Artisans
@@ -59,6 +57,7 @@ export const mockAnnonces: Annonce[] = [
       commentsCount: mockComments.filter((c) => c.annonceId === 'annonce-2').length,
       isLiked: true,
       professionalId: 'pro-2',
+      tradeId: 'trade-hairdresser',
       categoryId: 'cat-2',
       professional: mockProfessionals[1],    // Marie Martin
       category: mockCategories[1],           // Beauté
@@ -76,6 +75,7 @@ export const mockAnnonces: Annonce[] = [
       commentsCount: mockComments.filter((c) => c.annonceId === 'annonce-3').length,
       isLiked: false,
       professionalId: 'pro-3',
+      tradeId: 'trade-lawyer',
       categoryId: 'cat-3',
       professional: mockProfessionals[2],    // Paul Leblanc
       category: mockCategories[2],           // Juridique
@@ -93,6 +93,7 @@ export const mockAnnonces: Annonce[] = [
       commentsCount: mockComments.filter((c) => c.annonceId === 'annonce-4').length,
       isLiked: true,
       professionalId: 'pro-4',
+      tradeId: 'trade-coach',
       categoryId: 'cat-5',
       professional: mockProfessionals[3],    // Sophie Durand
       category: mockCategories[4],           // Santé
@@ -111,6 +112,7 @@ export const mockAnnonces: Annonce[] = [
       commentsCount: mockComments.filter((c) => c.annonceId === 'annonce-5').length,
       isLiked: false,
       professionalId: 'pro-5',
+      tradeId: 'trade-electrician',
       categoryId: 'cat-1',
       professional: mockProfessionals[4],    // Lucas Bernard
       category: mockCategories[0],           // Artisans

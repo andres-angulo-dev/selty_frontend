@@ -4,13 +4,17 @@ import { Colors, Typography, Spacing, Strings, BorderRadius } from '@/shared/con
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/navigation/types';
-import { getAnnonceById } from '@/__mocks__/mockAnnonces';
+import { useAnnonce } from '@/shared/hooks/usePublications';
+import { formatEuros } from '@/shared/utils/formatPrice';
 import { formatRelativeDate } from '@/shared/utils/formatDate';
 import { ProfessionalRowCard } from '@/shared/components/ProfessionalRowCard';
 import { MapPlaceholder } from '@/shared/components/MapPlaceholder';
 import { MapPreview } from '@/shared/components/MapPreview';
 import { DetailCtaBar } from '@/shared/components/DetailCtaBar';
 import { getProfessionalMapData } from '@/shared/utils/professionalMap';
+import { getProfessionLabel } from '@/shared/utils/professionLabel';
+import { withUndrawableZones } from '@/shared/utils/zoneLabels';
+import { useProfessionalServiceArea } from '@/shared/hooks/useProfessionalServiceArea';
 import { useFavorite } from '@/shared/hooks/useFavorite';
 import { useAccountType } from '@/app/providers/AccountTypeProvider';
 import { snapshotFromAnnonce } from '@/shared/utils/favoriteSnapshot';
@@ -19,7 +23,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'AnnonceDetail'>;
 
 export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     const { annonceId } = route.params;
-    const annonce = getAnnonceById(annonceId);
+    const annonce = useAnnonce(annonceId);
 
     // ── All hooks must be declared before any conditional return ──────────
     const [isLiked, setIsLiked] = useState(annonce?.isLiked ?? false);
@@ -29,6 +33,8 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     const { isFavorite: isSaved, toggle: handleToggleSave } = useFavorite('annonce', annonceId, favoriteSnapshot);
     // Favorites are for individuals: no bookmark for a professional viewer
     const { isProfessional } = useAccountType();
+    // Real trades and zones of the professional behind this annonce
+    const serviceArea = useProfessionalServiceArea(annonce?.professional ?? null);
 
     const handleToggleLike = useCallback(() => {
         setIsLiked(prev => {
@@ -93,14 +99,23 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     }
 
     const categoryLabel = annonce.category?.name ?? null;
-    const mapData = annonce.professional ? getProfessionalMapData(annonce.professional) : null;
-    const locationCaption = `${annonce.city} — ${Strings.annonce.department} ${annonce.department}`;
+    const mapData = annonce.professional ? getProfessionalMapData(annonce.professional, serviceArea.zones) : null;
+    const locationCaption = withUndrawableZones(
+        `${annonce.city} — ${Strings.annonce.department} ${annonce.department}`,
+        serviceArea.zones,
+    );
     const imageUrl = annonce.images[0] ?? null;
 
     // Stat items with icons derived from pricing fields
     const statItems: { icon: string; label: string }[] = [];
     if (annonce.isFree) statItems.push({ icon: 'gift-outline', label: 'Gratuit' });
-    if (annonce.priceType === 'fixed') statItems.push({ icon: 'pricetag-outline', label: 'Prix fixe' });
+    if (annonce.priceType === 'fixed') {
+        // The amount when known: it is what the customer wants to read
+        statItems.push({
+            icon: 'pricetag-outline',
+            label: annonce.price !== undefined ? formatEuros(annonce.price) : 'Prix fixe',
+        });
+    }
     if (annonce.priceType === 'quote') statItems.push({ icon: 'document-text-outline', label: 'Devis gratuit' });
 
     const handleProfessionalPress = () => {
@@ -203,13 +218,11 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
                             <Text style={styles.sectionTitle}>{Strings.annonce.professional}</Text>
                             <ProfessionalRowCard
                                 name={`${annonce.professional.firstName} ${annonce.professional.lastName}`}
-                                subtitle={`${annonce.professional.profession} · ${annonce.professional.city}`}
+                                subtitle={`${getProfessionLabel(serviceArea.tradeIds)} · ${annonce.professional.city}`}
                                 avatarUrl={annonce.professional.avatar}
                                 rating={annonce.professional.rating}
                                 reviewsCount={annonce.professional.reviewsCount}
                                 reviewsLabel={Strings.offer.reviews}
-                                isVerified={annonce.professional.isCertified}
-                                verifiedLabel={Strings.offer.verified}
                                 isOnline={annonce.professional.isAvailable}
                                 onPress={handleProfessionalPress}
                                 style={styles.professionalCard}
@@ -217,7 +230,7 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
                         </>
                     )}
 
-                    {/* Location: real map when coordinates exist, placeholder otherwise */}
+                    {/* Location: real map when there is something to draw, placeholder otherwise */}
                     <Text style={styles.sectionTitle}>{Strings.annonce.location}</Text>
                     {mapData && annonce.professional ? (
                         <MapPreview

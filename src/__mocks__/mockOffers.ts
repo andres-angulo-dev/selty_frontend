@@ -6,10 +6,6 @@ import { Offer } from '@/shared/types';
 import { mockProfessionals } from '@/__mocks__/mockProfessionals';
 import { mockCategories } from '@/__mocks__/mockCategories';
 
-export const getOfferById = (offerId: string): Offer | null => {
-  return mockOffers.find((offer) => offer.id === offerId) ?? null;
-};
-
 export const mockOffers: Offer[] = [
     {
       id: 'offer-1',
@@ -23,6 +19,7 @@ export const mockOffers: Offer[] = [
       conditions: ['free_quote', 'fast_response', 'no_commitment'],
       likesCount: 24,
       professionalId: 'pro-1',
+      tradeId: 'trade-plumber',
       categoryId: 'cat-1',
       professional: mockProfessionals[0],    // Jean Dupont
       category: mockCategories[0],           // Artisans
@@ -40,6 +37,7 @@ export const mockOffers: Offer[] = [
       conditions: ['free_quote', 'no_commitment'],
       likesCount: 8,
       professionalId: 'pro-5',
+      tradeId: 'trade-electrician',
       categoryId: 'cat-1',
       professional: mockProfessionals[4],    // Lucas Bernard
       category: mockCategories[0],           // Artisans
@@ -57,6 +55,7 @@ export const mockOffers: Offer[] = [
       conditions: ['first_session_free'],
       likesCount: 41,
       professionalId: 'pro-2',
+      tradeId: 'trade-hairdresser',
       categoryId: 'cat-2',
       professional: mockProfessionals[1],    // Marie Martin
       category: mockCategories[1],           // Beauté
@@ -75,6 +74,7 @@ export const mockOffers: Offer[] = [
       conditions: ['free_quote'],
       likesCount: 5,
       professionalId: 'pro-3',
+      tradeId: 'trade-lawyer',
       categoryId: 'cat-3',
       professional: mockProfessionals[2],    // Paul Leblanc
       category: mockCategories[2],           // Juridique
@@ -84,7 +84,7 @@ export const mockOffers: Offer[] = [
       id: 'offer-5',
       title: 'Séance découverte offerte',
       description: 'Séance de coaching sportif découverte gratuite. Programme personnalisé inclus.',
-      discount: 'Gratuit',
+      discount: null,                        // An offer without a discount: no badge
       image: 'https://picsum.photos/seed/coaching-offer/400/200',
       startsAt: null,
       expiresAt: null,
@@ -92,6 +92,7 @@ export const mockOffers: Offer[] = [
       conditions: ['first_session_free', 'no_commitment'],
       likesCount: 17,
       professionalId: 'pro-4',
+      tradeId: 'trade-coach',
       categoryId: 'cat-5',
       professional: mockProfessionals[3],    // Sophie Durand
       category: mockCategories[4],           // Santé

@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors, Typography, Spacing, Strings } from '@/shared/constants';
 import { Category } from '../types';
 import { Professional } from '@/shared/types';
+import { getProfessionLabel } from '@/shared/utils/professionLabel';
 
 interface SearchOverlayProps {
     searchText: string;
@@ -98,7 +99,7 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({
                                 <Ionicons name='person-outline' size={18} color={Colors.primary.main} />
                                 <View>
                                     <Text style={styles.resultText}>{pro.firstName} {pro.lastName}</Text>
-                                    <Text style={styles.resultSubText}>{pro.profession}</Text>
+                                    <Text style={styles.resultSubText}>{getProfessionLabel(pro.tradeIds)}</Text>
                                 </View>
                             </View>
                             {pro.distance && (

@@ -13,7 +13,6 @@ import { FormHeader } from '@/shared/components/FormHeader';
 import { MenuSection } from '@/shared/components/MenuSection';
 import { FormInput } from '@/shared/components/FormInput';
 import { PhotoPicker } from '@/shared/components/PhotoPicker';
-import { SelectField } from '@/shared/components/SelectField';
 import { ChipSelector, ChipOption } from '@/shared/components/ChipSelector';
 import { DateField } from '@/shared/components/DateField';
 import { Button } from '@/shared/components/button';
@@ -28,8 +27,12 @@ import {
     OfferFormOutput,
     startOfDay,
 } from '../schemas/offerSchema';
+import { TradeField, getInitialTradeId } from '../components/TradeField';
+import { buildPublishedOffer } from '../utils/buildPublication';
+import { usePublicationActions } from '@/shared/hooks/usePublications';
 import { usePublishFlow } from '@/shared/hooks/usePublishFlow';
-import { CATEGORY_OPTIONS } from '@/__mocks__/mockCategoryOptions';
+import { useServiceArea } from '@/shared/hooks/useServiceArea';
+import { getTradeById, getTradeOptions } from '@/__mocks__/mockTrades';
 
 // ============================================
 // OFFER FORM SCREEN (professionals only)
@@ -53,7 +56,7 @@ const FIELD_LABELS: Record<string, string> = {
     image: texts.sections.image,
     title: texts.fields.title,
     discount: texts.fields.discount,
-    categoryId: Strings.add.annonceForm.fields.category,
+    tradeId: Strings.add.annonceForm.fields.trade,
     description: texts.fields.description,
     startsAt: texts.fields.startsAt,
     expiresAt: texts.fields.expiresAt,
@@ -64,7 +67,7 @@ const DEFAULT_VALUES: OfferFormInput = {
     image: [],
     title: '',
     discount: '',
-    categoryId: '',
+    tradeId: '',
     description: '',
     startsAt: null,
     expiresAt: null,
@@ -74,6 +77,8 @@ const DEFAULT_VALUES: OfferFormInput = {
 export const OfferFormScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const insets = useSafeAreaInsets();
+    // A professional publishes only in their own trades
+    const tradeOptions = getTradeOptions(useServiceArea().tradeIds);
 
     const {
         control,
@@ -82,11 +87,12 @@ export const OfferFormScreen: React.FC = () => {
         formState: { errors, isDirty, isSubmitted },
     } = useForm({
         resolver: zodResolver(offerSchema),
-        defaultValues: DEFAULT_VALUES,
+        defaultValues: { ...DEFAULT_VALUES, tradeId: getInitialTradeId(tradeOptions) },
         mode: 'onTouched',
     });
 
     const { publish } = usePublishFlow(isDirty, texts.discard);
+    const { publishOffer } = usePublicationActions();
 
     // The end date picker cannot go before the chosen start (or today)
     const today = startOfDay(new Date());
@@ -94,22 +100,24 @@ export const OfferFormScreen: React.FC = () => {
     const conditionsCount = watch('conditions').length;
 
     /**
-     * Called only with valid data. No backend yet: the offer is not stored;
-     * the form is replaced by the confirmation.
+     * Called only with valid data. The offer is kept in memory, then the form
+     * is replaced by the confirmation.
      * TODO(backend): send the offer before showing the confirmation.
      */
     const onPublish = (data: OfferFormOutput) => {
-        const category = CATEGORY_OPTIONS.find((option) => option.value === data.categoryId)?.label ?? '';
 
-        publish(() =>
+        const trade = getTradeById(data.tradeId)?.label ?? '';
+
+        publish(() => {
+            publishOffer(buildPublishedOffer(data, new Date()));
             navigation.replace('PublishSuccess', {
                 kind: 'offer',
                 title: data.title,
-                subtitle: category,
-                tag: data.discount,
+                subtitle: trade,
+                tag: data.discount ?? undefined,   // No discount: the tag is simply not shown
                 coverUri: data.image[0],
-            }),
-        );
+            });
+        });
     };
 
     return (
@@ -176,19 +184,14 @@ export const OfferFormScreen: React.FC = () => {
                     />
                     <Controller
                         control={control}
-                        name="categoryId"
+                        name="tradeId"
                         render={({ field }) => (
-                            <SelectField
-                                label={Strings.add.annonceForm.fields.category}
-                                options={CATEGORY_OPTIONS}
+                            <TradeField
+                                options={tradeOptions}
                                 value={field.value}
                                 onChange={field.onChange}
-                                onClose={field.onBlur}
-                                placeholder={Strings.add.annonceForm.fields.categoryPlaceholder}
-                                searchPlaceholder={Strings.add.annonceForm.fields.categorySearch}
-                                emptyText={Strings.add.annonceForm.fields.categoryEmpty}
-                                closeLabel={Strings.selectField.close}
-                                error={errors.categoryId?.message}
+                                onBlur={field.onBlur}
+                                error={errors.tradeId?.message}
                             />
                         )}
                     />

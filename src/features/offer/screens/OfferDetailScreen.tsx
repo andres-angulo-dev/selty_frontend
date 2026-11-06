@@ -11,8 +11,11 @@ import { MapPreview } from '@/shared/components/MapPreview';
 import { DetailCtaBar } from '@/shared/components/DetailCtaBar';
 import { formatAbsoluteDate, getDaysUntil } from '@/shared/utils/formatDate';
 import { getProfessionalMapData } from '@/shared/utils/professionalMap';
+import { getProfessionLabel } from '@/shared/utils/professionLabel';
+import { withUndrawableZones } from '@/shared/utils/zoneLabels';
+import { useProfessionalServiceArea } from '@/shared/hooks/useProfessionalServiceArea';
 import { RootStackParamList } from '@/app/navigation/types';
-import { getOfferById } from '@/__mocks__/mockOffers';
+import { useOffer } from '@/shared/hooks/usePublications';
 import { useFavorite } from '@/shared/hooks/useFavorite';
 import { useAccountType } from '@/app/providers/AccountTypeProvider';
 import { snapshotFromOffer } from '@/shared/utils/favoriteSnapshot';
@@ -49,18 +52,19 @@ const getCountdownLabel = (expiresAt: Date | null): { label: string; isExpired: 
     return { label: `${Strings.offer.expiresIn} ${daysLeft} ${unit}`, isExpired: false };
 };
 
-// Validity meta text: "Du X au Y" / "Valable jusqu'au Y" / "Sans date limite"
+// Validity meta text: "Du X au Y" / "Valable jusqu'au Y" / "À partir du X" / "Sans date limite"
 const getValidityLabel = (startsAt: Date | null, expiresAt: Date | null): string => {
     if (startsAt && expiresAt) {
         return `${Strings.offer.validFrom} ${formatAbsoluteDate(startsAt)} ${Strings.offer.validTo} ${formatAbsoluteDate(expiresAt)}`;
     }
     if (expiresAt) return `${Strings.offer.validUntil} ${formatAbsoluteDate(expiresAt)}`;
+    if (startsAt) return `${Strings.offer.validStartsOn} ${formatAbsoluteDate(startsAt)}`;
     return Strings.offer.noExpiry;
 };
 
 export const OfferDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     const { offerId } = route.params;
-    const offer = getOfferById(offerId);
+    const offer = useOffer(offerId);
 
     // ── All hooks must be declared before any conditional return ──────────
     // Saved state lives in the favorites store (shared with the Favorites tab)
@@ -68,6 +72,8 @@ export const OfferDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     const { isFavorite: isSaved, toggle: handleToggleSave } = useFavorite('offer', offerId, favoriteSnapshot);
     // Favorites are for individuals: no bookmark for a professional viewer
     const { isProfessional } = useAccountType();
+    // Real trades and zones of the professional behind this offer
+    const serviceArea = useProfessionalServiceArea(offer?.professional ?? null);
 
     const handleShare = useCallback(async () => {
         if (!offer) return;
@@ -116,7 +122,10 @@ export const OfferDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     const validityLabel = getValidityLabel(offer.startsAt, offer.expiresAt);
     const conditions = (offer.conditions ?? []).slice(0, MAX_CONDITIONS);
     const professional = offer.professional;
-    const mapData = professional ? getProfessionalMapData(professional) : null;
+    const mapData = professional ? getProfessionalMapData(professional, serviceArea.zones) : null;
+    const locationCaption = professional
+        ? withUndrawableZones(`${professional.city} ${Strings.offer.locationSuffix}`, serviceArea.zones)
+        : '';
 
     const handleProfessionalPress = () => {
         if (professional) {
@@ -157,24 +166,30 @@ export const OfferDetailScreen: React.FC<Props> = ({ route, navigation }) => {
                         pointerEvents='none'
                     />
 
-                    {/* Discount pill (top-left) */}
-                    <View style={styles.discountPill}>
-                        <Text style={styles.discountText}>{offer.discount}</Text>
-                    </View>
+                    {/* Pills over the photo: the discount is free text and text can be enlarged,
+                        so a wrapping row puts them on two lines rather than one over the other */}
+                    <View style={styles.heroPills}>
+                        {/* Discount (left), only when the offer has one */}
+                        {offer.discount ? (
+                            <View style={styles.discountPill}>
+                                <Text style={styles.discountText}>{offer.discount}</Text>
+                            </View>
+                        ) : null}
 
-                    {/* Countdown pill (top-right) */}
-                    {countdown && (
-                        <View style={styles.countdownPill}>
-                            <Ionicons
-                                name={countdown.isExpired ? 'alert-circle' : 'time-outline'}
-                                size={14}
-                                color={Colors.semantic.error}
-                            />
-                            <Text style={[styles.countdownText, countdown.isExpired && styles.countdownExpired]}>
-                                {countdown.label}
-                            </Text>
-                        </View>
-                    )}
+                        {/* Countdown (right, even without a discount) */}
+                        {countdown && (
+                            <View style={styles.countdownPill}>
+                                <Ionicons
+                                    name={countdown.isExpired ? 'alert-circle' : 'time-outline'}
+                                    size={14}
+                                    color={Colors.semantic.error}
+                                />
+                                <Text style={[styles.countdownText, countdown.isExpired && styles.countdownExpired]}>
+                                    {countdown.label}
+                                </Text>
+                            </View>
+                        )}
+                    </View>
                 </View>
 
                 {/* ── White content card ──────────────────────────── */}
@@ -221,20 +236,18 @@ export const OfferDetailScreen: React.FC<Props> = ({ route, navigation }) => {
                             <Text style={styles.sectionTitle}>{Strings.offer.professional}</Text>
                             <ProfessionalRowCard
                                 name={`${professional.firstName} ${professional.lastName}`}
-                                subtitle={`${professional.profession} · ${professional.city}`}
+                                subtitle={`${getProfessionLabel(serviceArea.tradeIds)} · ${professional.city}`}
                                 avatarUrl={professional.avatar}
                                 rating={professional.rating}
                                 reviewsCount={professional.reviewsCount}
                                 reviewsLabel={Strings.offer.reviews}
-                                isVerified={professional.isCertified}
-                                verifiedLabel={Strings.offer.verified}
                                 isOnline={professional.isAvailable}
                                 onPress={handleProfessionalPress}
                             />
                         </View>
                     )}
 
-                    {/* Location: real map when coordinates exist, placeholder otherwise */}
+                    {/* Location: real map when there is something to draw, placeholder otherwise */}
                     {professional && (
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>{Strings.offer.location}</Text>
@@ -242,16 +255,16 @@ export const OfferDetailScreen: React.FC<Props> = ({ route, navigation }) => {
                                 <MapPreview
                                     markers={mapData.markers}
                                     zones={mapData.zones}
-                                    caption={`${professional.city} ${Strings.offer.locationSuffix}`}
+                                    caption={locationCaption}
                                     onPress={() => navigation.navigate('LocationMap', {
                                         title: `${professional.firstName} ${professional.lastName}`,
-                                        caption: `${professional.city} ${Strings.offer.locationSuffix}`,
+                                        caption: locationCaption,
                                         markers: mapData.markers,
                                         zones: mapData.zones,
                                     })}
                                 />
                             ) : (
-                                <MapPlaceholder caption={`${professional.city} ${Strings.offer.locationSuffix}`} />
+                                <MapPlaceholder caption={locationCaption} />
                             )}
                         </View>
                     )}
@@ -325,10 +338,17 @@ const styles = StyleSheet.create({
         ...StyleSheet.absoluteFill,
     },
 
-    discountPill: {
+    heroPills: {
         position: 'absolute',
         top: Spacing.md,
         left: Spacing.md,
+        right: Spacing.md,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: Spacing.sm,
+    },
+
+    discountPill: {
         backgroundColor: Colors.semantic.error,
         borderRadius: BorderRadius.full,
         paddingHorizontal: Spacing.md - Spacing.xs,  // 12px
@@ -344,9 +364,7 @@ const styles = StyleSheet.create({
     },
 
     countdownPill: {
-        position: 'absolute',
-        top: Spacing.md,
-        right: Spacing.md,
+        marginLeft: 'auto',        // Pushed to the right of the row
         flexDirection: 'row',
         alignItems: 'center',
         gap: Spacing.xs,

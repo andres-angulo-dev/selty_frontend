@@ -73,12 +73,8 @@ export type SubscriptionPlan = 'free';
 // Kept apart from User so an individual account carries none of it.
 export interface ProfessionalProfileSummary {
   professionalId: string;          // Opens the public profile (ProfessionalDetail)
-  profession: string;
   city: string;
   rating: number;
   reviewsCount: number;
-  isVerified: boolean;
-  annoncesCount: number;
-  activeOffersCount: number;
   plan: SubscriptionPlan;
 }

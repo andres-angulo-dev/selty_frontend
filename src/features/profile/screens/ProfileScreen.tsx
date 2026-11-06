@@ -15,6 +15,9 @@ import { MenuRow } from '@/shared/components/MenuRow';
 import { MenuSwitchRow } from '@/shared/components/MenuSwitchRow';
 import { useAccountType } from '@/app/providers/AccountTypeProvider';
 import { useServiceArea } from '@/shared/hooks/useServiceArea';
+import { getProfessionLabel } from '@/shared/utils/professionLabel';
+import { isOfferLive } from '@/shared/utils/availability';
+import { useMyPublications } from '@/shared/hooks/usePublications';
 import { ProfileIdentityCard, ProfileIdentityAction } from '../components/ProfileIdentityCard';
 import { ProfileStatsStrip } from '../components/ProfileStatsStrip';
 import { HighlightCtaCard } from '../components/HighlightCtaCard';
@@ -56,6 +59,9 @@ export const ProfileScreen: React.FC = () => {
     const { isProfessional: isPro, setAccountType } = useAccountType();
     const pro = mockProfessionalSummary;
     const serviceArea = useServiceArea();
+    // Counted from the real lists, so the strip always matches "Mes publications"
+    const publications = useMyPublications();
+    const activeOffersCount = publications.offers.filter(isOfferLive).length;
 
     const fullName = `${mockUser.firstName} ${mockUser.lastName}`;
     const memberSince = mockUser.createdAt.toLocaleDateString(Strings.locale, {
@@ -91,11 +97,9 @@ export const ProfileScreen: React.FC = () => {
                     avatarUrl={mockUser.avatar}
                     subtitle={
                         isPro
-                            ? `${pro.profession} · ${pro.city}`
+                            ? `${getProfessionLabel(serviceArea.tradeIds)} · ${pro.city}`
                             : `${Strings.profile.memberSince} ${memberSince}`
                     }
-                    isVerified={isPro && pro.isVerified}
-                    verifiedLabel={Strings.profile.verified}
                     ratingText={isPro ? formatRating(pro.rating) : undefined}
                     reviewsText={isPro ? Strings.profile.reviewsCount(pro.reviewsCount) : undefined}
                     actions={identityActions}
@@ -103,8 +107,8 @@ export const ProfileScreen: React.FC = () => {
                     {isPro ? (
                         <ProfileStatsStrip
                             stats={[
-                                { value: String(pro.annoncesCount), label: Strings.profile.stats.annonces },
-                                { value: String(pro.activeOffersCount), label: Strings.profile.stats.activeOffers },
+                                { value: String(publications.annonces.length), label: Strings.profile.stats.annonces },
+                                { value: String(activeOffersCount), label: Strings.profile.stats.activeOffers },
                                 { value: String(pro.reviewsCount), label: Strings.profile.stats.reviews },
                             ]}
                         />
@@ -148,8 +152,16 @@ export const ProfileScreen: React.FC = () => {
                                 badge={Strings.serviceArea.count(serviceArea.zones.length, Strings.serviceArea.zoneUnit.one, Strings.serviceArea.zoneUnit.many)}
                                 onPress={() => navigation.navigate('ServiceZones')}
                             />
-                            <MenuRow icon="megaphone-outline" label={Strings.profile.menu.myAnnonces} onPress={noDestinationYet} />
-                            <MenuRow icon="pricetag-outline" label={Strings.profile.menu.myOffers} onPress={noDestinationYet} />
+                            <MenuRow
+                                icon="megaphone-outline"
+                                label={Strings.profile.menu.myAnnonces}
+                                onPress={() => navigation.navigate('MainTabs', { screen: 'MyPublications', params: { segment: 'annonce' } })}
+                            />
+                            <MenuRow
+                                icon="pricetag-outline"
+                                label={Strings.profile.menu.myOffers}
+                                onPress={() => navigation.navigate('MainTabs', { screen: 'MyPublications', params: { segment: 'offer' } })}
+                            />
                             <MenuRow icon="star-outline" label={Strings.profile.menu.receivedReviews} onPress={noDestinationYet} />
                         </MenuSection>
 

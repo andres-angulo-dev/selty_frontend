@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Pressable, Platform, StyleSheet } from 'react-native';
+import { View, Text, Pressable, Platform, Modal, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { Colors, Typography, Spacing, BorderRadius, Strings } from '@/shared/constants';
@@ -9,7 +9,10 @@ import { Colors, Typography, Spacing, BorderRadius, Strings } from '@/shared/con
 // Labelled field showing a date (or a placeholder) that opens the native
 // date picker. Controlled: the parent owns `value` (Date or null).
 // - Android: the system dialog, opened imperatively (DateTimePickerAndroid)
-// - iOS: an inline calendar unfolds under the field, closed with "OK"
+// - iOS: the calendar opens in a white card above the form, closed with "OK"
+//   (keeps the highlighted date) or a tap outside (keeps the field as it was).
+//   Not inside the form: the native calendar imposes its own
+//   size (bigger with enlarged text) and has no background of its own.
 // Optional dates get a "clear" link to go back to null (e.g. no end date).
 // ============================================
 
@@ -36,8 +39,16 @@ export const DateField: React.FC<DateFieldProps> = ({
     clearable = false,
     error,
 }) => {
-    // iOS only: whether the inline calendar is unfolded
+    // iOS only: whether the calendar card is open
     const [isIosPickerOpen, setIsIosPickerOpen] = useState(false);
+    const closeIosPicker = () => setIsIosPickerOpen(false);
+
+    // "OK" confirms the date the calendar highlights, even when no other day was tapped.
+    // A tap outside only closes, so it stays the way to leave without choosing.
+    const confirmIosPicker = () => {
+        if (!value) onChange(initialPickerDate);
+        closeIosPicker();
+    };
 
     // Date shown when the picker opens: the current value, else the minimum, else today
     const initialPickerDate = value ?? minimumDate ?? new Date();
@@ -52,7 +63,7 @@ export const DateField: React.FC<DateFieldProps> = ({
             });
             return;
         }
-        setIsIosPickerOpen((open) => !open);
+        setIsIosPickerOpen(true);
     };
 
     return (
@@ -77,25 +88,43 @@ export const DateField: React.FC<DateFieldProps> = ({
                 </Pressable>
             ) : null}
 
-            {/* iOS inline calendar: every tap updates the value, "OK" folds it back */}
-            {Platform.OS === 'ios' && isIosPickerOpen ? (
-                <View style={styles.iosPicker}>
-                    <DateTimePicker
-                        value={initialPickerDate}
-                        mode="date"
-                        display="inline"
-                        locale={Strings.locale}
-                        minimumDate={minimumDate}
-                        accentColor={Colors.primary.main}
-                        onValueChange={(_event, date) => onChange(date)}
-                    />
-                    <Pressable onPress={() => setIsIosPickerOpen(false)} accessibilityRole="button" style={styles.doneButton}>
-                        <Text style={styles.doneText}>{Strings.dateField.done}</Text>
-                    </Pressable>
-                </View>
-            ) : null}
-
             {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+            {/* iOS calendar card: every tap updates the value, "OK" or a tap outside closes it */}
+            {Platform.OS === 'ios' ? (
+                <Modal visible={isIosPickerOpen} transparent animationType="fade" onRequestClose={closeIosPicker}>
+                    <View style={styles.backdrop}>
+                        {/* Behind the card, so a tap on the calendar itself never closes it */}
+                        <Pressable
+                            style={StyleSheet.absoluteFill}
+                            onPress={closeIosPicker}
+                            accessibilityRole="button"
+                            accessibilityLabel={Strings.selectField.close}
+                        />
+                        <View style={styles.calendarCard}>
+                            <Text style={styles.calendarTitle}>{label}</Text>
+                            {/* The native calendar lays months side by side and does not clip them:
+                                without this wrapper, the next month shows outside the card */}
+                            <View style={styles.calendarClip}>
+                                {/* Forced light: the card stays white, even on a phone in dark mode */}
+                                <DateTimePicker
+                                    value={initialPickerDate}
+                                    mode="date"
+                                    display="inline"
+                                    themeVariant="light"
+                                    locale={Strings.locale}
+                                    minimumDate={minimumDate}
+                                    accentColor={Colors.primary.main}
+                                    onValueChange={(_event, date) => onChange(date)}
+                                />
+                            </View>
+                            <Pressable onPress={confirmIosPicker} accessibilityRole="button" style={styles.doneButton}>
+                                <Text style={styles.doneText}>{Strings.dateField.done}</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </Modal>
+            ) : null}
         </View>
     );
 };
@@ -138,8 +167,28 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         marginTop: Spacing.xs,
     },
-    iosPicker: {
-        marginTop: Spacing.sm,
+    // Dark layer over the form, the calendar card centered on it
+    backdrop: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: Spacing.sm,
+        backgroundColor: Colors.overlay.darkScrim,
+    },
+    // No fixed width: the card wraps the native calendar, whose size cannot be set
+    calendarCard: {
+        maxWidth: '100%',
+        backgroundColor: Colors.neutral.card,
+        borderRadius: BorderRadius.lg,
+        padding: Spacing.md,
+    },
+    calendarClip: {
+        overflow: 'hidden',
+    },
+    calendarTitle: {
+        ...Typography.bodyBold,
+        color: Colors.text.primary,
+        marginBottom: Spacing.sm,
     },
     doneButton: {
         alignSelf: 'flex-end',

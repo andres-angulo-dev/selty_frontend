@@ -1,4 +1,5 @@
 import { Annonce, FavoriteSnapshot, Offer, Professional } from '@/shared/types';
+import { getProfessionLabel } from '@/shared/utils/professionLabel';
 
 // ============================================
 // Favorite snapshots — the small copy stored with a favorite at save time.
@@ -9,7 +10,7 @@ import { Annonce, FavoriteSnapshot, Offer, Professional } from '@/shared/types';
 /** "Plombier · Melun (77)" */
 export const snapshotFromProfessional = (professional: Professional): FavoriteSnapshot => ({
     title: `${professional.firstName} ${professional.lastName}`,
-    subtitle: `${professional.profession} · ${professional.city} (${professional.department})`,
+    subtitle: `${getProfessionLabel(professional.tradeIds)} · ${professional.city} (${professional.department})`,
     imageUrl: professional.avatar ?? undefined,
 });
 
@@ -20,11 +21,17 @@ export const snapshotFromAnnonce = (annonce: Annonce): FavoriteSnapshot => ({
     imageUrl: annonce.images[0],
 });
 
-/** "-15% · Maître Dupont" */
-export const snapshotFromOffer = (offer: Offer): FavoriteSnapshot => ({
-    title: offer.title,
-    subtitle: offer.professional
-        ? `${offer.discount} · ${offer.professional.firstName} ${offer.professional.lastName}`
-        : offer.discount,
-    imageUrl: offer.image ?? undefined,
-});
+/** "-15% · Maître Dupont", or only one of them when the other is missing */
+export const snapshotFromOffer = (offer: Offer): FavoriteSnapshot => {
+    const professionalName = offer.professional
+        ? `${offer.professional.firstName} ${offer.professional.lastName}`
+        : null;
+    // filter(Boolean) removes the missing parts, so "null" is never written
+    const subtitle = [offer.discount, professionalName].filter(Boolean).join(' · ');
+
+    return {
+        title: offer.title,
+        subtitle: subtitle || undefined,
+        imageUrl: offer.image ?? undefined,
+    };
+};

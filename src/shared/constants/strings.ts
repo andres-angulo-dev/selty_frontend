@@ -106,6 +106,7 @@ export const Strings = {
     },
     // Professionals: their trades and zones ("Mon activité")
     serviceArea: {
+      defaultProfession: 'Professionnel',   // Public label when no trade is usable
       tradesIntro: 'Vous pouvez répondre aux demandes de ces métiers, dans vos zones.',
       zonesIntro: 'Vous pouvez répondre aux demandes de vos métiers, dans ces zones. Tout le monde voit toutes les demandes.',
       trades: 'Mes métiers',
@@ -264,10 +265,13 @@ export const Strings = {
     },
     // Professionals: manage their own annonces and offers
     publication: {
-      placeholder: {
-        title: 'Mes publications',
-        comingSoon: 'Bientôt disponible',
-        message: 'Retrouvez ici vos annonces et vos offres pour les modifier ou les désactiver.',
+      title: 'Mes publications',
+      segments: { annonce: 'Annonces', offer: 'Offres' },
+      ended: 'Terminée',
+      upcoming: 'À venir',
+      empty: {
+        annonce: { title: 'Aucune annonce', message: 'Appuyez sur « Publier » pour présenter vos services.' },
+        offer: { title: 'Aucune offre', message: 'Appuyez sur « Publier » pour proposer une offre spéciale.' },
       },
     },
     favorites: {
@@ -292,7 +296,6 @@ export const Strings = {
         offer: 'Touchez le marque-page d\'une offre pour la retrouver ici.',
       },
       explore: 'Explorer',
-      verified: 'Vérifié',
       reviews: 'avis',
       removeNamed: (name: string) => `Retirer ${name} des favoris`,
       removeAction: 'Retirer',
@@ -336,10 +339,10 @@ export const Strings = {
         fields: {
           title: 'Titre',
           titlePlaceholder: 'Ex. Dépannage 7j/7',   // Short: one line on small screens
-          category: 'Catégorie',
-          categoryPlaceholder: 'Choisir une catégorie',
-          categorySearch: 'Rechercher une catégorie',
-          categoryEmpty: 'Aucune catégorie trouvée',
+          trade: 'Métier',
+          tradePlaceholder: 'Choisir un métier',
+          tradeSearch: 'Rechercher un métier',
+          tradeEmpty: 'Aucun métier trouvé',
           description: 'Description',
           descriptionPlaceholder: 'Décrivez vos prestations, votre expérience et vos disponibilités…',
           price: 'Montant',
@@ -357,7 +360,7 @@ export const Strings = {
           photosMax: '6 photos maximum.',
           titleMin: 'Le titre doit contenir au moins 5 caractères.',
           titleMax: 'Le titre ne peut pas dépasser 80 caractères.',
-          category: 'Choisissez une catégorie.',
+          trade: 'Choisissez un métier.',
           descriptionMin: 'La description doit contenir au moins 20 caractères.',
           descriptionMax: 'La description ne peut pas dépasser 1000 caractères.',
           priceType: 'Choisissez un type de prix.',
@@ -376,13 +379,13 @@ export const Strings = {
         annonceTitle: 'Annonce publiée',
         offerTitle: 'Offre publiée',
         annonceMessage: (title: string) =>
-          `Votre annonce « ${title} » est maintenant visible par les particuliers de votre zone.`,
+          `Votre annonce « ${title} » est maintenant visible sur l'accueil.`,
         offerMessage: (title: string) =>
-          `Votre offre « ${title} » est maintenant visible par les particuliers de votre zone.`,
+          `Votre offre « ${title} » est maintenant visible sur l'accueil.`,
         requestTitle: 'Demande publiée',
         requestMessage: (title: string) =>
           `Votre demande « ${title} » est en ligne. Les professionnels pourront vous répondre en privé.`,
-        publishAnother: 'Publier autre chose',
+        seePublications: 'Voir mes publications',
         backToFeed: 'Voir le feed',
       },
       offerForm: {
@@ -397,7 +400,7 @@ export const Strings = {
         fields: {
           title: 'Titre',
           titlePlaceholder: 'Ex. Diagnostic offert',
-          discount: 'Remise / avantage',
+          discount: 'Remise / avantage (facultatif)',
           discountPlaceholder: 'Ex. -30 %',
           discountHint: 'Ex. -30 %, 1 séance offerte, 2 pour 1',
           description: 'Description',
@@ -414,9 +417,9 @@ export const Strings = {
         errors: {
           titleMin: 'Le titre doit contenir au moins 5 caractères.',
           titleMax: 'Le titre ne peut pas dépasser 60 caractères.',
-          discountMin: 'Indiquez la remise ou l\'avantage.',
+          discountZero: 'Une remise de 0 n\'est pas un avantage : laissez ce champ vide.',
           discountMax: '30 caractères maximum.',
-          category: 'Choisissez une catégorie.',
+          trade: 'Choisissez un métier.',
           descriptionMin: 'La description doit contenir au moins 20 caractères.',
           descriptionMax: 'La description ne peut pas dépasser 1000 caractères.',
           startsAtPast: 'La date de début ne peut pas être passée.',
@@ -454,7 +457,6 @@ export const Strings = {
 
       // Identity card
       memberSince: 'Membre depuis',
-      verified: 'Vérifié',
       reviewsCount: (count: number) => `(${count} avis)`,
 
       // Stats strip (professional)
@@ -610,6 +612,10 @@ export const Strings = {
           shareMessage: 'Découvre',
           shareOnSialty: 'sur Sialty !',
         },
+        zones: {
+          title: "Zones d'intervention",
+          countrySubtitle: 'À distance',    // Public wording of the "Toute la France" zone
+        },
         about: {
           title: 'À propos',
           seeMore: 'Voir plus',
@@ -634,6 +640,7 @@ export const Strings = {
         headerTitle: 'Offre',
         // Validity meta row
         validUntil: 'Valable jusqu\'au',
+        validStartsOn: 'À partir du',
         validFrom: 'Du',
         validTo: 'au',
         noExpiry: 'Sans date limite',
@@ -653,7 +660,6 @@ export const Strings = {
         },
         // Professional card
         professional: 'Proposé par',
-        verified: 'Pro vérifié',
         reviews: 'avis',
         // Location
         location: 'Localisation',

@@ -31,8 +31,9 @@ export interface Category {
 
 // Where the professional works:
 // - 'fixed'  → customers come to a place (salon, office) → pin on the map
-// - 'mobile' → the professional travels within a radius → zone circle on the map
-// - 'both'   → a place AND home visits around it → pin + circle
+// - 'mobile' → the professional travels to customers → no pin
+// - 'both'   → a place AND home visits → pin
+// Coverage does not depend on this: it comes from `zones` (circles for city zones)
 export type ProfessionalLocationType = 'fixed' | 'mobile' | 'both';
 
 // Professional profile for display (card, list, search results)
@@ -45,7 +46,8 @@ export interface Professional {
   avatar: string | null;
 
   // Professional info
-  profession: string;              // Main profession
+  tradeIds: string[];              // Trades; the first one is the main profession (see getProfessionLabel)
+  zones: ServiceZone[];            // Where requests are accepted (same rule as ProServiceArea)
   description: string;             // Bio / presentation text
   services: string[];              // List of services offered
 
@@ -57,14 +59,13 @@ export interface Professional {
   longitude: number | null;
   distance: string | null;         // Calculated client-side (e.g. "500m")
   locationType: ProfessionalLocationType;
-  interventionRadiusKm?: number;   // Required when locationType is 'mobile' or 'both'
 
   // Ratings
   rating: number;                  // Average rating
   reviewsCount: number;            // Total number of reviews
 
   // Status
-  isCertified: boolean;            // Sialty verified badge
+  isCertified: boolean;            // Paid plan badge (not displayed yet), not the entry check
   isAvailable: boolean;            // Currently available for work
 
   // Contact
@@ -111,7 +112,8 @@ export interface Annonce {
 
   // Relations (IDs for backend)
   professionalId: string;
-  categoryId: string;
+  tradeId: string;                 // One of the professional's trades
+  categoryId: string;              // Copied from the trade, for category filters
 
   // Populated relations (for display)
   professional: Professional | null;
@@ -176,7 +178,7 @@ export interface Offer {
   // Content
   title: string;                   // e.g. "-30% on plumbing"
   description: string;             // Detailed description of the offer
-  discount: string;                // e.g. "-30%", "free", "2 for 1"
+  discount: string | null;         // e.g. "-30%", "free", "2 for 1"; null = no discount, no badge
   image: string | null;
 
   // Validity
@@ -190,7 +192,8 @@ export interface Offer {
 
   // Relations (IDs for backend)
   professionalId: string;
-  categoryId: string;
+  tradeId: string;                 // One of the professional's trades
+  categoryId: string;              // Copied from the trade, for category filters
 
   // Populated relations (for display)
   professional: Professional | null;

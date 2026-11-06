@@ -12,11 +12,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 // PUBLISH SUCCESS SCREEN
 // Shown after an annonce / offer (pro) or a request (individual) is published:
 // check mark, title, message, preview card of the publication, then an action
-// ("Publier autre chose" for a pro, "Voir le feed" for a request).
+// ("Voir mes publications" for a pro, "Voir le feed" for a request).
 // The form was replaced by this screen, so going back lands on the tabs
 // (the "Publier" choice), never on the filled form.
-// "Voir mon annonce" is left out on purpose until publications are stored
-// (no backend yet: there would be nothing to open).
 // ============================================
 
 type SuccessRoute = RouteProp<RootStackParamList, 'PublishSuccess'>;
@@ -38,15 +36,17 @@ export const PublishSuccessScreen: React.FC = () => {
     const placeholderIcon = ({ annonce: 'megaphone-outline', offer: 'pricetag-outline', request: 'create-outline' } as const)[kind];
 
     /**
-     * Pro: back to the tabs on the "Publier" choice.
+     * Pro: to "Mes publications", on the segment of what was just published.
      * Request: to the Home feed, where the new request now appears first.
+     * popTo closes this screen: since React Navigation 7, `navigate` would stack a second
+     * MainTabs on top, and going back would land on this confirmation again.
      */
     const handleAction = () => {
-        if (isRequest) {
-            navigation.navigate('MainTabs', { screen: 'Home' });
+        if (kind === 'request') {
+            navigation.popTo('MainTabs', { screen: 'Home' });
             return;
         }
-        navigation.goBack();
+        navigation.popTo('MainTabs', { screen: 'MyPublications', params: { segment: kind } });
     };
 
     return (
@@ -88,7 +88,7 @@ export const PublishSuccessScreen: React.FC = () => {
             </View>
 
             <Button
-                label={isRequest ? texts.backToFeed : texts.publishAnother}
+                label={isRequest ? texts.backToFeed : texts.seePublications}
                 onPress={handleAction}
                 fullWidth
                 size="large"

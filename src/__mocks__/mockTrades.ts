@@ -25,6 +25,7 @@ export const mockTrades: Trade[] = [
     { id: 'trade-cleaner', label: 'Aide ménagère', categoryId: 'cat-4' },
     // cat-5 Santé
     { id: 'trade-physio', label: 'Kinésithérapeute', categoryId: 'cat-5' },
+    { id: 'trade-coach', label: 'Coach sportif', categoryId: 'cat-5' },
     // cat-6 Cours
     { id: 'trade-tutor', label: 'Professeur particulier', categoryId: 'cat-6', isRemoteCapable: true },
     // cat-7 Tech
@@ -42,6 +43,16 @@ export const TRADE_OPTIONS: SelectOption[] = mockTrades.map((trade) => ({
     value: trade.id,
     label: trade.label,
 }));
+
+/**
+ * Options of a form limited to some trades (a professional publishes only in their own).
+ *
+ * @param tradeIds Trades to offer, in this order; unknown IDs are skipped
+ * @returns Options for SelectField
+ */
+export const getTradeOptions = (tradeIds: string[]): SelectOption[] =>
+    TRADE_OPTIONS.filter((option) => tradeIds.includes(option.value))
+        .sort((a, b) => tradeIds.indexOf(a.value) - tradeIds.indexOf(b.value));
 
 /** Lookup by ID (undefined for an unknown trade) */
 export const getTradeById = (id: string): Trade | undefined =>

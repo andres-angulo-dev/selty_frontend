@@ -37,10 +37,12 @@ export const OfferCard: React.FC<OfferCardProps> = ({
                 )}
             </View>
 
-            {/* Discount badge — floats over image/content boundary */}
-            <View style={styles.discountBadge}>
-                <Text style={styles.discountText}>{offer.discount}</Text>
-            </View>
+            {/* Discount badge — floats over image/content boundary, only when the offer has one */}
+            {offer.discount ? (
+                <View style={styles.discountBadge}>
+                    <Text style={styles.discountText} numberOfLines={1}>{offer.discount}</Text>
+                </View>
+            ) : null}
 
             {/* Title — top of content area, below floating badge */}
             <View style={styles.content}>
@@ -103,6 +105,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: COVER_HEIGHT - BADGE_OVERLAP,
         left: 10,
+        maxWidth: '88%',           // The discount is free text: it must stay inside the card
         zIndex: 10,
         backgroundColor: Colors.semantic.error,
         borderRadius: BorderRadius.full,

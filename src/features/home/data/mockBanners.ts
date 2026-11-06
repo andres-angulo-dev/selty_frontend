@@ -8,7 +8,7 @@ export const mockBanners: Banner[] = [
     {
         id: 'banner-1',
         title: 'Votre expert à portée de main',
-        subtitle: 'Pros certifiés • Avis vérifiés • Devis gratuit',
+        subtitle: 'Trouvez le bon pro près de chez vous',
         backgroundColor: '#1e3a5f',
         gradientColors: ['#1e3a5f', '#4A90D9'],
         ctaLabel: 'Explorer',

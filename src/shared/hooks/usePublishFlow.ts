@@ -8,7 +8,8 @@ import { useNavigation, usePreventRemove } from '@react-navigation/native';
 // 1. Discard guard — while the form has unsaved input, leaving it ("Annuler",
 //    iOS swipe back, Android back) first asks for confirmation.
 // 2. Publish exit — `publish(leave)` switches the guard off, then runs
-//    `leave` on the next render (e.g. replace the form by the confirmation).
+//    `leave` once on the next render (store the publication, replace the form
+//    by the confirmation). Put the store write in `leave` so it runs once too.
 //    The guard must be off BEFORE leaving, otherwise it would block our own
 //    navigation and ask "Abandonner ?" right after a successful publication.
 //
@@ -60,7 +61,8 @@ export const usePublishFlow = (isDirty: boolean, texts: DiscardTexts) => {
     }, [pendingExit]);
 
     return {
-        // Wrapped in a function: useState would otherwise call `leave` as an updater
-        publish: (leave: () => void) => setPendingExit(() => leave),
+        // Keeps the first call: a double tap on "Publier" must publish once.
+        // `leave` is returned by the updater, so useState stores it instead of calling it.
+        publish: (leave: () => void) => setPendingExit((current) => current ?? leave),
     };
 };

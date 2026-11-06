@@ -3,15 +3,19 @@
 // ============================================ 
 
 import { Professional } from "@/shared/types";
+import { CURRENT_PROFESSIONAL_ID, CURRENT_PRO_AREA } from "@/__mocks__/mockSession";
+import { buildDepartmentZone, COUNTRY_ZONE } from "@/shared/utils/serviceZones";
 
 export const mockProfessionals: Professional[] = [
     {
-      id: 'pro-1',
+      id: CURRENT_PROFESSIONAL_ID,
       firstName: 'Jean',
       lastName: 'Dupont',
       userName: 'jean.dupont',
       avatar: null,
-      profession: 'Plombier',
+      // Same data as the signed-in professional at app start
+      tradeIds: CURRENT_PRO_AREA.tradeIds,
+      zones: CURRENT_PRO_AREA.zones,
       description: 'Plombier expérimenté depuis 15 ans. Intervention rapide et devis gratuit.',
       services: ['Plomberie', 'Chauffage', 'Sanitaire'],
       address: null,
@@ -25,7 +29,6 @@ export const mockProfessionals: Professional[] = [
       isCertified: true,
       isAvailable: true,
       locationType: 'mobile',          // Plumber: travels to customers
-      interventionRadiusKm: 20,
       phone: '06 12 34 56 78',
       email: 'jean.dupont@email.com',
       createdAt: new Date('2023-03-15'),
@@ -41,7 +44,20 @@ export const mockProfessionals: Professional[] = [
       lastName: 'Martin',
       userName: 'marie.martin',
       avatar: null,
-      profession: 'Coiffeuse',
+      tradeIds: ['trade-hairdresser'],
+      zones: [
+        {
+          kind: 'city',
+          id: 'city-77373',
+          communeCode: '77373',
+          city: 'Pontault-Combault',
+          department: '77',
+          latitude: 48.7885,
+          longitude: 2.6173,
+          cityRadiusKm: 2.08,
+          radiusKm: 10,
+        },
+      ],
       description: 'Coiffeuse à domicile. Spécialiste coloration et coiffure événementielle.',
       services: ['Coupe', 'Coloration', 'Coiffure mariage'],
       address: null,
@@ -55,7 +71,6 @@ export const mockProfessionals: Professional[] = [
       isCertified: true,
       isAvailable: true,
       locationType: 'both',            // Hairdresser: salon + home visits around it
-      interventionRadiusKm: 10,
       phone: '06 98 76 54 32',
       email: 'marie.martin@email.com',
       createdAt: new Date('2023-06-20'),
@@ -71,7 +86,8 @@ export const mockProfessionals: Professional[] = [
       lastName: 'Leblanc',
       userName: 'paul.leblanc',
       avatar: null,
-      profession: 'Avocat',
+      tradeIds: ['trade-lawyer'],
+      zones: [COUNTRY_ZONE],
       description: 'Avocat spécialisé en droit immobilier et droit des affaires.',
       services: ['Droit immobilier', 'Droit des affaires', 'Conseil juridique'],
       address: null,
@@ -100,8 +116,21 @@ export const mockProfessionals: Professional[] = [
       lastName: 'Durand',
       userName: 'sophie.durand',
       avatar: null,
-      profession: 'Coach sportif',
-      description: 'Coach sportif certifié. Remise en forme, perte de poids, préparation physique.',
+      tradeIds: ['trade-coach'],
+      zones: [
+        {
+          kind: 'city',
+          id: 'city-77108',
+          communeCode: '77108',
+          city: 'Chelles',
+          department: '77',
+          latitude: 48.8845,
+          longitude: 2.5954,
+          cityRadiusKm: 2.26,
+          radiusKm: 15,
+        },
+      ],
+      description: 'Coach sportif. Remise en forme, perte de poids, préparation physique.',
       services: ['Coaching individuel', 'Cours collectifs', 'Programme nutrition'],
       address: null,
       city: 'Chelles',
@@ -114,7 +143,6 @@ export const mockProfessionals: Professional[] = [
       isCertified: false,
       isAvailable: true,
       locationType: 'mobile',          // Sports coach: travels to customers
-      interventionRadiusKm: 15,
       phone: '06 55 44 33 22',
       email: 'sophie.durand@email.com',
       createdAt: new Date('2024-01-05'),
@@ -130,7 +158,21 @@ export const mockProfessionals: Professional[] = [
       lastName: 'Bernard',
       userName: 'lucas.bernard',
       avatar: null,
-      profession: 'Électricien',
+      tradeIds: ['trade-electrician'],
+      zones: [
+        {
+          kind: 'city',
+          id: 'city-77243',
+          communeCode: '77243',
+          city: 'Lagny-sur-Marne',
+          department: '77',
+          latitude: 48.8716,
+          longitude: 2.7045,
+          cityRadiusKm: 1.36,
+          radiusKm: 25,
+        },
+        buildDepartmentZone('93', 'Seine-Saint-Denis'),
+      ],
       description: 'Électricien qualifié. Installation, dépannage et mise aux normes.',
       services: ['Installation électrique', 'Dépannage', 'Mise aux normes'],
       address: null,
@@ -144,7 +186,6 @@ export const mockProfessionals: Professional[] = [
       isCertified: true,
       isAvailable: true,
       locationType: 'mobile',          // Electrician: travels to customers
-      interventionRadiusKm: 25,
       phone: '06 11 22 33 44',
       email: 'lucas.bernard@email.com',
       createdAt: new Date('2024-03-18'),

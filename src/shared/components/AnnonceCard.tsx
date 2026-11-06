@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors, Typography, Spacing } from '@/shared/constants';
 import { Annonce } from '@/shared/types';
 import { formatRelativeDate } from '@/shared/utils/formatDate';
+import { getProfessionLabel } from '@/shared/utils/professionLabel';
 
 interface AnnonceCardProps {
     annonce: Annonce;
@@ -40,7 +41,7 @@ export const AnnonceCard: React.FC<AnnonceCardProps> = ({
                                 {annonce.professional.firstName} {annonce.professional.lastName}
                             </Text>
                             <Text style={styles.profession} numberOfLines={1}>
-                                {annonce.professional.profession}
+                                {getProfessionLabel(annonce.professional.tradeIds)}
                             </Text>
                         </View>
 

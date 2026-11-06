@@ -13,7 +13,6 @@ import { FormHeader } from '@/shared/components/FormHeader';
 import { FormInput } from '@/shared/components/FormInput';
 import { PhotoPicker } from '@/shared/components/PhotoPicker';
 import { ChipSelector, ChipOption } from '@/shared/components/ChipSelector';
-import { SelectField } from '@/shared/components/SelectField';
 import { LocationFields } from '@/shared/components/LocationFields';
 import { EMPTY_LOCATION } from '@/shared/utils/locationSchema';
 import { Button } from '@/shared/components/button';
@@ -29,8 +28,13 @@ import {
     parsePriceInput,
 } from '../schemas/annonceSchema';
 import type { AnnoncePriceType } from '../types';
+import { TradeField, getInitialTradeId } from '../components/TradeField';
+import { buildPublishedAnnonce } from '../utils/buildPublication';
+import { usePublicationActions } from '@/shared/hooks/usePublications';
+import { formatEuros } from '@/shared/utils/formatPrice';
 import { usePublishFlow } from '@/shared/hooks/usePublishFlow';
-import { CATEGORY_OPTIONS } from '@/__mocks__/mockCategoryOptions';
+import { useServiceArea } from '@/shared/hooks/useServiceArea';
+import { getTradeById, getTradeOptions } from '@/__mocks__/mockTrades';
 
 // ============================================
 // ANNONCE FORM SCREEN (professionals only)
@@ -50,15 +54,11 @@ const PRICE_OPTIONS: ChipOption<AnnoncePriceType>[] = ANNONCE_PRICE_TYPES.map((v
     label: texts.priceTypes[value],
 }));
 
-/** Formats an amount in the app language: 80 → "80,00 €" */
-const formatEuros = (amount: number) =>
-    amount.toLocaleString(Strings.locale, { style: 'currency', currency: 'EUR' });
-
 // Field name → label, in the order of the form (error message above the button)
 const FIELD_LABELS: Record<string, string> = {
     photos: texts.sections.photos,
     title: texts.fields.title,
-    categoryId: texts.fields.category,
+    tradeId: texts.fields.trade,
     description: texts.fields.description,
     location: Strings.locationFields.summaryLabel,
     priceType: texts.sections.price,
@@ -68,7 +68,7 @@ const FIELD_LABELS: Record<string, string> = {
 const DEFAULT_VALUES: AnnonceFormInput = {
     photos: [],
     title: '',
-    categoryId: '',
+    tradeId: '',
     description: '',
     location: EMPTY_LOCATION,
     priceType: [],
@@ -78,6 +78,8 @@ const DEFAULT_VALUES: AnnonceFormInput = {
 export const AnnonceFormScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const insets = useSafeAreaInsets();
+    // A professional publishes only in their own trades
+    const tradeOptions = getTradeOptions(useServiceArea().tradeIds);
 
     const {
         control,
@@ -86,7 +88,7 @@ export const AnnonceFormScreen: React.FC = () => {
         formState: { errors, isDirty, isSubmitted },
     } = useForm({
         resolver: zodResolver(annonceSchema),
-        defaultValues: DEFAULT_VALUES,
+        defaultValues: { ...DEFAULT_VALUES, tradeId: getInitialTradeId(tradeOptions) },
         mode: 'onTouched',
     });
 
@@ -95,28 +97,31 @@ export const AnnonceFormScreen: React.FC = () => {
 
     // Discard confirmation + closing after publication (shared with the offer form)
     const { publish } = usePublishFlow(isDirty, texts.discard);
+    const { publishAnnonce } = usePublicationActions();
 
     /**
-     * Called only with valid data (already trimmed by Zod). No backend yet:
-     * the annonce is not stored; the form is replaced by the confirmation.
+     * Called only with valid data (already trimmed by Zod). The annonce is kept
+     * in memory, then the form is replaced by the confirmation.
      * TODO(backend): send the annonce (photos upload, server-side validation)
      * before showing the confirmation, and handle the error case.
      */
     const onPublish = (data: AnnonceFormOutput) => {
+
         const priceType = data.priceType[0];
         const amount = priceType === 'fixed' ? parsePriceInput(data.price) : null;
-        const category = CATEGORY_OPTIONS.find((option) => option.value === data.categoryId)?.label ?? '';
+        const trade = getTradeById(data.tradeId)?.label ?? '';
 
-        publish(() =>
+        publish(() => {
+            publishAnnonce(buildPublishedAnnonce(data, new Date()));
             navigation.replace('PublishSuccess', {
                 kind: 'annonce',
                 title: data.title,
-                subtitle: `${category} · ${data.location.city} (${data.location.department})`,
+                subtitle: `${trade} · ${data.location.city} (${data.location.department})`,
                 // "80,00 €" for a fixed price, otherwise the chip label
                 tag: amount !== null ? formatEuros(amount) : texts.priceTypes[priceType],
                 coverUri: data.photos[0],
-            }),
-        );
+            });
+        });
     };
 
     return (
@@ -168,22 +173,16 @@ export const AnnonceFormScreen: React.FC = () => {
                         )}
                     />
 
-                    {/* Select + search sheet: the category list will grow */}
                     <Controller
                         control={control}
-                        name="categoryId"
+                        name="tradeId"
                         render={({ field }) => (
-                            <SelectField
-                                label={texts.fields.category}
-                                options={CATEGORY_OPTIONS}
+                            <TradeField
+                                options={tradeOptions}
                                 value={field.value}
                                 onChange={field.onChange}
-                                onClose={field.onBlur}
-                                placeholder={texts.fields.categoryPlaceholder}
-                                searchPlaceholder={texts.fields.categorySearch}
-                                emptyText={texts.fields.categoryEmpty}
-                                closeLabel={Strings.selectField.close}
-                                error={errors.categoryId?.message}
+                                onBlur={field.onBlur}
+                                error={errors.tradeId?.message}
                             />
                         )}
                     />

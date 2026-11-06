@@ -59,7 +59,9 @@ export const createAnnonceSchema = (messages: AnnonceErrorMessages) =>
             .trim()
             .min(ANNONCE_LIMITS.titleMin, messages.titleMin)
             .max(ANNONCE_LIMITS.titleMax, messages.titleMax),
-        categoryId: z.string().min(1, messages.category),
+        // Security: the form only offers the pro's trades, but this is comfort only.
+        // TODO(backend): the server must refuse a tradeId outside the pro's trades.
+        tradeId: z.string().min(1, messages.trade),
         description: z
             .string()
             .trim()

@@ -23,6 +23,7 @@ import { useServiceArea } from '@/shared/hooks/useServiceArea';
 import { useAccountType } from '@/app/providers/AccountTypeProvider';
 import { formatAuthorName, getRequestStatus } from '@/shared/utils/requestStatus';
 import { formatRelativeDate } from '@/shared/utils/formatDate';
+import { getProfessionLabel } from '@/shared/utils/professionLabel';
 import { useUserLocation } from '@/shared/hooks/useUserLocation';
 import { calculateDistance, formatDistance } from '@/shared/utils/geolocation';
 
@@ -30,8 +31,8 @@ import { calculateDistance, formatDistance } from '@/shared/utils/geolocation';
 import { mockCategories } from '@/__mocks__/mockCategories';
 import { mockBanners } from '../data/mockBanners';
 import { mockProfessionals } from '@/__mocks__/mockProfessionals';
-import { mockOffers } from '@/__mocks__/mockOffers';
-import { mockAnnonces } from '@/__mocks__/mockAnnonces';
+import { useAnnonces, useOffers } from '@/shared/hooks/usePublications';
+import { isOfferLive } from '@/shared/utils/availability';
 import { getTradeById, isTradeRemoteCapable } from '@/__mocks__/mockTrades';
 import { getProAnswerEligibility } from '@/shared/utils/requestEligibility';
 
@@ -67,10 +68,14 @@ export const HomeScreen: React.FC = () => {
     // Fulfilled and expired requests leave the feed (they stay in "Mes demandes").
     // ============================================
     const requests = useRequests();
+    const annonces = useAnnonces();
+    // Customers only see an offer while it runs: not before it starts, not once it ended
+    const allOffers = useOffers();
+    const offers = useMemo(() => allOffers.filter(isOfferLive), [allOffers]);
     const { isProfessional } = useAccountType();
     const serviceArea = useServiceArea();
     const feedItems = useMemo<FeedItem[]>(() => {
-        const annonceItems: FeedItem[] = mockAnnonces.map((annonce) => ({
+        const annonceItems: FeedItem[] = annonces.map((annonce) => ({
             kind: 'annonce',
             id: annonce.id,
             date: annonce.createdAt.getTime(),
@@ -85,7 +90,7 @@ export const HomeScreen: React.FC = () => {
                 request,
             }));
         return [...annonceItems, ...requestItems].sort((a, b) => b.date - a.date);
-    }, [requests]);
+    }, [annonces, requests]);
 
     // ============================================
     // HEADER ANIMATION
@@ -135,7 +140,7 @@ export const HomeScreen: React.FC = () => {
         professionalsWithDistance.filter((pro) =>
             pro.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
             pro.lastName.toLowerCase().includes(searchText.toLowerCase()) ||
-            pro.profession.toLowerCase().includes(searchText.toLowerCase())
+            getProfessionLabel(pro.tradeIds).toLowerCase().includes(searchText.toLowerCase())
         ),
     [professionalsWithDistance, searchText]);
     
@@ -184,7 +189,7 @@ export const HomeScreen: React.FC = () => {
             {/* Offres spéciales - Horizontal scroll */}
             <SectionHeader title={Strings.home.specialOffers} onSeeAllPress={() => console.log('SeeAll')} />
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalList} contentContainerStyle={styles.horizontalListContent}>
-                {mockOffers.map((offer) => (
+                {offers.map((offer) => (
                     <OfferCard key={offer.id} offer={offer} onPress={(offer) => navigation.navigate('OfferDetail', { offerId: offer.id })} />
                 ))}
             </ScrollView>
@@ -192,7 +197,7 @@ export const HomeScreen: React.FC = () => {
             {/* Feed section title */}
             <SectionHeader title={Strings.home.nearYou} />
         </View>
-    ), [professionalsWithDistance, navigation]);
+    ), [professionalsWithDistance, offers, navigation]);
 
     // ============================================
     // FEED ITEM (Instagram-style grid card)
