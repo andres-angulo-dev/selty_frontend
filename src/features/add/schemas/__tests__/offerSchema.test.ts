@@ -40,6 +40,32 @@ describe('offer discount', () => {
     });
 });
 
+describe('offer dates', () => {
+    const inDays = (days: number) => {
+        const date = new Date();
+        date.setDate(date.getDate() + days);
+        return date;
+    };
+    const dateError = (field: string, startsAt: Date | null, expiresAt: Date | null) =>
+        schema
+            .safeParse({ ...form(''), startsAt, expiresAt })
+            .error?.issues.find((issue) => issue.path[0] === field)?.message;
+
+    it('accepts no date, today, and a one-day offer', () => {
+        expect(schema.safeParse({ ...form(''), startsAt: inDays(0), expiresAt: inDays(0) }).success).toBe(true);
+        expect(schema.safeParse(form('')).success).toBe(true);
+    });
+
+    it('refuses a date in the past', () => {
+        expect(dateError('startsAt', inDays(-1), null)).toBe(messages.startsAtPast);
+        expect(dateError('expiresAt', null, inDays(-1))).toBe(messages.expiresAtPast);
+    });
+
+    it('refuses an end before the start', () => {
+        expect(dateError('expiresAt', inDays(5), inDays(2))).toBe(messages.expiresBeforeStart);
+    });
+});
+
 describe('snapshotFromOffer', () => {
     const pro = { firstName: 'Jean', lastName: 'Dupont' } as Professional;
     const offer = (over: Partial<Offer>) => ({ title: 'Offre', image: null, ...over }) as Offer;
