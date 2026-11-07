@@ -9,9 +9,10 @@ import { Colors, Typography, Spacing, BorderRadius } from '@/shared/constants';
 // optional pill, optional action on the right (e.g. a bookmark).
 // Project-agnostic: primitives only, every text comes from the caller
 // (annonces, offers, products, listings...).
-// Same 3-line rhythm as ProfessionalRowCard (title / subtitle / badge), each
-// on ONE line, so rows of every kind have the same height. Long texts are
-// truncated; the thumbnail and the action keep their size.
+// Always TWO lines (title, then subtitle + pill on the right), so a row with a
+// pill is exactly as tall as a row without one (dev's choice, 2026-11-07).
+// The pill is never cut: the subtitle gives way first ("Plombier · Mel…").
+// The thumbnail and the action keep their size.
 // ============================================
 
 export type MediaRowBadgeTone = 'danger' | 'neutral' | 'primary';
@@ -59,22 +60,27 @@ export const MediaRowCard: React.FC<MediaRowCardProps> = ({
             {/* Texts */}
             <View style={styles.info}>
                 <Text style={styles.title} numberOfLines={1}>{title}</Text>
-                {subtitle ? <Text style={styles.subtitle} numberOfLines={1}>{subtitle}</Text> : null}
-                {badge ? (
-                    <View
-                        style={[
-                            styles.badge,
-                            badge.tone === 'danger' && styles.badgeDanger,
-                            badge.tone === 'primary' && styles.badgePrimary,
-                            (!badge.tone || badge.tone === 'neutral') && styles.badgeNeutral,
-                        ]}
-                    >
-                        <Text
-                            style={[styles.badgeText, (badge.tone === 'danger' || badge.tone === 'primary') && styles.badgeTextInverse]}
-                            numberOfLines={1}
-                        >
-                            {badge.label}
-                        </Text>
+                {/* Second line: subtitle (shrinks) + pill (keeps its width) */}
+                {subtitle || badge ? (
+                    <View style={styles.secondLine}>
+                        {subtitle ? <Text style={styles.subtitle} numberOfLines={1}>{subtitle}</Text> : null}
+                        {badge ? (
+                            <View
+                                style={[
+                                    styles.badge,
+                                    badge.tone === 'danger' && styles.badgeDanger,
+                                    badge.tone === 'primary' && styles.badgePrimary,
+                                    (!badge.tone || badge.tone === 'neutral') && styles.badgeNeutral,
+                                ]}
+                            >
+                                <Text
+                                    style={[styles.badgeText, (badge.tone === 'danger' || badge.tone === 'primary') && styles.badgeTextInverse]}
+                                    numberOfLines={1}
+                                >
+                                    {badge.label}
+                                </Text>
+                            </View>
+                        ) : null}
                     </View>
                 ) : null}
             </View>
@@ -131,14 +137,24 @@ const styles = StyleSheet.create({
         color: Colors.text.primary,
     },
 
+    secondLine: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.sm,
+    },
+
+    // flexShrink: the subtitle is the one cut when the line is full
     subtitle: {
         ...Typography.caption,
         color: Colors.text.secondary,
+        flexShrink: 1,
     },
 
-    // Slim pill: same height as the rating line of ProfessionalRowCard
+    // Slim pill: no vertical padding, so the line is as tall as a subtitle alone.
+    // Never shrinks, but a very long label (a long price) is capped and ends with "…"
     badge: {
-        alignSelf: 'flex-start',
+        flexShrink: 0,
+        maxWidth: '60%',
         paddingHorizontal: Spacing.sm,
         borderRadius: BorderRadius.full,
     },

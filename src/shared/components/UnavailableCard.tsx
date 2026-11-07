@@ -10,7 +10,9 @@ import { Colors, Typography, Spacing, BorderRadius } from '@/shared/constants';
 // pill and a "remove" action. Deliberately NOT pressable: there is no detail
 // to open. All texts come from the caller.
 // - layout 'tile': column card for grids (annonces, offers), width from the caller
-// - layout 'row': full-width row (professionals list)
+// - layout 'row': full-width row. Square image (annonce, offer) = two lines like
+//   MediaRowCard, title then message (subtitle not shown); circle image
+//   (professional) = three lines like ProfessionalRowCard
 // ============================================
 
 interface UnavailableCardProps {
@@ -43,6 +45,9 @@ export const UnavailableCard: React.FC<UnavailableCardProps> = ({
     style,
 }) => {
     const isRow = layout === 'row';
+    // Content row (annonce, offer): two lines like MediaRowCard, the message on the second
+    // line. A person row keeps three lines, like ProfessionalRowCard.
+    const isTwoLineRow = isRow && imageShape === 'square';
 
     // Image (or icon placeholder) under a white veil
     const media = (
@@ -63,7 +68,7 @@ export const UnavailableCard: React.FC<UnavailableCardProps> = ({
     );
 
     const messagePill = (
-        <View style={styles.pill}>
+        <View style={[styles.pill, isTwoLineRow && styles.pillInline]}>
             <Ionicons name="alert-circle-outline" size={12} color={Colors.text.secondary} />
             <Text style={styles.pillText} numberOfLines={1}>{message}</Text>
         </View>
@@ -106,9 +111,15 @@ export const UnavailableCard: React.FC<UnavailableCardProps> = ({
                 <View accessible accessibilityLabel={`${title}. ${message}`}>
                     {/* Row: one line per text, same height as the other rows */}
                     <Text style={styles.title} numberOfLines={isRow ? 1 : 2}>{title}</Text>
-                    {subtitle ? <Text style={styles.subtitle} numberOfLines={1}>{subtitle}</Text> : null}
+                    {isTwoLineRow ? (
+                        // No subtitle here: next to "Retirer" there is room for one thing only,
+                        // and why the item is gone matters more than where it was
+                        <View style={styles.secondLine}>{messagePill}</View>
+                    ) : subtitle ? (
+                        <Text style={styles.subtitle} numberOfLines={1}>{subtitle}</Text>
+                    ) : null}
                 </View>
-                {messagePill}
+                {isTwoLineRow ? null : messagePill}
                 {isRow ? null : removeButton}
             </View>
 
@@ -206,6 +217,13 @@ const styles = StyleSheet.create({
         marginTop: 2,
     },
 
+    secondLine: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.sm,
+        marginTop: 2,
+    },
+
     // ── Message + action ──────────────────────────────
     pill: {
         flexDirection: 'row',
@@ -216,6 +234,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: Spacing.sm,
         borderRadius: BorderRadius.full,
         backgroundColor: Colors.neutral.inputBg,
+    },
+
+    // Alone on the second line: may use all of it, cut with "…" only beyond
+    pillInline: {
+        alignSelf: 'auto',
+        flexShrink: 1,
+        maxWidth: '100%',
     },
 
     pillText: {
