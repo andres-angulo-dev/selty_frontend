@@ -90,4 +90,18 @@ describe('computeRegion', () => {
         expect(region?.latitude).toBeCloseTo(48.5);
         expect(region?.longitude).toBeCloseTo(2.5);
     });
+
+    it('contains every coloured shape, even with nothing else to frame', () => {
+        const area = {
+            coordinates: [
+                { latitude: 48, longitude: 2 },
+                { latitude: 48, longitude: 4 },
+                { latitude: 50, longitude: 3 },
+            ],
+        };
+        const region = computeRegion([], [], [area]);
+        expect(region?.latitude).toBeCloseTo(49);
+        expect(region?.longitude).toBeCloseTo(3);
+        expect(region?.latitudeDelta).toBeGreaterThan(2);
+    });
 });

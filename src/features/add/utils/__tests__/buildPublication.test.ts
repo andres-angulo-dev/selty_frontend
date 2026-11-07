@@ -14,7 +14,7 @@ const annonceForm = (over: Partial<AnnonceFormOutput>) =>
         title: 'Peinture de salon',
         tradeId: 'trade-painter',
         description: 'Une description assez longue pour passer.',
-        location: { postalCode: '77000', city: 'Melun', department: '77' },
+        location: { postalCode: '77000', city: 'Melun', department: '77', latitude: 48.5421, longitude: 2.6552 },
         priceType: ['quote'],
         price: '',
         ...over,
@@ -50,6 +50,15 @@ describe('buildPublishedAnnonce', () => {
         });
         expect(annonce.isFree).toBeUndefined();
         expect(annonce.price).toBeUndefined();
+    });
+
+    it('keeps the commune center for the map, never more precise, and null when the city was typed', () => {
+        expect(buildPublishedAnnonce(annonceForm({}), now)).toMatchObject({ latitude: 48.5421, longitude: 2.6552 });
+
+        const typed = annonceForm({
+            location: { postalCode: '77000', city: 'Melun', department: '77', latitude: null, longitude: null },
+        } as Partial<AnnonceFormOutput>);
+        expect(buildPublishedAnnonce(typed, now)).toMatchObject({ latitude: null, longitude: null });
     });
 
     it('puts each price type in the right field', () => {

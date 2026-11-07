@@ -104,6 +104,9 @@ export interface Annonce {
   // Location
   city: string;
   department: string;
+  // Center of the commune (never the address): its pin on the map. Missing on old mocks
+  latitude?: number | null;
+  longitude?: number | null;
 
   // Interactions
   likesCount: number;              // Total likes

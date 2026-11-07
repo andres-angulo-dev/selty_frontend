@@ -667,7 +667,6 @@ export const Strings = {
         reviews: 'avis',
         // Location
         location: 'Localisation',
-        locationSuffix: 'et alentours',
         // Social proof
         likes: 'personnes ont aimé cette offre',
         // CTA bar
@@ -735,6 +734,10 @@ export const Strings = {
         locating: 'Localisation en cours…',
         distanceFromYou: (distance: string) => `À ${distance} de vous`,
         inZone: 'dans sa zone d\'intervention',
+        // Only coloured shapes, no single point to measure a distance to
+        inZoneOnly: 'Vous êtes dans sa zone d\'intervention',
+        outOfZone: 'Vous êtes hors de sa zone d\'intervention',
+        outlinesSource: (source: string) => `Contours : ${source}`,
         directions: 'Itinéraire',
         openSettings: 'Réglages',
         fitAll: 'Voir tout',

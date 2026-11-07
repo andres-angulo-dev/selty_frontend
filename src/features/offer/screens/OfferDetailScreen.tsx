@@ -13,7 +13,7 @@ import { callPhone } from '@/shared/utils/callPhone';
 import { formatAbsoluteDate, getDaysUntil } from '@/shared/utils/formatDate';
 import { getProfessionalMapData } from '@/shared/utils/professionalMap';
 import { getProfessionLabel } from '@/shared/utils/professionLabel';
-import { withUndrawableZones } from '@/shared/utils/zoneLabels';
+import { describeZonesCaption } from '@/shared/utils/zoneLabels';
 import { useProfessionalServiceArea } from '@/shared/hooks/useProfessionalServiceArea';
 import { RootStackParamList } from '@/app/navigation/types';
 import { useOffer } from '@/shared/hooks/usePublications';
@@ -125,7 +125,7 @@ export const OfferDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     const professional = offer.professional;
     const mapData = professional ? getProfessionalMapData(professional, serviceArea.zones) : null;
     const locationCaption = professional
-        ? withUndrawableZones(`${professional.city} ${Strings.offer.locationSuffix}`, serviceArea.zones)
+        ? describeZonesCaption(serviceArea.zones, professional.city)
         : '';
 
     const handleProfessionalPress = () => {
@@ -249,12 +249,14 @@ export const OfferDetailScreen: React.FC<Props> = ({ route, navigation }) => {
                                 <MapPreview
                                     markers={mapData.markers}
                                     zones={mapData.zones}
+                                    areas={mapData.areas}
                                     caption={locationCaption}
                                     onPress={() => navigation.navigate('LocationMap', {
                                         title: `${professional.firstName} ${professional.lastName}`,
                                         caption: locationCaption,
                                         markers: mapData.markers,
                                         zones: mapData.zones,
+                                        areas: mapData.areas,
                                     })}
                                 />
                             ) : (

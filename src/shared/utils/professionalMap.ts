@@ -1,10 +1,12 @@
 import { Professional, ServiceZone } from '@/shared/types';
-import type { MapPoint, MapZone } from '@/shared/components/MapPreview';
+import type { MapArea, MapPoint, MapZone } from '@/shared/components/MapPreview';
+import { getZoneAreas } from '@/shared/utils/zoneOutlines';
 
 // What MapPreview needs to draw a professional's location
 export interface ProfessionalMapData {
     markers: MapPoint[];
     zones: MapZone[];
+    areas: MapArea[];
 }
 
 /**
@@ -15,7 +17,8 @@ export interface ProfessionalMapData {
  * - Circle: one per city zone, centered on the commune, whatever the locationType,
  *   since zones are where the professional really accepts requests. Its radius adds
  *   the size of the city to the km chosen around it, like the eligibility rule.
- * - Other zones have no shape: name them with getUndrawableZoneNames.
+ * - Coloured shape: the real outline of each department and region zone.
+ * - France is never drawn (it would fill the map): the caption names it (describeZonesCaption).
  *
  * @param professional The displayed professional
  * @param zones Their zones (see useProfessionalServiceArea)
@@ -41,5 +44,9 @@ export const getProfessionalMapData = (
             : [],
     );
 
-    return markers.length > 0 || circles.length > 0 ? { markers, zones: circles } : null;
+    const areas = zones.flatMap(getZoneAreas);
+
+    return markers.length > 0 || circles.length > 0 || areas.length > 0
+        ? { markers, zones: circles, areas }
+        : null;
 };

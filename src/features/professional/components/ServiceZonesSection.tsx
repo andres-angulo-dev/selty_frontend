@@ -40,6 +40,7 @@ export const ServiceZonesSection: React.FC<ServiceZonesSectionProps> = ({
                 <MapPreview
                     markers={mapData.markers}
                     zones={mapData.zones}
+                    areas={mapData.areas}
                     caption={caption}
                     captionIcon="location-outline"
                     onPress={onMapPress}

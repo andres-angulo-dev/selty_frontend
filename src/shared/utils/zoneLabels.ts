@@ -55,24 +55,12 @@ export const describePublicZone = (zone: ServiceZone): { title: string; subtitle
 };
 
 /**
- * Names of the zones a map cannot draw. Only a city zone is a circle: no contour
- * is available for departments and regions, and France would fill the map.
+ * Caption of a professional's map: where they work, read from their zones. Not the
+ * city of their profile: a pro living in Melun may work only in Romainville.
  *
  * @param zones Zones of a professional
- * @returns Display names, in the order of the zones
+ * @param fallback Shown when there is no zone yet (the city of the profile)
+ * @returns "Romainville, Seine-et-Marne (77), Toute la France"
  */
-export const getUndrawableZoneNames = (zones: ServiceZone[]): string[] =>
-    zones.filter((zone) => zone.kind !== 'city').map((zone) => describeZone(zone).title);
-
-/**
- * Completes a map caption with the zones the map does not show, so a visitor
- * never believes the coverage stops at the drawn circles.
- *
- * @param caption Caption of the map
- * @param zones Zones of a professional
- * @returns "Melun · + Seine-et-Marne (77), Paris (75)", or the caption alone
- */
-export const withUndrawableZones = (caption: string, zones: ServiceZone[]): string => {
-    const names = getUndrawableZoneNames(zones);
-    return names.length > 0 ? `${caption} · + ${names.join(', ')}` : caption;
-};
+export const describeZonesCaption = (zones: ServiceZone[], fallback: string): string =>
+    zones.length > 0 ? zones.map((zone) => describePublicZone(zone).title).join(', ') : fallback;

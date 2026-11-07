@@ -22,7 +22,7 @@ import { useAccountType } from '@/app/providers/AccountTypeProvider';
 import { snapshotFromProfessional } from '@/shared/utils/favoriteSnapshot';
 import { getProfessionLabel } from '@/shared/utils/professionLabel';
 import { getProfessionalMapData } from '@/shared/utils/professionalMap';
-import { withUndrawableZones } from '@/shared/utils/zoneLabels';
+import { describeZonesCaption } from '@/shared/utils/zoneLabels';
 import { useProfessionalServiceArea } from '@/shared/hooks/useProfessionalServiceArea';
 import { useAnnonces } from '@/shared/hooks/usePublications';
 
@@ -133,20 +133,21 @@ export const ProfessionalDetailScreen: React.FC<Props> = ({ route, navigation })
                     services={professional.services}
                 />
 
-                {/* Where they work: the list below the map names every zone, so the caption
-                    stays short here; the full-screen map has no list and names them all */}
+                {/* Where they work: the caption names the zones, never the city of the profile
+                    (a pro living in Melun may work only in Romainville) */}
                 <ServiceZonesSection
                     title={Strings.professional.zones.title}
                     zones={serviceArea.zones}
-                    caption={professional.city}
+                    caption={describeZonesCaption(serviceArea.zones, professional.city)}
                     mapData={mapData}
                     onMapPress={() => {
                         if (!mapData) return;
                         navigation.navigate('LocationMap', {
                             title: `${professional.firstName} ${professional.lastName}`,
-                            caption: withUndrawableZones(professional.city, serviceArea.zones),
+                            caption: describeZonesCaption(serviceArea.zones, professional.city),
                             markers: mapData.markers,
                             zones: mapData.zones,
+                            areas: mapData.areas,
                         });
                     }}
                 />

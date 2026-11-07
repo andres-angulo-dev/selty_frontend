@@ -3,10 +3,10 @@ import { getProfessionalMapData } from '@/shared/utils/professionalMap';
 import {
     describePublicZone,
     describeZone,
-    getUndrawableZoneNames,
-    withUndrawableZones,
+    describeZonesCaption,
 } from '@/shared/utils/zoneLabels';
 import { buildDepartmentZone, COUNTRY_ZONE } from '@/shared/utils/serviceZones';
+import { isPointInAreas } from '@/shared/utils/zoneOutlines';
 
 const melun: ServiceZone = {
     kind: 'city',
@@ -32,6 +32,13 @@ describe('getProfessionalMapData', () => {
         expect(data?.zones).toEqual([{ latitude: melun.latitude, longitude: melun.longitude, radiusKm: 31.6 }]);
     });
 
+    it('colours a department with its real shape', () => {
+        const data = getProfessionalMapData(pro({}), [dept]);
+        expect(data?.zones).toEqual([]);
+        expect(data?.areas.length).toBeGreaterThan(0);
+        expect(isPointInAreas({ latitude: melun.latitude, longitude: melun.longitude }, data?.areas ?? [])).toBe(true);
+    });
+
     it('pins a fixed place, and does not draw the country', () => {
         const data = getProfessionalMapData(pro({ locationType: 'fixed' }), [COUNTRY_ZONE]);
         expect(data?.markers).toHaveLength(1);
@@ -50,7 +57,7 @@ describe('getProfessionalMapData', () => {
     });
 
     it('returns null when nothing can be drawn', () => {
-        expect(getProfessionalMapData(pro({}), [dept])).toBeNull();
+        expect(getProfessionalMapData(pro({}), [COUNTRY_ZONE])).toBeNull();
         expect(
             getProfessionalMapData(pro({ locationType: 'fixed', latitude: null, longitude: null }), [COUNTRY_ZONE]),
         ).toBeNull();
@@ -58,17 +65,13 @@ describe('getProfessionalMapData', () => {
 });
 
 describe('zone labels', () => {
-    it('names the zones without a shape', () => {
-        expect(getUndrawableZoneNames([melun, dept])).toEqual(['Seine-et-Marne (77)']);
-        expect(getUndrawableZoneNames([melun])).toEqual([]);
-        expect(getUndrawableZoneNames([COUNTRY_ZONE])).toEqual(['Toute la France']);
-    });
 
-    it('completes a caption only when a zone cannot be drawn', () => {
-        expect(withUndrawableZones('Melun', [melun])).toBe('Melun');
-        expect(withUndrawableZones('Melun', [melun, dept, COUNTRY_ZONE])).toBe(
-            'Melun · + Seine-et-Marne (77), Toute la France',
+    it('captions the map with the zones, not with the city of the profile', () => {
+        expect(describeZonesCaption([melun, dept, COUNTRY_ZONE], 'Paris')).toBe(
+            'Melun, Seine-et-Marne (77), Toute la France',
         );
+        // No zone yet: the city of the profile is all there is
+        expect(describeZonesCaption([], 'Paris')).toBe('Paris');
     });
 
     it('never speaks to the professional on a public page', () => {

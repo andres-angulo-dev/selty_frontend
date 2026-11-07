@@ -21,7 +21,7 @@ export type ProfileStackParamList = {
     ChangePassword: undefined;
 };
 
-import type { MapPoint, MapZone } from '@/shared/components/MapPreview';
+import type { MapArea, MapPoint, MapZone } from '@/shared/components/MapPreview';
 
 export type RootStackParamList = {
     // Optional nested params let a screen open a given tab: navigate('MainTabs', { screen: 'Home' })
@@ -50,5 +50,14 @@ export type RootStackParamList = {
         coverUri?: string;       // Local URI of the cover / offer image
     };
     // Full-screen map. Params stay serializable (plain coordinates, no business object, no callback)
-    LocationMap: { title: string; caption?: string; markers: MapPoint[]; zones: MapZone[] };
+    // target: the item looked at (an annonce): its own pin, and the distance is measured to it
+    LocationMap: {
+        title: string;
+        caption?: string;
+        markers: MapPoint[];
+        zones: MapZone[];
+        areas: MapArea[];
+        target?: MapPoint;
+        targetTitle?: string;
+    };
 }

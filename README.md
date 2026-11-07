@@ -66,6 +66,11 @@ Detail screens (offer, annonce) are built from the same blocks:
 - `DetailCtaBar` — bottom action bar: square secondary button + full-width primary button
 - `OfferCard`, `AnnonceGridCard`, `ProfessionalCoverCard`, `CategoryCard`, `SearchBar`, `FormInput`, `Button`
 
+## Data sources
+
+- **Department and region outlines** (`src/shared/data/frenchOutlines.json`): IGN, ADMIN EXPRESS COG CARTO, under the [Licence Ouverte / Open Licence 2.0](https://www.etalab.gouv.fr/licence-ouverte-open-licence). Simplified to about 500 m (departments) and 800 m (regions). The licence asks to name the source and its date: the full-screen map shows them. Rebuild about once a year, when the official boundaries change: `node scripts/build-french-outlines.mjs` (network needed; runs mapshaper through npx, not a project dependency).
+- **Communes** (postal code ↔ city): geo.api.gouv.fr, called live by the forms.
+
 ## Known limitations
 
 - No backend yet: favorites, publications, requests, trades and zones live in memory (lost on restart). Likes and comments live in local screen state.

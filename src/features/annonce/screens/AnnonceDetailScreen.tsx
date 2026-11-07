@@ -12,9 +12,7 @@ import { ProfessionalRowCard } from '@/shared/components/ProfessionalRowCard';
 import { MapPlaceholder } from '@/shared/components/MapPlaceholder';
 import { MapPreview } from '@/shared/components/MapPreview';
 import { DetailCtaBar } from '@/shared/components/DetailCtaBar';
-import { getProfessionalMapData } from '@/shared/utils/professionalMap';
 import { getProfessionLabel } from '@/shared/utils/professionLabel';
-import { withUndrawableZones } from '@/shared/utils/zoneLabels';
 import { useProfessionalServiceArea } from '@/shared/hooks/useProfessionalServiceArea';
 import { useFavorite } from '@/shared/hooks/useFavorite';
 import { useAccountType } from '@/app/providers/AccountTypeProvider';
@@ -103,12 +101,16 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     }
 
     const categoryLabel = annonce.category?.name ?? null;
-    const mapData = annonce.professional ? getProfessionalMapData(annonce.professional, serviceArea.zones) : null;
-    const locationCaption = withUndrawableZones(
-        `${annonce.city} — ${Strings.annonce.department} ${annonce.department}`,
-        serviceArea.zones,
-    );
+    // The map shows where the ANNONCE is, never the zones of the professional: they may be
+    // far from it, and the pro's page already shows them
+    const locationCaption = `${annonce.city} — ${Strings.annonce.department} ${annonce.department}`;
     const imageUrl = annonce.images[0] ?? null;
+    // Commune center (never an address): its pin, and the distance is measured to it.
+    // Missing on annonces published before it was kept: the placeholder shows the city
+    const annoncePoint =
+        annonce.latitude != null && annonce.longitude != null
+            ? { latitude: annonce.latitude, longitude: annonce.longitude }
+            : undefined;
 
     // Stat items with icons derived from pricing fields
     const statItems: { icon: React.ComponentProps<typeof Ionicons>['name']; label: string }[] = [];
@@ -227,19 +229,21 @@ export const AnnonceDetailScreen: React.FC<Props> = ({ route, navigation }) => {
                         </>
                     )}
 
-                    {/* Location: real map when there is something to draw, placeholder otherwise */}
+                    {/* Location: the annonce's commune on a real map, placeholder when it has no position */}
                     <Text style={styles.sectionTitle}>{Strings.annonce.location}</Text>
-                    {mapData && annonce.professional ? (
+                    {annoncePoint ? (
                         <MapPreview
-                            markers={mapData.markers}
-                            zones={mapData.zones}
+                            target={annoncePoint}
                             caption={locationCaption}
                             captionIcon='location-outline'
                             onPress={() => navigation.navigate('LocationMap', {
-                                title: `${annonce.professional?.firstName} ${annonce.professional?.lastName}`,
+                                title: annonce.title,
                                 caption: locationCaption,
-                                markers: mapData.markers,
-                                zones: mapData.zones,
+                                markers: [],
+                                zones: [],
+                                areas: [],
+                                target: annoncePoint,
+                                targetTitle: annonce.city,
                             })}
                         />
                     ) : (

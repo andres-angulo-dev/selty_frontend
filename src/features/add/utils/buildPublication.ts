@@ -26,6 +26,9 @@ export const buildPublishedAnnonce = (data: AnnonceFormOutput, now: Date): Publi
         images: data.photos,
         city: data.location.city,
         department: data.location.department,
+        // Commune center from the city list, null when the city was typed by hand
+        latitude: data.location.latitude,
+        longitude: data.location.longitude,
         likesCount: 0,
         commentsCount: 0,
         isLiked: false,

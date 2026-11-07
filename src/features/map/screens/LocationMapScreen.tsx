@@ -1,28 +1,30 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, Alert, ActivityIndicator, Linking } from 'react-native';
-import MapView, { Marker, Circle } from 'react-native-maps';
+import MapView from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors, Typography, Spacing, Strings, BorderRadius } from '@/shared/constants';
-import { ZONE_FILL } from '@/shared/components/MapPreview';
+import { MapShapes } from '@/shared/components/MapShapes';
 import { useUserLocation } from '@/shared/hooks/useUserLocation';
 import { computeRegion } from '@/shared/utils/mapRegion';
+import { getOutlinesSource, isPointInAreas } from '@/shared/utils/zoneOutlines';
 import { calculateDistance, formatDistance } from '@/shared/utils/geolocation';
 import { openDirections } from '@/shared/utils/openDirections';
 import { RootStackParamList } from '@/app/navigation/types';
 
 // ============================================
 // LOCATION MAP SCREEN
-// Interactive full-screen map: the professional's place(s) and/or coverage
-// zone(s), the user's own position, the distance between the two, and a
-// directions button when there is a physical place to go to.
+// Interactive full-screen map: the professional's place(s), circles and
+// coloured shapes of their zones, the item looked at (an annonce), the user's
+// own position, the distance, and a directions button when there is a
+// physical place to go to.
 // ============================================
 
 type Props = NativeStackScreenProps<RootStackParamList, 'LocationMap'>;
 
 export const LocationMapScreen: React.FC<Props> = ({ route }) => {
-    const { title, caption, markers, zones } = route.params;
+    const { title, caption, markers, zones, areas, target, targetTitle } = route.params;
     const mapRef = useRef<MapView>(null);
     const insets = useSafeAreaInsets();
     const { userLocation, errorMsg, isLoading } = useUserLocation();
@@ -30,35 +32,48 @@ export const LocationMapScreen: React.FC<Props> = ({ route }) => {
     // Height of the bottom card, measured at runtime so the floating button sits right above it
     const [bottomCardHeight, setBottomCardHeight] = useState(0);
 
-    // Base framing: the professional alone (used before the user position is known)
-    const initialRegion = useMemo(() => computeRegion(markers, zones), [markers, zones]);
+    // What is framed: the professional's places, the item looked at, and the user once known
+    const framedPoints = useMemo(() => (target ? [...markers, target] : markers), [markers, target]);
 
-    // Frame everything: the professional's place(s) / zone(s) plus the user when known.
+    // Base framing, used before the user position is known
+    const initialRegion = useMemo(() => computeRegion(framedPoints, zones, areas), [framedPoints, zones, areas]);
+
+    // Frame everything, the user included when known.
     // Called once when the position arrives, and again on demand via the "fit all" button.
     const fitAll = useCallback(() => {
-        const points = userLocation ? [...markers, userLocation] : markers;
-        const region = computeRegion(points, zones);
+        const points = userLocation ? [...framedPoints, userLocation] : framedPoints;
+        const region = computeRegion(points, zones, areas);
         if (region) mapRef.current?.animateToRegion(region, 600);
-    }, [userLocation, markers, zones]);
+    }, [userLocation, framedPoints, zones, areas]);
 
     useEffect(() => {
         if (userLocation) fitAll();
     }, [userLocation, fitAll]);
 
-    // Distance to the nearest point (place or zone center), and whether the user sits inside a zone
+    // Distance to the item looked at when there is one (an annonce), otherwise to the nearest
+    // place or circle center; and whether the user stands inside one of the zones
     const distanceInfo = useMemo(() => {
         if (!userLocation) return null;
-        const targets = [...markers, ...zones];
-        if (targets.length === 0) return null;
+        const distanceTo = (point: { latitude: number; longitude: number }) =>
+            calculateDistance(userLocation.latitude, userLocation.longitude, point.latitude, point.longitude);
 
-        const distances = targets.map((target) =>
-            calculateDistance(userLocation.latitude, userLocation.longitude, target.latitude, target.longitude),
-        );
-        const nearestKm = Math.min(...distances);
-        const isInZone = zones.some((zone, index) => distances[markers.length + index] <= zone.radiusKm);
+        const zoneDistances = zones.map(distanceTo);
+        const isInZone =
+            zones.some((zone, index) => zoneDistances[index] <= zone.radiusKm) || isPointInAreas(userLocation, areas);
 
-        return { label: formatDistance(nearestKm), isInZone };
-    }, [userLocation, markers, zones]);
+        const candidates = target ? [distanceTo(target)] : [...markers.map(distanceTo), ...zoneDistances];
+        // Only shapes: no single point to measure to, the banner just says inside or outside
+        const label = candidates.length > 0 ? formatDistance(Math.min(...candidates)) : null;
+
+        return { label, isInZone };
+    }, [userLocation, markers, zones, areas, target]);
+
+    // Banner text once the position is known
+    const distanceText = !distanceInfo
+        ? null
+        : distanceInfo.label
+            ? `${Strings.map.distanceFromYou(distanceInfo.label)}${distanceInfo.isInZone ? `, ${Strings.map.inZone}` : ''}`
+            : distanceInfo.isInZone ? Strings.map.inZoneOnly : Strings.map.outOfZone;
 
     // Directions only make sense towards a physical place (first marker)
     const destination = markers[0];
@@ -80,19 +95,14 @@ export const LocationMapScreen: React.FC<Props> = ({ route }) => {
                 showsMyLocationButton={false}
                 toolbarEnabled={false}
             >
-                {zones.map((zone, index) => (
-                    <Circle
-                        key={`zone-${index}`}
-                        center={{ latitude: zone.latitude, longitude: zone.longitude }}
-                        radius={zone.radiusKm * 1000}
-                        fillColor={ZONE_FILL}
-                        strokeColor={Colors.primary.main}
-                        strokeWidth={1.5}
-                    />
-                ))}
-                {markers.map((marker, index) => (
-                    <Marker key={`marker-${index}`} coordinate={marker} title={title} pinColor={Colors.primary.main} />
-                ))}
+                <MapShapes
+                    markers={markers}
+                    zones={zones}
+                    areas={areas}
+                    target={target}
+                    markerTitle={title}
+                    targetTitle={targetTitle}
+                />
             </MapView>
 
             {/* Status banner: distance, locating, or permission error */}
@@ -102,13 +112,10 @@ export const LocationMapScreen: React.FC<Props> = ({ route }) => {
                         <ActivityIndicator size='small' color={Colors.primary.main} />
                         <Text style={styles.bannerText}>{Strings.map.locating}</Text>
                     </>
-                ) : distanceInfo ? (
+                ) : distanceText ? (
                     <>
                         <Ionicons name='navigate' size={16} color={Colors.primary.main} />
-                        <Text style={styles.bannerText}>
-                            {Strings.map.distanceFromYou(distanceInfo.label)}
-                            {distanceInfo.isInZone ? `, ${Strings.map.inZone}` : ''}
-                        </Text>
+                        <Text style={styles.bannerText}>{distanceText}</Text>
                     </>
                 ) : (
                     <>
@@ -157,6 +164,8 @@ export const LocationMapScreen: React.FC<Props> = ({ route }) => {
                         <Text style={styles.directionsText}>{Strings.map.directions}</Text>
                     </Pressable>
                 )}
+                {/* Licence Ouverte: the source of the shapes is named where they are shown in full */}
+                {areas.length > 0 && <Text style={styles.source}>{Strings.map.outlinesSource(getOutlinesSource())}</Text>}
             </View>
         </View>
     );
@@ -257,5 +266,10 @@ const styles = StyleSheet.create({
     directionsText: {
         ...Typography.button,
         color: Colors.text.inverse,
+    },
+
+    source: {
+        ...Typography.caption,
+        color: Colors.text.tertiary,
     },
 });
