@@ -4,7 +4,7 @@ import type { ProServiceArea, ServiceZone } from '@/shared/types';
 // ============================================
 // serviceArea slice
 // Trades and zones of the current professional. The rules (no duplicates,
-// limits) live in shared/utils/serviceZones.ts: this slice only stores the result.
+// limits) live in @sialty/domain (zones/serviceZones.ts): this slice only stores the result.
 // In memory (lost on restart) until the backend.
 // ============================================
 

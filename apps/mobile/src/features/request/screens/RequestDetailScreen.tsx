@@ -24,10 +24,15 @@ import { useServiceArea } from '@/shared/hooks/useServiceArea';
 import { useAccountType } from '@/app/providers/AccountTypeProvider';
 import { calculateDistance, formatDistance } from '@/shared/utils/geolocation';
 import { formatRelativeDate } from '@/shared/utils/formatDate';
-import { formatAuthorName, getDaysUntilExpiry, getRequestStatus } from '@/shared/utils/requestStatus';
+import {
+    formatAuthorName,
+    getDaysUntilExpiry,
+    getProAnswerEligibility,
+    getRequestStatus,
+    ProAnswerEligibility,
+} from '@sialty/domain';
 import { getTradeById, isTradeRemoteCapable } from '@/__mocks__/mockTrades';
 import { CURRENT_USER_ID } from '@/__mocks__/mockSession';
-import { getProAnswerEligibility, ProAnswerEligibility } from '@/shared/utils/requestEligibility';
 
 // ============================================
 // REQUEST DETAIL SCREEN

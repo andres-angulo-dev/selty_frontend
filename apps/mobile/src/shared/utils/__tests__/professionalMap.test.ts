@@ -5,7 +5,7 @@ import {
     describeZone,
     describeZonesCaption,
 } from '@/shared/utils/zoneLabels';
-import { buildDepartmentZone, COUNTRY_ZONE } from '@/shared/utils/serviceZones';
+import { buildDepartmentZone, COUNTRY_ZONE } from '@sialty/domain';
 import { isPointInAreas } from '@/shared/utils/zoneOutlines';
 
 const melun: ServiceZone = {

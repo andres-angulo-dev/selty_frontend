@@ -1,8 +1,9 @@
-import type { ProServiceArea, ServiceRequest, ServiceZone } from '@/shared/types';
-import { getProAnswerEligibility, isRequestInZone } from '@/shared/utils/requestEligibility';
-import { buildDepartmentZone, buildRegionZone, COUNTRY_ZONE } from '@/shared/utils/serviceZones';
+import { describe, expect, it } from 'vitest';
+import type { ProServiceArea, ServiceRequest, ServiceZone } from '../../types';
+import { getProAnswerEligibility, isRequestInZone } from '../requestEligibility';
+import { buildDepartmentZone, buildRegionZone, COUNTRY_ZONE } from '../../zones/serviceZones';
 
-// These tests follow the rule written in shared/constants/requestRules.ts
+// These tests follow the rule written in requests/requestRules.ts
 
 const melun = (radiusKm: number): Extract<ServiceZone, { kind: 'city' }> => ({
     kind: 'city',

@@ -4,7 +4,7 @@
 
 import { Professional } from "@/shared/types";
 import { CURRENT_PROFESSIONAL_ID, CURRENT_PRO_AREA } from "@/__mocks__/mockSession";
-import { buildDepartmentZone, COUNTRY_ZONE } from "@/shared/utils/serviceZones";
+import { buildDepartmentZone, COUNTRY_ZONE } from '@sialty/domain';
 
 export const mockProfessionals: Professional[] = [
     {

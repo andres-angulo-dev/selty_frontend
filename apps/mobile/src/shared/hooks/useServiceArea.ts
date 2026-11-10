@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import type { ProServiceArea, ServiceZone } from '@/shared/types';
 import { useAppDispatch, useAppSelector } from '@/stores/hooks';
 import { selectServiceArea, setTradeIds, setZones } from '@/stores/serviceArea/serviceAreaSlice';
-import { AddZoneResult, addZone, RemoveTradeResult, removeTrade, removeZone } from '@/shared/utils/serviceZones';
+import { AddZoneResult, addZone, RemoveTradeResult, removeTrade, removeZone } from '@sialty/domain';
 
 // ============================================
 // Service area hooks — screens use these and never touch Redux directly.

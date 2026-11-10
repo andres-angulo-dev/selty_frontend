@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/navigation/types';
 import { BorderRadius, Colors, Spacing, Strings, Typography } from '@/shared/constants';
-import { REQUEST_RULES } from '@/shared/constants/requestRules';
+import { REQUEST_RULES } from '@sialty/domain';
 import { describeZone, ZONE_ICONS } from '@/shared/utils/zoneLabels';
 import { Button } from '@/shared/components/button';
 import { MenuSection } from '@/shared/components/MenuSection';
@@ -14,7 +14,7 @@ import { useServiceArea, useServiceAreaActions } from '@/shared/hooks/useService
 // SERVICE ZONES SCREEN — "Mes zones" (professionals)
 // The zones where the pro can answer requests. Changes apply at once to the feed
 // and the request screens. The rules (limits, no duplicates) are in
-// shared/utils/serviceZones.ts; this screen shows the outcome.
+// @sialty/domain (zones/serviceZones.ts); this screen shows the outcome.
 // Not saved after an app restart until the backend exists.
 // ============================================
 

@@ -23,7 +23,7 @@ import { FormErrorSummary } from '@/shared/components/FormErrorSummary';
 import { getInvalidFieldLabels } from '@/shared/utils/formErrors';
 import { usePublishFlow } from '@/shared/hooks/usePublishFlow';
 import { useRequestActions } from '@/shared/hooks/useRequests';
-import { computeRequestExpiry } from '@/shared/utils/requestStatus';
+import { computeRequestExpiry } from '@sialty/domain';
 import { TRADE_OPTIONS, getTradeById } from '@/__mocks__/mockTrades';
 import { CURRENT_USER_AUTHOR } from '@/__mocks__/mockSession';
 

@@ -1,0 +1,106 @@
+import { z } from 'zod';
+import type { OfferCondition } from '../types';
+
+// ============================================
+// OFFER SCHEMA (Zod)
+// Rules of the "Nouvelle offre" form; the form type is inferred from it.
+//
+// Security: client-side validation is for comfort only. The server MUST
+// validate again (same limits, exported below) and check that the account
+// is a professional. Dates are compared by calendar day, in the phone's
+// time zone; the server should store them as UTC dates.
+// ============================================
+
+export const OFFER_LIMITS = {
+    imageMax: 1,
+    titleMin: 5,
+    titleMax: 60,
+    discountMax: 30,
+    descriptionMin: 20,
+    descriptionMax: 1000,
+    conditionsMax: 3,
+} as const;
+
+// Same keys as the OfferCondition union, in display order
+export const OFFER_CONDITIONS = [
+    'free_quote',
+    'fast_response',
+    'no_commitment',
+    'first_session_free',
+] as const satisfies readonly OfferCondition[];
+
+/** Texts shown for each offer rule */
+export interface OfferErrorMessages {
+    titleMin: string;
+    titleMax: string;
+    discountMax: string;
+    discountZero: string;
+    trade: string;
+    descriptionMin: string;
+    descriptionMax: string;
+    conditionsMax: string;
+    startsAtPast: string;
+    expiresAtPast: string;
+    expiresBeforeStart: string;
+}
+
+// "0", "-0 %", "0,00 €": not an advantage, and a "0" badge on a card looks like a bug.
+// The field is free text ("2 pour 1"), so only this exact shape is refused.
+const ZERO_DISCOUNT = /^[-−–\s]*0+([.,]0+)?\s*(%|€)?$/;
+
+/** Midnight of the given day, so two dates compare by calendar day only. */
+export const startOfDay = (date: Date): Date =>
+    new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+/**
+ * Builds the offer schema with the given error messages.
+ * @param messages user-facing texts for each rule
+ * @returns the Zod object schema
+ */
+export const createOfferSchema = (messages: OfferErrorMessages) =>
+    z
+        .object({
+            image: z.array(z.string()).max(OFFER_LIMITS.imageMax),
+            title: z
+                .string()
+                .trim()
+                .min(OFFER_LIMITS.titleMin, messages.titleMin)
+                .max(OFFER_LIMITS.titleMax, messages.titleMax),
+            // Optional: an empty field becomes null, and no badge is shown
+            discount: z
+                .string()
+                .trim()
+                .max(OFFER_LIMITS.discountMax, messages.discountMax)
+                .refine((value) => !ZERO_DISCOUNT.test(value), messages.discountZero)
+                .transform((value) => value || null),
+            // Security: the form only offers the pro's trades, but this is comfort only.
+            // TODO(backend): the server must refuse a tradeId outside the pro's trades.
+            tradeId: z.string().min(1, messages.trade),
+            description: z
+                .string()
+                .trim()
+                .min(OFFER_LIMITS.descriptionMin, messages.descriptionMin)
+                .max(OFFER_LIMITS.descriptionMax, messages.descriptionMax),
+            startsAt: z.date().nullable(),     // null = starts immediately
+            expiresAt: z.date().nullable(),    // null = no end date
+            conditions: z.array(z.enum(OFFER_CONDITIONS)).max(OFFER_LIMITS.conditionsMax, messages.conditionsMax),
+        })
+        // Cross-field date rules (one message per field)
+        .superRefine((data, ctx) => {
+            const today = startOfDay(new Date());
+
+            if (data.startsAt && startOfDay(data.startsAt) < today) {
+                ctx.addIssue({ code: 'custom', path: ['startsAt'], message: messages.startsAtPast });
+            }
+            if (data.expiresAt && startOfDay(data.expiresAt) < today) {
+                ctx.addIssue({ code: 'custom', path: ['expiresAt'], message: messages.expiresAtPast });
+                return;
+            }
+            // Same day allowed: a one-day offer starts and ends on the same date
+            if (data.startsAt && data.expiresAt && startOfDay(data.expiresAt) < startOfDay(data.startsAt)) {
+                ctx.addIssue({ code: 'custom', path: ['expiresAt'], message: messages.expiresBeforeStart });
+            }
+        });
+
+export type OfferFormInput = z.input<ReturnType<typeof createOfferSchema>>;
+export type OfferFormOutput = z.output<ReturnType<typeof createOfferSchema>>;

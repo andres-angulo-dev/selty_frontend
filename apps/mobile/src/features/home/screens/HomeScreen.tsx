@@ -21,7 +21,7 @@ import { RequestGridCard } from '@/shared/components/RequestGridCard';
 import { useRequests } from '@/shared/hooks/useRequests';
 import { useServiceArea } from '@/shared/hooks/useServiceArea';
 import { useAccountType } from '@/app/providers/AccountTypeProvider';
-import { formatAuthorName, getRequestStatus } from '@/shared/utils/requestStatus';
+import { formatAuthorName, getProAnswerEligibility, getRequestStatus } from '@sialty/domain';
 import { formatRelativeDate } from '@/shared/utils/formatDate';
 import { getProfessionLabel } from '@/shared/utils/professionLabel';
 import { useUserLocation } from '@/shared/hooks/useUserLocation';
@@ -34,7 +34,6 @@ import { mockProfessionals } from '@/__mocks__/mockProfessionals';
 import { useAnnonces, useOffers } from '@/shared/hooks/usePublications';
 import { isOfferLive } from '@/shared/utils/availability';
 import { getTradeById, isTradeRemoteCapable } from '@/__mocks__/mockTrades';
-import { getProAnswerEligibility } from '@/shared/utils/requestEligibility';
 
 // Maps categoryId → display name for the grid card badge.
 // Kept local because this mapping is view-only logic, not business logic.

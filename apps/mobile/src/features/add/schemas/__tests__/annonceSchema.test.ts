@@ -2,7 +2,7 @@ import { ANNONCE_LIMITS, createAnnonceSchema, parsePriceInput } from '@/features
 import { Strings } from '@/shared/constants/strings';
 
 const messages = Strings.add.annonceForm.errors;
-const schema = createAnnonceSchema(messages);
+const schema = createAnnonceSchema(messages, Strings.locationFields.errors);
 
 // A valid form: each case changes what it tests
 const form = (over: object = {}) => ({

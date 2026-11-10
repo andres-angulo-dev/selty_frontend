@@ -35,7 +35,7 @@ describe('a form without a trade', () => {
 
     it('is refused for an annonce', () => {
         const errors = Strings.add.annonceForm.errors;
-        expect(tradeError(createAnnonceSchema(errors).safeParse({ tradeId: '' }))).toBe('Choisissez un métier.');
+        expect(tradeError(createAnnonceSchema(errors, Strings.locationFields.errors).safeParse({ tradeId: '' }))).toBe('Choisissez un métier.');
     });
 
     it('is refused for an offer', () => {

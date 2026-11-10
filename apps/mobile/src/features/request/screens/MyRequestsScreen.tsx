@@ -7,7 +7,7 @@ import type { RequestStatus, ServiceRequest } from '@/shared/types';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { MediaRowCard, MediaRowBadgeTone } from '@/shared/components/MediaRowCard';
 import { useRequests } from '@/shared/hooks/useRequests';
-import { getRequestStatus } from '@/shared/utils/requestStatus';
+import { getRequestStatus } from '@sialty/domain';
 import { getTradeById } from '@/__mocks__/mockTrades';
 import { CURRENT_USER_ID } from '@/__mocks__/mockSession';
 

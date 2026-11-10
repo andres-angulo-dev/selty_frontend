@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    // Shared by the app (Metro) and the server (Node): plain modern JavaScript, no DOM, no React
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    // import.meta.glob (Vite, installed with Vitest): lets the purity test read the source files
+    "types": ["vite/client"]
+  },
+  "include": ["src"]
+}

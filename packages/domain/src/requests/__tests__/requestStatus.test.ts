@@ -1,11 +1,12 @@
-import type { RequestAuthor, ServiceRequest } from '@/shared/types';
+import { describe, expect, it } from 'vitest';
+import type { RequestAuthor, ServiceRequest } from '../../types';
 import {
     computeRequestExpiry,
     formatAuthorName,
     getDaysUntilExpiry,
     getRequestStatus,
-} from '@/shared/utils/requestStatus';
-import { REQUEST_RULES } from '@/shared/constants/requestRules';
+} from '../requestStatus';
+import { REQUEST_RULES } from '../requestRules';
 
 const now = new Date('2026-11-06T12:00:00.000Z');
 const DAY_MS = 24 * 60 * 60 * 1000;

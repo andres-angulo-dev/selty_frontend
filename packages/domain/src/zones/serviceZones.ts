@@ -1,6 +1,6 @@
-import type { ProServiceArea, ServiceZone } from '@/shared/types';
-import { FRENCH_DEPARTMENTS, FRENCH_REGIONS } from '@/shared/constants/frenchGeo';
-import { REQUEST_RULES } from '@/shared/constants/requestRules';
+import type { ProServiceArea, ServiceZone } from '../types';
+import { FRENCH_DEPARTMENTS, FRENCH_REGIONS } from '../geo/frenchGeo';
+import { REQUEST_RULES } from '../requests/requestRules';
 
 // ============================================
 // Changes to a professional's trades and zones, as pure functions: they take the

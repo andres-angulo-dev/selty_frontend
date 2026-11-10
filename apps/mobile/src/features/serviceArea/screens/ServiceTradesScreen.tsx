@@ -10,7 +10,7 @@ import { getTradeById, isTradeRemoteCapable, TRADE_OPTIONS } from '@/__mocks__/m
 // ============================================
 // SERVICE TRADES SCREEN — "Mes métiers" (professionals)
 // The trades whose requests the pro can answer. Changes apply at once to the
-// feed and the request screens. The rules are in shared/utils/serviceZones.ts.
+// feed and the request screens. The rules are in @sialty/domain (zones/serviceZones.ts).
 // Not saved after an app restart until the backend exists.
 // ============================================
 

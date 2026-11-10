@@ -1,5 +1,6 @@
-import type { ProServiceArea, ServiceZone } from '@/shared/types';
-import { REQUEST_RULES } from '@/shared/constants/requestRules';
+import { describe, expect, it } from 'vitest';
+import type { ProServiceArea, ServiceZone } from '../../types';
+import { REQUEST_RULES } from '../../requests/requestRules';
 import {
     addZone,
     buildDepartmentZone,
@@ -10,7 +11,7 @@ import {
     REGION_OPTIONS,
     removeTrade,
     removeZone,
-} from '@/shared/utils/serviceZones';
+} from '../serviceZones';
 
 const city = (code: string, radiusKm: number): ServiceZone => ({
     kind: 'city',

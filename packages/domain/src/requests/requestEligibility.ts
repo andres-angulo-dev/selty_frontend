@@ -1,10 +1,10 @@
-import type { ProServiceArea, ServiceRequest, ServiceZone } from '@/shared/types';
-import { FRENCH_DEPARTMENTS } from '@/shared/constants/frenchGeo';
-import { calculateDistance } from './geolocation';
+import type { ProServiceArea, ServiceRequest, ServiceZone } from '../types';
+import { FRENCH_DEPARTMENTS } from '../geo/frenchGeo';
+import { calculateDistance } from '../geo/distance';
 
 // ============================================
 // Can this professional answer this request?
-// The rule and its parameters are written in shared/constants/requestRules.ts.
+// The rule and its parameters are written in requests/requestRules.ts.
 // Everyone SEES every open request; only answering is limited. This only drives
 // the display: the server must enforce the same rule.
 // ============================================

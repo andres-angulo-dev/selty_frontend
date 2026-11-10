@@ -5,7 +5,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/app/navigation/types';
 import { BorderRadius, Colors, Spacing, Strings, Typography } from '@/shared/constants';
-import { REQUEST_RULES } from '@/shared/constants/requestRules';
 import type { ServiceZone } from '@/shared/types';
 import { Button } from '@/shared/components/button';
 import { FormErrorSummary } from '@/shared/components/FormErrorSummary';
@@ -22,9 +21,10 @@ import {
     COUNTRY_ZONE,
     DEPARTMENT_OPTIONS,
     estimateCityRadiusKm,
+    FRENCH_DEPARTMENTS,
     REGION_OPTIONS,
-} from '@/shared/utils/serviceZones';
-import { FRENCH_DEPARTMENTS } from '@/shared/constants/frenchGeo';
+    REQUEST_RULES,
+} from '@sialty/domain';
 import { isTradeRemoteCapable } from '@/__mocks__/mockTrades';
 
 // ============================================

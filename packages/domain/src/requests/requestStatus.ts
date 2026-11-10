@@ -1,5 +1,5 @@
-import type { RequestAuthor, RequestStatus, ServiceRequest } from '@/shared/types';
-import { REQUEST_RULES } from '@/shared/constants/requestRules';
+import type { RequestAuthor, RequestStatus, ServiceRequest } from '../types';
+import { REQUEST_RULES } from './requestRules';
 
 // ============================================
 // Service request helpers (status, lifetime, public author name)

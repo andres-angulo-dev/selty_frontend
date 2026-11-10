@@ -1,5 +1,10 @@
-import { FRENCH_DEPARTMENTS as DEPARTMENTS, FRENCH_REGIONS as REGIONS } from '@/shared/constants/frenchGeo';
-import { buildDepartmentZone, buildRegionZone, COUNTRY_ZONE } from '@/shared/utils/serviceZones';
+import {
+    buildDepartmentZone,
+    buildRegionZone,
+    COUNTRY_ZONE,
+    FRENCH_DEPARTMENTS as DEPARTMENTS,
+    FRENCH_REGIONS as REGIONS,
+} from '@sialty/domain';
 import { getOutlinesSource, getZoneAreas, isPointInAreas } from '@/shared/utils/zoneOutlines';
 
 // Real commune centers
