@@ -19,11 +19,27 @@ const CATEGORY_DISPLAY: Record<string, CategoryDisplay> = {
     'cat-6': { icon: 'school-outline', color: '#F3A683', professionalsCount: 15 },
     'cat-7': { icon: 'laptop-outline', color: '#596275', professionalsCount: 12 },
     'cat-8': { icon: 'calendar-outline', color: '#BEE3DB', professionalsCount: 9 },
-    'cat-all': { icon: 'apps-outline', color: '#022448', professionalsCount: 0 },
 };
 
-export const mockCategories: Category[] = CATEGORIES.map((category) => ({
-    id: category.id,
-    name: category.name,
-    ...CATEGORY_DISPLAY[category.id],
-}));
+/**
+ * "Toutes" (no filter): an app-only entry, NOT a category of the catalogue.
+ * It is never stored nor served by the API, so it is added here. Kept last,
+ * where it already was: the mocks pick categories by index (mockCategories[0]
+ * = Artisans), putting it first would shift them all.
+ */
+const ALL_CATEGORIES_ENTRY: Category = {
+    id: 'cat-all',
+    name: 'Toutes',
+    icon: 'apps-outline',
+    color: '#022448',
+    professionalsCount: 0,
+};
+
+export const mockCategories: Category[] = [
+    ...CATEGORIES.map((category) => ({
+        id: category.id,
+        name: category.name,
+        ...CATEGORY_DISPLAY[category.id],
+    })),
+    ALL_CATEGORIES_ENTRY,
+];

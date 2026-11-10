@@ -79,7 +79,15 @@ export const createApp = ({
         }),
     );
 
-    // 3. Baseline limit per IP; answers 429 with standard RateLimit headers
+    // 3. Blurred photos, BEFORE the limit: one feed page carries 20 to 60 of them
+    // and a pro page up to 100, so counting them would answer 429 on images after
+    // a few screens (sooner behind a mobile carrier's shared IP). They are public,
+    // immutable (cached a year by the client), unguessable and cheap to serve.
+    // Security: only the blurred version is reachable here (media.routes.ts);
+    // the clear photos of plan 4 go behind the session check AND the limit.
+    app.use(mediaRoutes(storage));
+
+    // 4. Baseline limit per IP; answers 429 with standard RateLimit headers
     app.use(
         rateLimit({
             windowMs: LIMITS.rateLimitWindowMs,
@@ -89,12 +97,11 @@ export const createApp = ({
         }),
     );
 
-    // 4. JSON bodies only, size capped
+    // 5. JSON bodies only, size capped
     app.use(express.json({ limit: LIMITS.jsonBodyMax }));
 
-    // 5. Routes
+    // 6. Routes
     app.use(healthRoutes(db));
-    app.use(mediaRoutes(storage));
     // Routes that read the database; absent in the tests of the bare skeleton
     if (db) {
         app.use(referenceRoutes(db));
@@ -103,7 +110,7 @@ export const createApp = ({
     }
     if (extraRoutes) app.use(extraRoutes);
 
-    // 6. Nothing matched, then every error as a problem document
+    // 7. Nothing matched, then every error as a problem document
     app.use(notFound);
     app.use(errorHandler);
 

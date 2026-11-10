@@ -62,6 +62,31 @@ describe('GET /v1/media/*key', () => {
     });
 });
 
+describe('GET /v1/media/*key and the rate limit', () => {
+    // "r=" in the RateLimit header = requests left for this client
+    const remaining = (response: request.Response): string | undefined =>
+        /r=(\d+)/.exec(String(response.headers.ratelimit))?.[1];
+
+    it('does not count blurred photos: one feed page carries dozens of them', async () => {
+        // A fresh app, so its limiter starts from a full quota
+        const fresh = createApp({ storage: new LocalDiskStorage(root) });
+        const server = fresh.listen(0);
+        try {
+            let last: request.Response | undefined;
+            for (let i = 0; i < 301; i += 1) last = await request(server).get('/v1/media/a/b/blur.webp');
+            expect(last?.status).toBe(200);
+            expect(last?.headers.ratelimit).toBeUndefined();
+
+            // The API routes still have their whole quota (300, minus this request)
+            const api = await request(server).get('/v1/health');
+            expect(api.status).toBe(200);
+            expect(remaining(api)).toBe('299');
+        } finally {
+            server.close();
+        }
+    });
+});
+
 describe('storeImage', () => {
     it('stores three files, a media row, and the blur is then served', async () => {
         const ownerId = await insertProfile(db);

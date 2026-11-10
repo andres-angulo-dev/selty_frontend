@@ -1,3 +1,4 @@
+import type { CategoryRef, ReferenceList, Trade } from '@sialty/domain';
 import { asc } from 'drizzle-orm';
 import { Router } from 'express';
 import type { Database } from '../../db/client';
@@ -29,7 +30,7 @@ export const referenceRoutes = (db: Database): Router => {
             })
             .from(trades)
             .orderBy(asc(trades.label));
-        res.set('Cache-Control', REFERENCE_CACHE_CONTROL).json({ items });
+        res.set('Cache-Control', REFERENCE_CACHE_CONTROL).json({ items } satisfies ReferenceList<Trade>);
     });
 
     router.get('/v1/categories', async (_req, res) => {
@@ -37,7 +38,7 @@ export const referenceRoutes = (db: Database): Router => {
             .select({ id: categories.id, name: categories.name })
             .from(categories)
             .orderBy(asc(categories.name));
-        res.set('Cache-Control', REFERENCE_CACHE_CONTROL).json({ items });
+        res.set('Cache-Control', REFERENCE_CACHE_CONTROL).json({ items } satisfies ReferenceList<CategoryRef>);
     });
 
     return router;

@@ -1,3 +1,12 @@
+import type {
+    Audience,
+    MemberProfessionalPage,
+    ProfessionalPage,
+    PublicAnnonce,
+    PublicOffer,
+    PublicRequest,
+    VisitorProfessionalPage,
+} from '@sialty/domain';
 import { Router, type Response } from 'express';
 import { z } from 'zod';
 import type { Database } from '../../db/client';
@@ -48,9 +57,48 @@ const varyOnAudience = (res: Response): void => {
     res.vary('Authorization');
 };
 
+/** Every body a detail route may send: typed so the compiler checks the contract the app reads */
+type DetailBody = ProfessionalPage | PublicAnnonce | PublicOffer | PublicRequest;
+
 /** Sends a found resource with the detail cache header */
-const sendDetail = (res: Response, body: unknown): void => {
+const sendDetail = (res: Response, body: DetailBody): void => {
     res.set('Cache-Control', DETAIL_CACHE_CONTROL).json(body);
+};
+
+/**
+ * Reads and shapes one professional's page: the profile and its nested lists.
+ * One branch per audience, so every part of a page has the SAME audience's
+ * shape (the compiler refuses a visitor profile carrying member annonces).
+ * @param db       The database
+ * @param id       The professional's id (already a valid uuid)
+ * @param audience Who reads
+ * @returns The page, or null when the professional is unknown or not validated
+ */
+const readProfessionalPage = async (db: Database, id: string, audience: Audience): Promise<ProfessionalPage | null> => {
+    if (audience === 'member') {
+        const result = await findProfessional(db, id, 'member');
+        if (result.state !== 'found') return null;
+        const [annonceRows, offerRows] = await Promise.all([
+            listProfessionalAnnonces(db, id, 'member'),
+            listProfessionalOffers(db, id, 'member'),
+        ]);
+        return {
+            ...serializeProfessional(result.row, 'member'),
+            annonces: annonceRows.map((row) => serializeAnnonce(row, 'member')),
+            offers: offerRows.map((row) => serializeOffer(row, 'member')),
+        } satisfies MemberProfessionalPage;
+    }
+    const result = await findProfessional(db, id, 'visitor');
+    if (result.state !== 'found') return null;
+    const [annonceRows, offerRows] = await Promise.all([
+        listProfessionalAnnonces(db, id, 'visitor'),
+        listProfessionalOffers(db, id, 'visitor'),
+    ]);
+    return {
+        ...serializeProfessional(result.row, 'visitor'),
+        annonces: annonceRows.map((row) => serializeAnnonce(row, 'visitor')),
+        offers: offerRows.map((row) => serializeOffer(row, 'visitor')),
+    } satisfies VisitorProfessionalPage;
 };
 
 /**
@@ -67,20 +115,9 @@ export const publicReadRoutes = (db: Database): Router => {
     });
 
     router.get('/v1/professionals/:id', async (req, res) => {
-        const id = parseId(req.params.id);
-        const audience = resolveAudience(req);
-        const result = await findProfessional(db, id, audience);
-        if (result.state !== 'found') throw new HttpProblem(404, 'Not found');
-
-        const [annonceRows, offerRows] = await Promise.all([
-            listProfessionalAnnonces(db, id, audience),
-            listProfessionalOffers(db, id, audience),
-        ]);
-        sendDetail(res, {
-            ...serializeProfessional(result.row, audience),
-            annonces: annonceRows.map((row) => serializeAnnonce(row, audience)),
-            offers: offerRows.map((row) => serializeOffer(row, audience)),
-        });
+        const page = await readProfessionalPage(db, parseId(req.params.id), resolveAudience(req));
+        if (!page) throw new HttpProblem(404, 'Not found');
+        sendDetail(res, page);
     });
 
     router.get('/v1/annonces/:id', async (req, res) => {

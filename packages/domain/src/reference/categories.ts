@@ -5,8 +5,9 @@ export interface CategoryRef {
 }
 
 /**
- * Categories of the catalogue, IDs stable. `cat-all` is the "no filter"
- * entry the app shows first; it owns no trade.
+ * Categories of the catalogue, IDs stable. Real categories only: the app's
+ * "Toutes" (no filter) entry is a UI choice and stays in the app, so it is
+ * never stored in the categories table nor served by /v1/categories.
  */
 export const CATEGORIES: readonly CategoryRef[] = [
     { id: 'cat-1', name: 'Artisans' },
@@ -17,5 +18,4 @@ export const CATEGORIES: readonly CategoryRef[] = [
     { id: 'cat-6', name: 'Cours' },
     { id: 'cat-7', name: 'Tech' },
     { id: 'cat-8', name: 'Événements' },
-    { id: 'cat-all', name: 'Toutes' },
 ];

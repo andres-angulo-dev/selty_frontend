@@ -71,6 +71,14 @@ describe('error serializer', () => {
         expect(JSON.parse(logLine(err)).err.message).toContain('outer');
     });
 
+    it('cuts the bound values of ANY error whose text copies Drizzle\'s, not only a recognised query error', () => {
+        const line = logLine(new Error('wrapped: Failed query: select 1\nparams: 48.5421,2.6553'));
+        const logged = JSON.parse(line).err;
+        expect(logged.message).toBe('wrapped: Failed query: select 1');
+        expect(line).not.toContain('48.5421');
+        expect(line).not.toContain('2.6553');
+    });
+
     it('leaves an ordinary error readable', () => {
         const logged = JSON.parse(logLine(new Error('plain failure'))).err;
         expect(logged.message).toBe('plain failure');

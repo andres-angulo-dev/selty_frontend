@@ -31,14 +31,14 @@ const countRows = async () => {
 describe('syncReference', () => {
     it('fills one row per domain category and trade', async () => {
         await syncReference(db);
-        expect(await countRows()).toEqual({ categories: 9, trades: 20 });
-        expect(CATEGORIES).toHaveLength(9);
+        expect(await countRows()).toEqual({ categories: 8, trades: 20 });
+        expect(CATEGORIES).toHaveLength(8);
         expect(TRADES).toHaveLength(20);
     });
 
     it('keeps the same counts when run twice', async () => {
         await syncReference(db);
         await syncReference(db);
-        expect(await countRows()).toEqual({ categories: 9, trades: 20 });
+        expect(await countRows()).toEqual({ categories: 8, trades: 20 });
     });
 });

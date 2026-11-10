@@ -3,8 +3,9 @@ import { CATEGORIES, TRADES } from '../index';
 
 // Reference data shared by the app and the server.
 describe('reference data', () => {
-    it('has 9 categories', () => {
-        expect(CATEGORIES).toHaveLength(9);
+    it('has the 8 real categories, without the app-only "Toutes" entry', () => {
+        expect(CATEGORIES).toHaveLength(8);
+        expect(CATEGORIES.map((category) => category.id)).not.toContain('cat-all');
     });
 
     it('links every trade to a known category', () => {

@@ -371,7 +371,23 @@ export async function findAnnonce(
 /**
  * Active annonces of one professional, newest first, at most NESTED_LIST_MAX.
  * Empty when the professional is not validated.
+ * Overloads: a literal audience gives rows of that audience only.
  */
+export async function listProfessionalAnnonces(
+    db: Database,
+    professionalId: string,
+    audience: 'visitor',
+): Promise<VisitorAnnonceRow[]>;
+export async function listProfessionalAnnonces(
+    db: Database,
+    professionalId: string,
+    audience: 'member',
+): Promise<MemberAnnonceRow[]>;
+export async function listProfessionalAnnonces(
+    db: Database,
+    professionalId: string,
+    audience: Audience,
+): Promise<(VisitorAnnonceRow | MemberAnnonceRow)[]>;
 export async function listProfessionalAnnonces(
     db: Database,
     professionalId: string,
@@ -518,7 +534,25 @@ export async function findOffer(
     return row.isLive ? { state: 'found', row: toVisitorOfferRow(row) } : { state: 'ended' };
 }
 
-/** Live offers of one professional, newest first, at most NESTED_LIST_MAX */
+/**
+ * Live offers of one professional, newest first, at most NESTED_LIST_MAX.
+ * Overloads: a literal audience gives rows of that audience only.
+ */
+export async function listProfessionalOffers(
+    db: Database,
+    professionalId: string,
+    audience: 'visitor',
+): Promise<VisitorOfferRow[]>;
+export async function listProfessionalOffers(
+    db: Database,
+    professionalId: string,
+    audience: 'member',
+): Promise<MemberOfferRow[]>;
+export async function listProfessionalOffers(
+    db: Database,
+    professionalId: string,
+    audience: Audience,
+): Promise<(VisitorOfferRow | MemberOfferRow)[]>;
 export async function listProfessionalOffers(
     db: Database,
     professionalId: string,

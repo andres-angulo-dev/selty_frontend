@@ -35,11 +35,12 @@ describe('GET /v1/trades', () => {
 });
 
 describe('GET /v1/categories', () => {
-    it('lists the 9 categories as id and name only', async () => {
+    it('lists the 8 categories as id and name only, never the app-only "Toutes"', async () => {
         const response = await request(app).get('/v1/categories');
         expect(response.status).toBe(200);
         expect(response.headers['cache-control']).toBe('public, max-age=3600');
-        expect(response.body.items).toHaveLength(9);
+        expect(response.body.items).toHaveLength(8);
+        expect(response.body.items.map((item: { id: string }) => item.id)).not.toContain('cat-all');
         expect(response.body.items).toHaveLength(CATEGORIES.length);
         for (const item of response.body.items) expect(Object.keys(item).sort()).toEqual(['id', 'name']);
     });

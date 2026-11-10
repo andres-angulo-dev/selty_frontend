@@ -229,6 +229,32 @@ export interface MemberRequest extends RequestCommon, MemberPlace {
 export type PublicRequest = VisitorRequest | MemberRequest;
 
 // ============================================
+// PROFESSIONAL PAGE — GET /v1/professionals/:id
+// The profile and its live publications, all in ONE audience's shapes:
+// a visitor page never nests member annonces, and the reverse.
+// ============================================
+
+export type VisitorProfessionalPage = VisitorProfessional & {
+    annonces: VisitorAnnonce[];  // Active, newest first, at most 50
+    offers: VisitorOffer[];      // Live, newest first, at most 50
+};
+
+export type MemberProfessionalPage = MemberProfessional & {
+    annonces: MemberAnnonce[];
+    offers: MemberOffer[];
+};
+
+export type ProfessionalPage = VisitorProfessionalPage | MemberProfessionalPage;
+
+// ============================================
+// REFERENCE LISTS — GET /v1/trades → ReferenceList<Trade>,
+// GET /v1/categories → ReferenceList<CategoryRef>
+// ============================================
+
+/** A whole reference list (small, never paginated) */
+export type ReferenceList<T> = { items: T[] };
+
+// ============================================
 // FEED
 // ============================================
 

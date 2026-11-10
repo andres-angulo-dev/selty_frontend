@@ -1,5 +1,3 @@
-import { DrizzleQueryError } from 'drizzle-orm';
-
 // ============================================
 // LOG SERIALIZERS — what a request or an error becomes in a log line.
 // Security / privacy: a log file is read by more people, and kept longer,
@@ -9,8 +7,8 @@ import { DrizzleQueryError } from 'drizzle-orm';
 //   * drizzle-orm's DrizzleQueryError writes the bound values in its message
 //     and stack ("Failed query: <sql>\nparams: 2.6553,48.5421") and keeps them
 //     in `params`. A value can itself contain a newline, so values are never
-//     searched for in the text: message and stack are CUT at the first
-//     "\nparams:", only the SQL before it stays (placeholders $1, $2...);
+//     searched for in the text: the message and stack of EVERY error are CUT
+//     at the first "\nparams:", only the SQL before it stays ($1, $2...);
 //   * the database's own error (pg DatabaseError) can quote the input
 //     ('invalid input syntax for type uuid: "..."'), so only its class and its
 //     SQLSTATE code are logged (57014 = statement timeout...), never its
@@ -58,10 +56,6 @@ const isObject = (value: unknown): value is Record<string, unknown> => typeof va
 const isErrorLike = (value: unknown): value is Record<string, unknown> =>
     value instanceof Error || (isObject(value) && typeof value.message === 'string' && 'stack' in value);
 
-/** drizzle-orm's query error (class check, or its shape when it comes from another copy of the package) */
-const isQueryError = (err: Record<string, unknown>): boolean =>
-    err instanceof DrizzleQueryError || (typeof err.query === 'string' && Array.isArray(err.params));
-
 /** A database error: carries a SQLSTATE code (a Node system error such as EPIPE carries `syscall` instead) */
 const isDatabaseError = (err: Record<string, unknown>): boolean =>
     typeof err.code === 'string' && SQLSTATE.test(err.code) && !('syscall' in err);
@@ -89,11 +83,13 @@ const toLoggedError = (err: Record<string, unknown>, seen: WeakSet<object>, dept
 
     if (isDatabaseError(err)) return { type, code: err.code };
 
-    const queryError = isQueryError(err);
+    // Cut for EVERY error, not only a recognised query error: a wrapper that
+    // copies Drizzle's text ("wrapped: Failed query ...\nparams: 48.54,2.65")
+    // would otherwise carry the bound values. A text without the marker is unchanged.
     const logged: LoggedError = {
         type,
-        message: queryError ? beforeParams(err.message) : err.message,
-        stack: queryError ? beforeParams(err.stack) : err.stack,
+        message: beforeParams(err.message),
+        stack: beforeParams(err.stack),
     };
 
     for (const [key, value] of Object.entries(err)) {
