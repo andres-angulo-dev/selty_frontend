@@ -8,6 +8,13 @@
       "when": 1794320308296,
       "tag": "0000_communes",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794340212889,
+      "tag": "0001_public_read",
+      "breakpoints": true
     }
   ]
 }

@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm';
 import { doublePrecision, geometry, index, pgTable, text } from 'drizzle-orm/pg-core';
 
 // ============================================
@@ -26,6 +27,10 @@ export const communes = pgTable(
         index('communes_region_code_idx').on(table.regionCode),
         // Spatial index: "communes within 30 km" without reading the whole table
         index('communes_center_gist_idx').using('gist', table.center),
+        // Same, for distances in meters: ST_DWithin(center::geography, ...) is an
+        // expression the index above does not cover. Queries must use exactly
+        // center::geography to hit it (added in migration 0001)
+        index('communes_center_geog_gist_idx').using('gist', sql`(${table.center}::geography)`),
     ],
 );
 

@@ -4,3 +4,8 @@
 // ============================================
 
 export * from './communes';
+export * from './reference';
+export * from './profiles';
+export * from './media';
+export * from './people';
+export * from './content';
