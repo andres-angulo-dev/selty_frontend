@@ -16,6 +16,10 @@ const envSchema = z.object({
     // Proxies in front of the server: 1 behind the tunnel, 0 when called directly.
     // A number, never "true" (see app.ts: a client could fake its address).
     TRUST_PROXY_HOPS: z.coerce.number().int().min(0).max(5).default(0),
+    // Network interface to listen on. 127.0.0.1 = this machine only: the tunnel
+    // (on this machine) still reaches it, but no device of the local network can
+    // call the API directly with a forged X-Forwarded-For. A host sets 0.0.0.0.
+    HOST: z.string().min(1).default('127.0.0.1'),
 });
 
 export type Env = z.infer<typeof envSchema>;

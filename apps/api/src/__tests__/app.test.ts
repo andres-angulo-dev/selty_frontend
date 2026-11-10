@@ -21,6 +21,10 @@ testRoutes.get('/v1/__test/crash', () => {
 testRoutes.get('/v1/__test/async-crash', async () => {
     throw new Error('secret async detail');
 });
+testRoutes.get('/v1/__test/late-crash', (_req, res) => {
+    res.write('partial');
+    throw new Error('after the headers');
+});
 
 const app = createApp({ extraRoutes: testRoutes });
 
@@ -60,6 +64,28 @@ describe('errors', () => {
         const response = await request(app).post('/v1/__test/echo').send({ title: 'Bonjour', extra: 1 });
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ title: 'Bonjour' });
+    });
+
+    it('answers 415 for a body in an unsupported charset: the client\'s fault, not a 500', async () => {
+        const response = await request(app)
+            .post('/v1/__test/echo')
+            .set('Content-Type', 'application/json; charset=klingon')
+            .send('{"title":"x"}');
+        expect(response.status).toBe(415);
+        expect(response.body.title).toBe('Unsupported media type');
+    });
+
+    it('closes the connection when an error happens after the answer has started, and keeps serving', async () => {
+        const lines: string[] = [];
+        const logger = pino({ level: 'error' }, { write: (line: string) => lines.push(line) });
+        const logged = createApp({ logger, extraRoutes: testRoutes });
+
+        // A second answer cannot be written: the connection is cut, the client sees it
+        await expect(request(logged).get('/v1/__test/late-crash')).rejects.toThrow();
+        expect(lines.join('')).toContain('error after the response started');
+
+        const next = await request(logged).get('/v1/health');
+        expect(next.status).toBe(200);
     });
 
     it('answers 413 when the body is too large', async () => {

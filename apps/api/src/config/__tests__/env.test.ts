@@ -14,6 +14,7 @@ describe('loadEnv', () => {
             PORT: 4000,
             DATABASE_URL,
             TRUST_PROXY_HOPS: 0,
+            HOST: '127.0.0.1',
         });
     });
 

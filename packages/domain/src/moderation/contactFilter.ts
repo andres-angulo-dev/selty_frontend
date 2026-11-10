@@ -24,17 +24,17 @@ const normalize = (text: string): string =>
         .toLowerCase()
         // "é" → "e" + combining accent, then the accent is dropped
         .normalize('NFD')
-        .replace(/[̀-ͯ]/g, '')
+        .replace(/[\u0300-\u036f]/g, '')
         // "[at]" / "(at)" → "@", with the spaces around it
         .replace(/\s*[[(]\s*at\s*[\])]\s*/g, '@')
         // "[dot]" / "(point)" → "."
         .replace(/\s*[[(]\s*(dot|point)\s*[\])]\s*/g, '.');
 
 // French phone number: "0" or "+33" / "0033", a digit 1-9, then four pairs of
-// digits, each pair optionally preceded by a space, a dot or a dash.
-// Not preceded or followed by another digit, so "77000" or "1 200" never match:
-// a postal code has 5 digits and no leading "0" + 9 digits.
-const PHONE = /(?<![\d+])(?:(?:\+|00)33[\s.-]*|0)[1-9](?:[\s.-]?\d{2}){4}(?!\d)/;
+// digits, each pair preceded by up to 3 separators (spaces, dots, dashes,
+// slashes: "06 / 12 / 34..."). Not preceded or followed by another digit, so
+// "77000" or "1 200" never match: a postal code has 5 digits, not "0" + 9 digits.
+const PHONE = /(?<![\d+])(?:(?:\+|00)33[\s./-]*|0)[1-9](?:[\s./-]{0,3}\d{2}){4}(?!\d)/;
 
 // E-mail address (checked after normalize, so disguised forms are covered)
 const EMAIL = /[a-z0-9._%+-]+@[a-z0-9-]+(?:\.[a-z0-9-]+)*\.[a-z]{2,}/;

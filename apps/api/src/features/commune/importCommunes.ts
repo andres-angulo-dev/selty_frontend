@@ -56,21 +56,45 @@ export const parseCommunes = (payload: unknown): { rows: CommuneRow[]; skipped: 
     return { rows, skipped };
 };
 
+export interface ImportOptions {
+    /** Rows per INSERT; 1 000 keeps each query far below the 65 535 parameters PostgreSQL accepts (6 per row) */
+    batchSize?: number;
+    /**
+     * Smallest accepted size of the new list, as a share of the table. A list
+     * much shorter than the table is a cut or broken answer, not a reform: the
+     * import stops instead of deleting thousands of communes. A real yearly
+     * change removes a few hundred at most (merged communes), below 1 %.
+     */
+    minKeepRatio?: number;
+}
+
 /**
- * Writes the communes: a known code is updated, a new one inserted.
- * One transaction for everything: if one row fails, nothing changes, so the
+ * Makes the table match the new official list: a known code is updated, a new
+ * one inserted, a code no longer in the list deleted (communes merged into a
+ * "commune nouvelle").
+ * One transaction for everything: if one step fails, nothing changes, so the
  * table is never left half-filled (the previous list stays in place).
+ * When requests reference communes (plan 5), deleting a referenced one will
+ * fail on its foreign key, and so stop the whole import: on purpose, those
+ * requests must be moved to the new commune first.
  *
- * @param batchSize Rows per INSERT; 1 000 keeps each query far below the
- *                  65 535 parameters PostgreSQL accepts (6 per row)
- * @returns How many rows were inserted and how many updated
+ * @returns How many rows were inserted, updated and deleted
+ * @throws When the new list is too short compared with the table (see minKeepRatio)
  */
 export const importCommunes = async (
     db: Database,
     rows: CommuneRow[],
-    batchSize = 1000,
-): Promise<{ inserted: number; updated: number }> =>
+    { batchSize = 1000, minKeepRatio = 0.95 }: ImportOptions = {},
+): Promise<{ inserted: number; updated: number; deleted: number }> =>
     db.transaction(async (tx) => {
+        // Guard against a cut answer, before writing anything
+        const [{ total }] = await tx.select({ total: sql<number>`count(*)::int` }).from(communes);
+        if (total > 0 && rows.length < total * minKeepRatio) {
+            throw new Error(
+                `Refused: the new list has ${rows.length} communes, there are ${total} in the table`,
+            );
+        }
+
         let inserted = 0;
         let updated = 0;
 
@@ -97,5 +121,14 @@ export const importCommunes = async (
                 else updated += 1;
             }
         }
-        return { inserted, updated };
+
+        // Codes no longer in the list. The whole list is ONE parameter (a text
+        // array), so 35 000 codes stay far below the parameter limit.
+        const codes = rows.map((row) => row.code);
+        const removed = await tx
+            .delete(communes)
+            .where(sql`not (${communes.code} = any(${sql.param(codes)}::text[]))`)
+            .returning({ code: communes.code });
+
+        return { inserted, updated, deleted: removed.length };
     });

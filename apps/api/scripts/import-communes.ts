@@ -19,9 +19,9 @@ const { rows, skipped } = parseCommunes(await response.json());
 
 const { db, close } = createDb(url);
 try {
-    const { inserted, updated } = await importCommunes(db, rows);
+    const { inserted, updated, deleted } = await importCommunes(db, rows);
     // Plain output on purpose: a one-off command, not the server's logs
-    process.stdout.write(`Communes: ${inserted} inserted, ${updated} updated, ${skipped.length} skipped\n`);
+    process.stdout.write(`Communes: ${inserted} inserted, ${updated} updated, ${deleted} deleted, ${skipped.length} skipped\n`);
     if (skipped.length > 0) process.stdout.write(`Skipped (no center): ${skipped.join(', ')}\n`);
 } finally {
     await close();

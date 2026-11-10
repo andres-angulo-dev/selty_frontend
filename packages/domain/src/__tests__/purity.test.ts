@@ -9,15 +9,25 @@ import { describe, expect, it } from 'vitest';
 // Raw text of every source file (tests included), keyed by path
 const sources = import.meta.glob<string>('../**/*.ts', { query: '?raw', import: 'default', eager: true });
 
-// An import or re-export line (not a comment) whose target belongs to an app
-// or a UI library. `m`: ^ matches at the start of every line.
-const FORBIDDEN =
-    /^\s*(import|export)\b[^\n]*from\s+['"](react|react-native|expo[^'"]*|@expo\/[^'"]*|@\/[^'"]*|[^'"]*apps\/[^'"]*)['"]/m;
+// Module names that belong to an app or a UI library
+const TARGET = String.raw`['"](react|react-native|expo[^'"]*|@expo\/[^'"]*|@\/[^'"]*|[^'"]*apps\/[^'"]*)['"]`;
+
+// A line (not a comment) that loads one of them: `import ... from`, `export ... from`,
+// a bare `import 'x'`, a `require('x')` or a dynamic `import('x')`.
+// `m`: ^ matches at the start of every line.
+const FORBIDDEN = new RegExp(
+    String.raw`^\s*(?:(?:import|export)\b[^\n]*from\s+|import\s+|[^\n/]*\b(?:require|import)\s*\(\s*)` + TARGET,
+    'm',
+);
 
 describe('domain purity', () => {
     it('catches a forbidden import but not a comment that mentions one', () => {
         expect("import { View } from 'react-native';").toMatch(FORBIDDEN);
         expect("export { Strings } from '@/shared/constants';").toMatch(FORBIDDEN);
+        expect("import 'react-native';").toMatch(FORBIDDEN);
+        expect("const Constants = require('expo-constants');").toMatch(FORBIDDEN);
+        expect("const screen = await import('@/features/home');").toMatch(FORBIDDEN);
+        expect("// a require('react') in a comment").not.toMatch(FORBIDDEN);
         expect("// screens still import from '@/shared/types'").not.toMatch(FORBIDDEN);
         expect("import { z } from 'zod';").not.toMatch(FORBIDDEN);
     });

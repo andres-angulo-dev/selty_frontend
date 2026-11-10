@@ -19,6 +19,8 @@ describe('findContactInfo', () => {
         '0033 6 12 34 56 78',
         'appelez le 01 23 45 67 89',
         'Tél : 07 98 76 54 32 après 18h',
+        '06  12  34  56  78',
+        '06 / 12 / 34 / 56 / 78',
     ])('finds a phone number in "%s"', (text) => {
         expect(findContactInfo(text)).toBe('phone');
     });
@@ -75,6 +77,9 @@ describe('findContactInfo', () => {
         'Fin de chantier vers 17.30',
         'Peinture, enduit, etc. Travail soigné.',
         'Snack, pizzas et sandwichs',
+        'Le 06/12/2026 à 14 h',
+        'Du 01/02 au 03/04/2026',
+        'Réf. 06 12 34',
         '',
     ])('lets a normal text through: "%s"', (text) => {
         expect(findContactInfo(text)).toBeNull();

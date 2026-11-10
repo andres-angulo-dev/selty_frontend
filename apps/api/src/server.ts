@@ -10,10 +10,11 @@ import { createDb } from './db/client';
 
 const env = loadEnv(process.env);
 const logger = pino({ level: env.NODE_ENV === 'production' ? 'info' : 'debug' });
-const database = createDb(env.DATABASE_URL);
+const database = createDb(env.DATABASE_URL, logger);
 
-const server = createApp({ db: database.db, logger, trustProxyHops: env.TRUST_PROXY_HOPS }).listen(env.PORT, () => {
-    logger.info(`API listening on http://localhost:${env.PORT}`);
+const app = createApp({ db: database.db, logger, trustProxyHops: env.TRUST_PROXY_HOPS });
+const server = app.listen(env.PORT, env.HOST, () => {
+    logger.info(`API listening on http://${env.HOST}:${env.PORT}`);
 });
 
 // A port already taken (another project's dev server...) must stop the start-up
@@ -26,9 +27,22 @@ server.on('error', (error: NodeJS.ErrnoException) => {
 });
 
 // Stop cleanly (Ctrl+C, or the host stopping the server): finish the requests
-// in progress, close the database connections, then exit
+// in progress, close the database connections, then exit.
+// A second signal is ignored; a request that never ends cannot block the stop:
+// after 10 s the process exits anyway (unref: this timer alone keeps nothing alive).
+const SHUTDOWN_TIMEOUT_MS = 10_000;
+let isClosing = false;
+
 const shutdown = (signal: string): void => {
+    if (isClosing) return;
+    isClosing = true;
     logger.info(`${signal} received, closing`);
+
+    setTimeout(() => {
+        logger.error('requests still running after 10 s, forced exit');
+        process.exit(1);
+    }, SHUTDOWN_TIMEOUT_MS).unref();
+
     server.close(() => {
         void database.close().finally(() => process.exit(0));
     });

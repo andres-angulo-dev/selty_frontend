@@ -63,7 +63,7 @@ describe('parseCommunes', () => {
 describe('importCommunes', () => {
     it('inserts every row', async () => {
         const result = await importCommunes(db, parseCommunes(fixture).rows);
-        expect(result).toEqual({ inserted: 5, updated: 0 });
+        expect(result).toEqual({ inserted: 5, updated: 0, deleted: 0 });
         expect(await countCommunes()).toBe(5);
     });
 
@@ -74,7 +74,7 @@ describe('importCommunes', () => {
         const renamed = rows.map((row) => (row.code === '77288' ? { ...row, name: 'Melun (renamed)' } : row));
         const result = await importCommunes(db, renamed);
 
-        expect(result).toEqual({ inserted: 0, updated: 5 });
+        expect(result).toEqual({ inserted: 0, updated: 5, deleted: 0 });
         expect(await countCommunes()).toBe(5);
         const [melun] = await db.select().from(communes).where(eq(communes.code, '77288'));
         expect(melun.name).toBe('Melun (renamed)');
@@ -93,8 +93,29 @@ describe('importCommunes', () => {
 
     it('works across several batches', async () => {
         const { rows } = parseCommunes(fixture);
-        const result = await importCommunes(db, rows, 2);
-        expect(result).toEqual({ inserted: 5, updated: 0 });
+        const result = await importCommunes(db, rows, { batchSize: 2 });
+        expect(result).toEqual({ inserted: 5, updated: 0, deleted: 0 });
+        expect(await countCommunes()).toBe(5);
+    });
+
+    it('removes a commune that left the official list (merged into another one)', async () => {
+        const { rows } = parseCommunes(fixture);
+        await importCommunes(db, rows);
+
+        // Romainville gone; minKeepRatio lowered: 4 of 5 is below the default guard
+        const withoutRomainville = rows.filter((row) => row.code !== '93063');
+        const result = await importCommunes(db, withoutRomainville, { minKeepRatio: 0.5 });
+
+        expect(result).toEqual({ inserted: 0, updated: 4, deleted: 1 });
+        const codes = (await db.select({ code: communes.code }).from(communes)).map((row) => row.code);
+        expect(codes).not.toContain('93063');
+    });
+
+    it('refuses a list much shorter than the table (cut answer), and changes nothing', async () => {
+        const { rows } = parseCommunes(fixture);
+        await importCommunes(db, rows);
+
+        await expect(importCommunes(db, rows.slice(0, 2))).rejects.toThrow(/2 communes.*5 in the table/);
         expect(await countCommunes()).toBe(5);
     });
 });
