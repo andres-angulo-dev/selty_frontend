@@ -10,10 +10,13 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 /**
  * Status shown to users. "Expired" is computed, never stored: a stored status
  * would need a job to flip it at the right time, a date comparison cannot drift.
- * @param request the request
+ * @param request the request (only its stored status and expiry are read, so the server can pass a row)
  * @param now     current time (injectable for tests)
  */
-export const getRequestStatus = (request: ServiceRequest, now: Date = new Date()): RequestStatus => {
+export const getRequestStatus = (
+    request: Pick<ServiceRequest, 'status' | 'expiresAt'>,
+    now: Date = new Date(),
+): RequestStatus => {
     if (request.status === 'fulfilled') {
         return 'fulfilled';
     }

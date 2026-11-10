@@ -1,11 +1,14 @@
 import type { FeedRadius } from '../feed/feedRules';
+import type { AnnoncePriceType, OfferCondition, RequestStatus, RequestUrgency } from '../types';
 
 // ============================================
 // Shapes of the PUBLIC read API. Types only.
 // Visitor rule: readable = trade, price, offer type, city, department,
 // publication date, title. Blurred = names, photos, descriptions. Absent =
 // phone, contact, map, precise location (the field does not exist at all).
-// The exact field lists may be refined by a later task.
+// Each resource has a Visitor* and a Member* shape; Public* is their union.
+// Never in any audience: phone, email, rating, reviews count, a last name.
+// Dates are ISO strings. Optional fields are left out, never sent as null.
 // ============================================
 
 /** Who is reading: no account (visitor) or signed in (member) */
@@ -14,74 +17,220 @@ export type Audience = 'visitor' | 'member';
 /** A text the visitor may not read: fake text of close length, never the real one */
 export type Blurred = { blurred: true; placeholder: string };
 
-/** A photo: always a blurred version; the clear URL only exists for a member */
-export type PublicMedia = { blurUrl: string } | { url: string; blurUrl: string };
+/** A photo for a visitor: only the server-made blurred version */
+export type VisitorMedia = { blurUrl: string };
 
-/** Professional card. Visitor: name blurred, photo blurred. Never a phone. */
-export interface PublicProfessional {
+/** A photo for a member: the clear version (1080 px) and the blurred one (placeholder while loading) */
+export type MemberMedia = { url: string; blurUrl: string };
+
+export type PublicMedia = VisitorMedia | MemberMedia;
+
+/** Where a thing is, for a visitor: city and department only */
+export interface VisitorPlace {
+    city: string;
+    department: string;          // Department name ("Seine-et-Marne")
+    departmentCode: string;      // "77"
+}
+
+/** Where a thing is, for a member: adds the commune and its CENTER (never an address) */
+export interface MemberPlace extends VisitorPlace {
+    communeCode: string;
+    latitude: number;
+    longitude: number;
+}
+
+// ============================================
+// SERVICE ZONES of a professional
+// ============================================
+
+/** A zone for a visitor: no coordinates, no commune code */
+export type VisitorZone =
+    | { kind: 'city'; city: string; department: string; departmentCode: string; radiusKm: number }
+    | { kind: 'department'; code: string; name: string }
+    | { kind: 'region'; code: string; name: string }
+    | { kind: 'country' };
+
+/** A zone for a member: same shapes as ServiceZone (city zones carry the commune center) */
+export type MemberZone =
+    | {
+          kind: 'city';
+          id: string;
+          communeCode: string;
+          city: string;
+          department: string;
+          departmentCode: string;
+          latitude: number;
+          longitude: number;
+          cityRadiusKm: number;
+          radiusKm: number;
+      }
+    | { kind: 'department'; id: string; code: string; name: string }
+    | { kind: 'region'; id: string; code: string; name: string }
+    | { kind: 'country'; id: string };
+
+// ============================================
+// PROFESSIONAL
+// ============================================
+
+/** "Proposed by" block inside an annonce or an offer */
+export interface VisitorProfessionalSummary {
     id: string;
+    displayName: Blurred;
+    tradeIds: string[];          // First = main trade (profession label)
+    avatar?: VisitorMedia;
+}
+
+export interface MemberProfessionalSummary {
+    id: string;
+    displayName: string;
     tradeIds: string[];
-    city: string;
-    department: string;
-    name: string | Blurred;
-    photo?: PublicMedia;
-    description?: string | Blurred;
+    avatar?: MemberMedia;
 }
 
-/** Annonce (a professional's post) */
-export interface PublicAnnonce {
+export type PublicProfessionalSummary = VisitorProfessionalSummary | MemberProfessionalSummary;
+
+/** Professional page for a visitor. Never a phone, never a rating */
+export interface VisitorProfessional extends VisitorPlace {
+    id: string;
+    displayName: Blurred;
+    description: Blurred;
+    tradeIds: string[];
+    services: string[];
+    locationType: 'fixed' | 'mobile' | 'both';
+    memberSince: string;
+    startingPrice?: number;      // Euros, whole amount
+    avatar?: VisitorMedia;
+    cover?: VisitorMedia;
+    zones: VisitorZone[];
+}
+
+/** Professional page for a member. Still never a phone (separate route, later) */
+export interface MemberProfessional extends MemberPlace {
+    id: string;
+    displayName: string;
+    description: string;
+    tradeIds: string[];
+    services: string[];
+    locationType: 'fixed' | 'mobile' | 'both';
+    memberSince: string;
+    startingPrice?: number;
+    avatar?: MemberMedia;
+    cover?: MemberMedia;
+    zones: MemberZone[];
+}
+
+export type PublicProfessional = VisitorProfessional | MemberProfessional;
+
+// ============================================
+// ANNONCE (a professional's post)
+// ============================================
+
+interface AnnonceCommon {
     id: string;
     title: string;
     tradeId: string;
     categoryId: string;
-    price?: string;
-    city: string;
-    department: string;
+    priceType: AnnoncePriceType;
+    price?: number;              // Euros, present only when priceType is 'fixed'
     publishedAt: string;
-    photos: PublicMedia[];
-    description: string | Blurred;
-    professional: PublicProfessional;
 }
 
-/** Offer (promotion) */
-export interface PublicOffer {
+export interface VisitorAnnonce extends AnnonceCommon, VisitorPlace {
+    description: Blurred;
+    photos: VisitorMedia[];
+    professional: VisitorProfessionalSummary;
+}
+
+export interface MemberAnnonce extends AnnonceCommon, MemberPlace {
+    description: string;
+    photos: MemberMedia[];
+    professional: MemberProfessionalSummary;
+}
+
+export type PublicAnnonce = VisitorAnnonce | MemberAnnonce;
+
+// ============================================
+// OFFER (promotion). Placed at its professional's commune
+// ============================================
+
+interface OfferCommon {
     id: string;
     title: string;
     tradeId: string;
     categoryId: string;
-    discount?: number;
-    conditions: string[];
-    city: string;
-    department: string;
+    discount?: string;           // Free text ("-20 %"); absent = no badge
+    conditions: OfferCondition[];
     publishedAt: string;
     startsAt?: string;
     expiresAt?: string;
-    photos: PublicMedia[];
-    description: string | Blurred;
-    professional: PublicProfessional;
 }
 
-/** Request (an individual's need). Author: first name blurred for a visitor. */
-export interface PublicRequest {
+export interface VisitorOffer extends OfferCommon, VisitorPlace {
+    description: Blurred;
+    photo?: VisitorMedia;
+    professional: VisitorProfessionalSummary;
+}
+
+export interface MemberOffer extends OfferCommon, MemberPlace {
+    description: string;
+    photo?: MemberMedia;
+    professional: MemberProfessionalSummary;
+}
+
+export type PublicOffer = VisitorOffer | MemberOffer;
+
+// ============================================
+// REQUEST (an individual's need)
+// ============================================
+
+interface RequestCommon {
     id: string;
     title: string;
     tradeId: string;
     categoryId: string;
-    budget?: string;
-    city: string;
-    department: string;
+    urgency: RequestUrgency;
+    status: RequestStatus;       // Computed: 'expired' is never stored
     publishedAt: string;
     expiresAt: string;
-    photos: PublicMedia[];
-    description: string | Blurred;
-    authorFirstName: string | Blurred;
 }
 
-/** One entry of the home feed */
-export type FeedItem =
+/** Author for a visitor: first name blurred (fixed 10-character fake), no initial */
+export interface VisitorRequestAuthor {
+    firstName: Blurred;
+    memberSince: string;
+}
+
+/** Author for a member: "Sophie M." (never the last name) */
+export interface MemberRequestAuthor {
+    firstName: string;
+    lastNameInitial: string;
+    memberSince: string;
+}
+
+export interface VisitorRequest extends RequestCommon, VisitorPlace {
+    description: Blurred;
+    photos: VisitorMedia[];
+    author: VisitorRequestAuthor;
+}
+
+export interface MemberRequest extends RequestCommon, MemberPlace {
+    description: string;
+    photos: MemberMedia[];
+    author: MemberRequestAuthor;
+}
+
+export type PublicRequest = VisitorRequest | MemberRequest;
+
+// ============================================
+// FEED
+// ============================================
+
+/** One entry of the home feed. distanceKm: whole kilometers from the asked position */
+export type FeedItem = (
     | ({ kind: 'annonce' } & PublicAnnonce)
     | ({ kind: 'offer' } & PublicOffer)
-    | ({ kind: 'request' } & PublicRequest);
+    | ({ kind: 'request' } & PublicRequest)
+) & { distanceKm: number };
 
 /** A page of the feed. `widenTo` = next radius to offer when this one is exhausted. */
 export type FeedPage = {
