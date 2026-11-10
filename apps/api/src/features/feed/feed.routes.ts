@@ -29,6 +29,9 @@ const RADIUS_STEPS: FeedRadius[] = [
     FEED_RULES.finalStep,
 ];
 
+/** Longest accepted ?cursor= (base64url of { createdAt with microseconds, uuid } is ~120) */
+const MAX_CURSOR_LENGTH = 200;
+
 /** A required number in the query string: an empty value is missing, not 0 */
 const coordinate = (min: number, max: number) =>
     z.string().trim().min(1).pipe(z.coerce.number<string>().min(min).max(max));
@@ -37,7 +40,8 @@ const feedQuerySchema = z.object({
     lat: coordinate(-90, 90),
     lng: coordinate(-180, 180),
     radius: z.enum(RADIUS_STEPS as [FeedRadius, ...FeedRadius[]]).default('30'),
-    cursor: z.string().optional(),
+    // A real cursor is ~120 characters: anything much longer is refused before any decoding work
+    cursor: z.string().max(MAX_CURSOR_LENGTH).optional(),
     limit: z.coerce.number().int().min(1).max(FEED_RULES.maxPageSize).default(FEED_RULES.pageSize),
 });
 
@@ -48,11 +52,13 @@ const toArea = (radius: FeedRadius): FeedArea =>
     radius === 'department' ? { kind: 'department' } : { kind: 'distance', km: Number(radius) };
 
 /**
+ * @param nothingSelected the page's selection (step 1) found no item at all:
+ *        the radius really holds nothing, not just items skipped while reading
  * @returns the next radius when the FIRST page of `radius` is empty, else null
  *          (a later empty page only means the end of a radius already shown)
  */
-const widenToFor = (radius: FeedRadius, isFirstPage: boolean, isEmpty: boolean): FeedRadius | null => {
-    if (!isFirstPage || !isEmpty) return null;
+const widenToFor = (radius: FeedRadius, isFirstPage: boolean, nothingSelected: boolean): FeedRadius | null => {
+    if (!isFirstPage || !nothingSelected) return null;
     return RADIUS_STEPS[RADIUS_STEPS.indexOf(radius) + 1] ?? null;
 };
 
@@ -87,7 +93,7 @@ export const feedRoutes = (db: Database): Router => {
         if (input.cursor !== undefined && !cursor) throw new HttpProblem(400, 'Invalid cursor');
 
         const audience = resolveAudience(req);
-        const { entries, nextCursor } = await findFeedPage(
+        const { entries, nextCursor, nothingSelected } = await findFeedPage(
             db,
             { lat: input.lat, lng: input.lng, area: toArea(input.radius), cursor, limit: input.limit },
             audience,
@@ -97,7 +103,7 @@ export const feedRoutes = (db: Database): Router => {
             items: entries.map((entry) => toFeedItem(entry, audience)),
             nextCursor: nextCursor ? encodeCursor(nextCursor) : null,
             radius: input.radius,
-            widenTo: widenToFor(input.radius, cursor === null, entries.length === 0),
+            widenTo: widenToFor(input.radius, cursor === null, nothingSelected),
         };
         res.set('Cache-Control', FEED_CACHE_CONTROL).json(body);
     });

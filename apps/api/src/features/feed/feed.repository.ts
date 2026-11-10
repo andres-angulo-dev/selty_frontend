@@ -56,6 +56,12 @@ export interface FeedPageRows {
     entries: FeedEntry[];
     /** Position of the last item of the page when another page exists, else null */
     nextCursor: FeedCursor | null;
+    /**
+     * True when step 1 found nothing at all after the cursor. This, not an
+     * empty `entries`, says the area is exhausted: items skipped in step 2
+     * (changed in between) can empty a page while more items follow.
+     */
+    nothingSelected: boolean;
 }
 
 /**
@@ -216,5 +222,5 @@ export const findFeedPage = async (db: Database, query: FeedQuery, audience: Aud
     // The cursor comes from the picked rows, not the read ones: a skipped item still moves the page on
     const last = page.at(-1);
     const nextCursor = picked.length > query.limit && last ? { createdAt: last.created_at, id: last.id } : null;
-    return { entries, nextCursor };
+    return { entries, nextCursor, nothingSelected: picked.length === 0 };
 };

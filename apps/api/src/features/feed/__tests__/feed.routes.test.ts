@@ -1,3 +1,4 @@
+import { pino } from 'pino';
 import request from 'supertest';
 import { sql } from 'drizzle-orm';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -154,6 +155,26 @@ describe('GET /v1/feed: radius', () => {
         expect(response.body).toMatchObject({ items: [], radius: '100', widenTo: 'department' });
     });
 
+    it('does not offer to widen when an item was selected but changed before it was read', async () => {
+        const annonceId = await annonceAt(MELUN.code);
+        // Step 1 selects the annonce, then it is deactivated before step 2 reads it
+        const original = db.$client.query.bind(db.$client) as (...args: unknown[]) => Promise<unknown>;
+        const spy = vi.spyOn(db.$client, 'query').mockImplementationOnce((async (...args: unknown[]) => {
+            const result = await original(...args);
+            await original(`update annonces set is_active = false where id = '${annonceId}'`);
+            return result;
+        }) as never);
+        let response: request.Response;
+        try {
+            response = await request(app).get(`/v1/feed?${AT_MELUN}`);
+        } finally {
+            spy.mockRestore();
+        }
+
+        expect(response.status).toBe(200);
+        expect(response.body).toMatchObject({ items: [], radius: '30', widenTo: null });
+    });
+
     it('department from Melun includes a neighbouring Essonne item, excludes Lyon', async () => {
         const evryId = await annonceAt(EVRY.code);
         const provinsId = await annonceAt(PROVINS.code);
@@ -229,10 +250,37 @@ describe('GET /v1/feed: pages', () => {
         ['longitude out of range', 'lat=48&lng=181'],
         ['empty latitude', 'lat=&lng=2'],
         ['unknown radius', `${AT_MELUN}&radius=50`],
+        ['cursor far too long', `${AT_MELUN}&cursor=${'a'.repeat(201)}`],
     ])('answers 400 for %s', async (_label, query) => {
         const response = await request(app).get(`/v1/feed?${query}`);
         expect(response.status).toBe(400);
         expect(response.body.errors.length).toBeGreaterThan(0);
+    });
+});
+
+describe('GET /v1/feed: privacy of the logs', () => {
+    it('a failing database query never writes the position (Drizzle puts the bound params in its error)', async () => {
+        const lines: string[] = [];
+        const logger = pino({ level: 'info' }, { write: (line: string) => lines.push(line) });
+        const logged = createApp({ db, logger });
+        // The pool rejects the first query as a statement timeout would; Drizzle
+        // wraps it in a DrizzleQueryError whose message ends with "params: 2.6553,48.5421"
+        const timeout = Object.assign(new Error('canceling statement due to statement timeout'), { code: '57014' });
+        const spy = vi.spyOn(db.$client, 'query').mockRejectedValueOnce(timeout as never);
+        let response: request.Response;
+        try {
+            response = await request(logged).get(`/v1/feed?${AT_MELUN}`);
+        } finally {
+            spy.mockRestore();
+        }
+
+        expect(response.status).toBe(500);
+        const output = lines.join('');
+        expect(output).toContain('unexpected error');
+        expect(output).toContain('Failed query');
+        expect(output).toContain('57014');
+        expect(output).not.toContain(String(MELUN.lat));
+        expect(output).not.toContain(String(MELUN.lng));
     });
 });
 

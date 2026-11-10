@@ -4,6 +4,7 @@ import { createApp } from './app';
 import { loadEnv } from './config/env';
 import { createDb } from './db/client';
 import { LocalDiskStorage } from './media/objectStorage';
+import { LOGGER_SERIALIZERS } from './shared/logging/logSerializers';
 
 // ============================================
 // SERVER — reads the settings, opens the database, builds the app, listens.
@@ -11,7 +12,8 @@ import { LocalDiskStorage } from './media/objectStorage';
 // ============================================
 
 const env = loadEnv(process.env);
-const logger = pino({ level: env.NODE_ENV === 'production' ? 'info' : 'debug' });
+// Errors logged outside a request (pool, startup) lose their bound SQL values too
+const logger = pino({ level: env.NODE_ENV === 'production' ? 'info' : 'debug', serializers: LOGGER_SERIALIZERS });
 const database = createDb(env.DATABASE_URL, logger);
 
 const app = createApp({

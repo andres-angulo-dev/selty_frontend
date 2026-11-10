@@ -12,6 +12,7 @@ import { referenceRoutes } from './features/reference/reference.routes';
 import { LocalDiskStorage, type ObjectStorage } from './media/objectStorage';
 import { mediaRoutes } from './media/media.routes';
 import { errorHandler, notFound } from './shared/http/errorHandler';
+import { LOGGER_SERIALIZERS, withoutQueryParams, withoutQueryString } from './shared/logging/logSerializers';
 
 // ============================================
 // APP — builds the Express application without starting it, so the tests
@@ -42,30 +43,12 @@ const REDACTED_LOG_PATHS = [
     'res.headers["set-cookie"]',
 ];
 
-/** The standard serialized request of pino-http (only the keys handled here are typed) */
-interface SerializedRequest {
-    url?: string;
-    query?: unknown;
-    [key: string]: unknown;
-}
-
-/**
- * Security / privacy: the logged request keeps its path but loses its query
- * string, for every route. A query string can hold a position (the feed's
- * ?lat=&lng= says where a person is) or other personal data; the path is
- * enough to follow a request. The parsed `query` copy is dropped too.
- */
-const withoutQueryString = (req: SerializedRequest): SerializedRequest => {
-    const { query: _query, ...rest } = req;
-    return { ...rest, url: req.url?.split('?')[0] };
-};
-
 /**
  * @returns The configured application. Middlewares run in this order.
  */
 export const createApp = ({
     db,
-    logger = pino({ level: 'silent' }),
+    logger = pino({ level: 'silent', serializers: LOGGER_SERIALIZERS }),
     extraRoutes,
     trustProxyHops = 0,
     storage = new LocalDiskStorage('storage'),
@@ -84,8 +67,17 @@ export const createApp = ({
     // 1. Security headers (nosniff, no framing, strict referrer...)
     app.use(helmet());
 
-    // 2. One log line per request, with an id reused by the error handler
-    app.use(pinoHttp({ logger, redact: REDACTED_LOG_PATHS, serializers: { req: withoutQueryString } }));
+    // 2. One log line per request, with an id reused by the error handler.
+    // Security / privacy (logSerializers.ts): no query string, and no values
+    // bound to a failed SQL query, whatever logger was passed in. pino-http
+    // gives these serializers to req.log too (the error handler's logger).
+    app.use(
+        pinoHttp({
+            logger,
+            redact: REDACTED_LOG_PATHS,
+            serializers: { req: withoutQueryString, err: withoutQueryParams },
+        }),
+    );
 
     // 3. Baseline limit per IP; answers 429 with standard RateLimit headers
     app.use(

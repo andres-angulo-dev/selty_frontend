@@ -239,7 +239,11 @@ export type FeedItem = (
     | ({ kind: 'request' } & PublicRequest)
 ) & { distanceKm: number };
 
-/** A page of the feed. `widenTo` = next radius to offer when this one is exhausted. */
+/**
+ * A page of the feed. `widenTo` = next radius to offer when this one holds nothing.
+ * `items` can be empty while `nextCursor` is set (every item of the page changed
+ * while it was read): follow the cursor, the radius is not exhausted.
+ */
 export type FeedPage = {
     items: FeedItem[];
     nextCursor: string | null;
