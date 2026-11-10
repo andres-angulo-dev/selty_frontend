@@ -23,3 +23,6 @@ export * from './forms/patterns';
 export * from './forms/locationSchema';
 export * from './forms/annonceSchema';
 export * from './forms/offerSchema';
+
+// Moderation of published texts
+export * from './moderation/contactFilter';
