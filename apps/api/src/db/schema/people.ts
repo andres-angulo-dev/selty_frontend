@@ -58,7 +58,8 @@ export const professionalProfiles = pgTable(
         coverMediaId: uuid('cover_media_id').references(() => media.id, { onDelete: 'set null' }),
         // In euros, whole amounts ("à partir de 40 €")
         startingPrice: integer('starting_price'),
-        // Never in any professional response (constraint), stored for the future contact flow
+        // API rule, not a database constraint: never sent in any professional response.
+        // Stored for the future contact flow
         phone: text('phone'),
         showPhone: boolean('show_phone').notNull().default(false),
         createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),

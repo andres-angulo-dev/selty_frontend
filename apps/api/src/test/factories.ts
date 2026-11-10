@@ -1,3 +1,4 @@
+import { REQUEST_RULES } from '@sialty/domain';
 import { and, eq, sql } from 'drizzle-orm';
 import type { Database } from '../db/client';
 import {
@@ -27,8 +28,8 @@ import {
 /** Trade given to a professional when the test does not choose */
 const DEFAULT_TRADE_ID = 'trade-painter';
 
-/** Lifetime of a request when the test does not choose */
-const DEFAULT_REQUEST_LIFETIME_MS = 30 * 24 * 60 * 60 * 1000;
+/** Lifetime of a request (REQUEST_RULES.lifetimeDays), links createdAt and expiresAt when only one is given */
+const REQUEST_LIFETIME_MS = REQUEST_RULES.lifetimeDays * 24 * 60 * 60 * 1000;
 
 export interface CommuneInput {
     code: string;
@@ -211,12 +212,16 @@ export type RequestInput = Partial<Omit<RequestRow, 'authorId' | 'communeCode'>>
 };
 
 /**
- * Inserts a request. Defaults: painter trade, flexible, open, expires 30 days
- * after its creation date.
+ * Inserts a request. Defaults: painter trade, flexible, open.
+ * Dates: neither given → created now, expires one lifetime later; only expiresAt
+ * given → created one lifetime before it (so an expired request, expiresAt in
+ * the past, still passes the expires_at > created_at check); only createdAt →
+ * expires one lifetime after it.
  * @returns The request id
  */
 export const insertRequest = async (db: Database, input: RequestInput): Promise<string> => {
-    const createdAt = input.createdAt ?? new Date();
+    const createdAt =
+        input.createdAt ?? (input.expiresAt ? new Date(input.expiresAt.getTime() - REQUEST_LIFETIME_MS) : new Date());
     const [row] = await db
         .insert(requests)
         .values({
@@ -226,7 +231,7 @@ export const insertRequest = async (db: Database, input: RequestInput): Promise<
             urgency: 'flexible',
             ...input,
             createdAt,
-            expiresAt: input.expiresAt ?? new Date(createdAt.getTime() + DEFAULT_REQUEST_LIFETIME_MS),
+            expiresAt: input.expiresAt ?? new Date(createdAt.getTime() + REQUEST_LIFETIME_MS),
         })
         .returning({ id: requests.id });
     return row.id;

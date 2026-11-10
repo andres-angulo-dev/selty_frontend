@@ -1,8 +1,15 @@
 import { eq, sql } from 'drizzle-orm';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { annonces, professionalProfiles, professionalZones } from '../schema';
+import { annonces, professionalProfiles, professionalZones, requests } from '../schema';
 import { createTestDb } from '../../test/db';
-import { insertAnnonce, insertCommune, insertPro, resetContent } from '../../test/factories';
+import {
+    insertAnnonce,
+    insertCommune,
+    insertPro,
+    insertProfile,
+    insertRequest,
+    resetContent,
+} from '../../test/factories';
 
 // ============================================
 // The rules the database itself enforces on the public read tables (checks,
@@ -88,6 +95,21 @@ describe('public read schema', () => {
         );
 
         expect(constraint).toBe('professional_profiles_status_check');
+    });
+
+    it('lets the factory insert an expired request (expires_at in the past)', async () => {
+        const authorId = await insertProfile(db);
+        const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+        const id = await insertRequest(db, { authorId, communeCode: MELUN.code, expiresAt: yesterday });
+
+        const [row] = await db
+            .select({ expiresAt: requests.expiresAt, createdAt: requests.createdAt })
+            .from(requests)
+            .where(eq(requests.id, id));
+        expect(row.expiresAt.getTime()).toBe(yesterday.getTime());
+        expect(row.expiresAt.getTime()).toBeLessThan(Date.now());
+        expect(row.createdAt.getTime()).toBeLessThan(row.expiresAt.getTime());
     });
 
     it("refuses an annonce in a trade that is not one of its professional's trades", async () => {
