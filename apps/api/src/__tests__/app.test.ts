@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { pino } from 'pino';
 import request from 'supertest';
 import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
@@ -79,6 +80,44 @@ describe('errors', () => {
             expect(response.text).not.toMatch(/\bat\s/);
         },
     );
+});
+
+describe('logs', () => {
+    it('never write the session token or the cookies', async () => {
+        const lines: string[] = [];
+        const logger = pino({ level: 'info' }, { write: (line: string) => lines.push(line) });
+
+        await request(createApp({ logger }))
+            .get('/v1/health')
+            .set('Authorization', 'Bearer secret-token')
+            .set('Cookie', 'session=secret-cookie');
+
+        const output = lines.join('');
+        expect(output).toContain('request completed');
+        expect(output).not.toContain('secret-token');
+        expect(output).not.toContain('secret-cookie');
+    });
+});
+
+describe('rate limit behind the tunnel', () => {
+    // "r=" in the RateLimit header = requests left for this client
+    const remaining = (response: request.Response): string | undefined =>
+        /r=(\d+)/.exec(String(response.headers.ratelimit))?.[1];
+
+    it('counts each real client separately when one proxy hop is trusted', async () => {
+        const proxied = createApp({ trustProxyHops: 1 });
+        const first = await request(proxied).get('/v1/health').set('X-Forwarded-For', '203.0.113.1');
+        const second = await request(proxied).get('/v1/health').set('X-Forwarded-For', '203.0.113.2');
+        expect(remaining(first)).toBe('299');
+        expect(remaining(second)).toBe('299');
+    });
+
+    it('ignores X-Forwarded-For when no proxy is trusted, so a client cannot fake its address', async () => {
+        const direct = createApp({});
+        await request(direct).get('/v1/health').set('X-Forwarded-For', '203.0.113.1');
+        const second = await request(direct).get('/v1/health').set('X-Forwarded-For', '203.0.113.2');
+        expect(remaining(second)).toBe('298');
+    });
 });
 
 describe('security headers', () => {

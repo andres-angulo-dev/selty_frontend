@@ -13,6 +13,9 @@ const envSchema = z.object({
     PORT: z.coerce.number().int().min(1).max(65_535).default(4000),
     // postgres:// or postgresql://, the two forms accepted by the driver
     DATABASE_URL: z.string().regex(/^postgres(ql)?:\/\//, 'must start with postgres://'),
+    // Proxies in front of the server: 1 behind the tunnel, 0 when called directly.
+    // A number, never "true" (see app.ts: a client could fake its address).
+    TRUST_PROXY_HOPS: z.coerce.number().int().min(0).max(5).default(0),
 });
 
 export type Env = z.infer<typeof envSchema>;

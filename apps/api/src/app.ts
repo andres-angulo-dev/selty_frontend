@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import { pino, type Logger } from 'pino';
 import { pinoHttp } from 'pino-http';
 import { LIMITS } from './config/limits';
+import type { Database } from './db/client';
 import { healthRoutes } from './features/health/health.routes';
 import { errorHandler, notFound } from './shared/http/errorHandler';
 
@@ -13,26 +14,52 @@ import { errorHandler, notFound } from './shared/http/errorHandler';
 // ============================================
 
 export interface AppDeps {
+    /** Database; optional only for the tests of the bare skeleton */
+    db?: Database;
     /** Logs; silent by default (tests) */
     logger?: Logger;
     /** Extra routes, for tests only: lets them trigger each error case */
     extraRoutes?: Router;
+    /**
+     * Number of proxies in front of the server (the tunnel, later the host's
+     * load balancer). 0 = clients connect directly. See TRUST_PROXY_HOPS in env.ts.
+     */
+    trustProxyHops?: number;
 }
+
+// Security: request parts never written to the logs. A session token or a
+// cookie in a log file is a stolen account for whoever reads that file.
+const REDACTED_LOG_PATHS = [
+    'req.headers.authorization',
+    'req.headers.cookie',
+    'res.headers["set-cookie"]',
+];
 
 /**
  * @returns The configured application. Middlewares run in this order.
  */
-export const createApp = ({ logger = pino({ level: 'silent' }), extraRoutes }: AppDeps = {}): Express => {
+export const createApp = ({
+    db,
+    logger = pino({ level: 'silent' }),
+    extraRoutes,
+    trustProxyHops = 0,
+}: AppDeps = {}): Express => {
     const app = express();
 
     // Security: no "X-Powered-By: Express" (helmet removes it too; this is explicit)
     app.disable('x-powered-by');
 
+    // Security: behind a proxy every request seems to come from the proxy, so
+    // the limit per IP would be shared by all users. Trusting exactly N hops
+    // makes req.ip the real client. Never `true`: a client could then fake its
+    // address with its own X-Forwarded-For header and escape the limit.
+    app.set('trust proxy', trustProxyHops);
+
     // 1. Security headers (nosniff, no framing, strict referrer...)
     app.use(helmet());
 
     // 2. One log line per request, with an id reused by the error handler
-    app.use(pinoHttp({ logger }));
+    app.use(pinoHttp({ logger, redact: REDACTED_LOG_PATHS }));
 
     // 3. Baseline limit per IP; answers 429 with standard RateLimit headers
     app.use(
@@ -48,7 +75,7 @@ export const createApp = ({ logger = pino({ level: 'silent' }), extraRoutes }: A
     app.use(express.json({ limit: LIMITS.jsonBodyMax }));
 
     // 5. Routes
-    app.use(healthRoutes());
+    app.use(healthRoutes(db));
     if (extraRoutes) app.use(extraRoutes);
 
     // 6. Nothing matched, then every error as a problem document

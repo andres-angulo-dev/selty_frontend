@@ -9,7 +9,16 @@ const DATABASE_URL = 'postgres://sialty:sialty@localhost:5432/sialty_dev';
 
 describe('loadEnv', () => {
     it('reads a complete environment, with defaults', () => {
-        expect(loadEnv({ DATABASE_URL })).toEqual({ NODE_ENV: 'development', PORT: 4000, DATABASE_URL });
+        expect(loadEnv({ DATABASE_URL })).toEqual({
+            NODE_ENV: 'development',
+            PORT: 4000,
+            DATABASE_URL,
+            TRUST_PROXY_HOPS: 0,
+        });
+    });
+
+    it('refuses TRUST_PROXY_HOPS=true, which would trust any forged address', () => {
+        expect(() => loadEnv({ DATABASE_URL, TRUST_PROXY_HOPS: 'true' })).toThrow(/TRUST_PROXY_HOPS/);
     });
 
     it('reads PORT as a number', () => {
