@@ -1,3 +1,4 @@
+import { isOfferLive as isOfferLiveAt, isOfferUpcoming as isOfferUpcomingAt } from '@sialty/domain';
 import { Annonce, Offer } from '@/shared/types';
 
 // ============================================
@@ -26,19 +27,15 @@ export const getOfferAvailability = (offer: Offer | undefined | null): Availabil
     return !offer.isActive || isExpired ? 'ended' : 'available';
 };
 
-/** Offer whose start date is after today: an offer starting today has started */
-export const isOfferUpcoming = (offer: Offer): boolean => {
-    if (!offer.startsAt) {
-        return false;
-    }
-    const tomorrow = startOfToday();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    return offer.startsAt >= tomorrow;
-};
+// Wrappers with ONE parameter on purpose: the domain functions take an optional
+// `now`, so passing them straight to `.filter(isOfferLive)` would hand them the
+// array index as a date.
 
-/** Offer running right now: the only ones customers see in a list and that count as active */
-export const isOfferLive = (offer: Offer): boolean =>
-    getOfferAvailability(offer) === 'available' && !isOfferUpcoming(offer);
+/** Offer whose start date is after today (rule shared with the server) */
+export const isOfferUpcoming = (offer: Offer): boolean => isOfferUpcomingAt(offer);
+
+/** Offer running right now: the only ones customers see in a list (rule shared with the server) */
+export const isOfferLive = (offer: Offer): boolean => isOfferLiveAt(offer);
 
 /** Annonce: disabled by the pro */
 export const getAnnonceAvailability = (annonce: Annonce | undefined | null): Availability => {
