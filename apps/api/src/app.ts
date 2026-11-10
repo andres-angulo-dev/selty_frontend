@@ -6,6 +6,8 @@ import { pinoHttp } from 'pino-http';
 import { LIMITS } from './config/limits';
 import type { Database } from './db/client';
 import { healthRoutes } from './features/health/health.routes';
+import { publicReadRoutes } from './features/publicRead/publicRead.routes';
+import { referenceRoutes } from './features/reference/reference.routes';
 import { LocalDiskStorage, type ObjectStorage } from './media/objectStorage';
 import { mediaRoutes } from './media/media.routes';
 import { errorHandler, notFound } from './shared/http/errorHandler';
@@ -82,6 +84,11 @@ export const createApp = ({
     // 5. Routes
     app.use(healthRoutes(db));
     app.use(mediaRoutes(storage));
+    // Routes that read the database; absent in the tests of the bare skeleton
+    if (db) {
+        app.use(referenceRoutes(db));
+        app.use(publicReadRoutes(db));
+    }
     if (extraRoutes) app.use(extraRoutes);
 
     // 6. Nothing matched, then every error as a problem document
