@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    // Node 24 runs modern JavaScript; tsx runs the TypeScript in development
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    // "bundler": lets the type check follow @sialty/domain, whose source uses
+    // imports without extensions (tsx resolves them the same way at run time)
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "types": ["node"]
+  },
+  "include": ["src", "scripts"]
+}

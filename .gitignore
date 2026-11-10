@@ -33,8 +33,14 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# local env files
+# local env files (settings and secrets; .env.example files are committed)
 .env*.local
+.env
+.env.*
+!.env.example
+
+# API local files storage (photos in development)
+/apps/api/storage/
 
 # typescript
 *.tsbuildinfo
