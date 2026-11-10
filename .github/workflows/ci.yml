@@ -1,0 +1,60 @@
+# Continuous integration: every push runs the type check and the tests of every
+# workspace (app, domain, API) on a fresh machine.
+name: CI
+
+# Every push, on any branch: a work branch is checked as soon as it is sent,
+# before it is merged into main (merges happen locally, then main is pushed)
+on:
+  push:
+    branches: ['**']
+
+# A newer push on the same branch cancels the run still going: only the last one matters
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# Least privilege: the workflow only reads the code
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    # Throw-away database for the API tests, same versions as the local one
+    # (PostgreSQL 16, PostGIS 3.4). Development password only, no secret.
+    services:
+      postgres:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_USER: sialty
+          POSTGRES_PASSWORD: sialty
+          POSTGRES_DB: sialty_test
+        ports:
+          - 5432:5432
+        # Wait until PostgreSQL accepts connections before the tests start
+        options: >-
+          --health-cmd "pg_isready -U sialty -d sialty_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL_TEST: postgres://sialty:sialty@localhost:5432/sialty_test
+
+    steps:
+      - uses: actions/checkout@v7
+
+      # Node version from .nvmrc, the same as on the developer's machine
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      # Exact versions of package-lock.json; fails if it is out of date
+      - run: npm ci
+
+      - run: npm run typecheck
+
+      - run: npm test
