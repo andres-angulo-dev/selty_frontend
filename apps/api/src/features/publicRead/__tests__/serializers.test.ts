@@ -195,7 +195,7 @@ describe('serializeProfessional', () => {
         expect(answer.description).toEqual({ blurred: true, placeholder: expect.any(String) });
         expect(answer.avatar).toEqual({ blurUrl: '/v1/media/media/avatar/blur.webp' });
         expect(answer.department).toBe('Seine-et-Marne');
-        expect(answer.memberSince).toBe('2025-03-01T08:00:00.000Z');
+        expect(answer.memberSince).toBe('2025-03');
         expect(answer.zones).toEqual([
             { kind: 'city', city: 'Melun', department: 'Seine-et-Marne', departmentCode: '77', radiusKm: 20 },
             { kind: 'department', code: '91', name: 'Essonne' },
@@ -374,7 +374,7 @@ describe('serializeRequest', () => {
         );
         expect(answer.author).toEqual({
             firstName: { blurred: true, placeholder: expect.stringMatching(/^.{10}$/) },
-            memberSince: '2026-01-15T08:00:00.000Z',
+            memberSince: '2026-01',
         });
         expect(JSON.stringify(answer)).not.toContain('lastNameInitial');
     });
@@ -394,7 +394,30 @@ describe('serializeRequest', () => {
         expect(answer.author).toEqual({
             firstName: REAL_FIRST_NAME,
             lastNameInitial: 'M',
-            memberSince: '2026-01-15T08:00:00.000Z',
+            memberSince: '2026-01',
         });
+    });
+});
+
+describe('memberSince is the month only, in French time, for every audience', () => {
+    // 23:30 UTC on 31 March = 01:30 on 1 April in Paris
+    const lateInMonth = new Date('2025-03-31T23:30:00Z');
+
+    it.each(['visitor', 'member'] as const)('professional, %s', (audience) => {
+        const answer = serializeProfessional({ ...proRow, memberSince: lateInMonth }, audience);
+        expect(answer.memberSince).toBe('2025-04');
+    });
+
+    it.each(['visitor', 'member'] as const)('request author, %s', (audience) => {
+        const answer = serializeRequest({ ...requestRow, authorMemberSince: lateInMonth }, audience, NOW);
+        expect(answer.author.memberSince).toBe('2025-04');
+        expect(JSON.stringify(answer)).not.toContain('T23:30');
+    });
+});
+
+describe('member media', () => {
+    it('fails loudly when a photo has no 1080 key instead of sending /v1/media/undefined', () => {
+        const row = { ...annonceRow, photos: [{ blurKey: 'media/x/blur.webp' }] } as MemberAnnonceRow;
+        expect(() => serializeAnnonce(row, 'member')).toThrow(/key1080/);
     });
 });

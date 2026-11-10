@@ -25,6 +25,13 @@ export type MemberMedia = { url: string; blurUrl: string };
 
 export type PublicMedia = VisitorMedia | MemberMedia;
 
+/**
+ * When a person joined, MONTH ONLY: "YYYY-MM" (month in Europe/Paris time), for
+ * every audience. The app shows "Membre depuis <mois année>"; an exact timestamp
+ * would be a near-unique fingerprint linking all the requests of one individual.
+ */
+export type MemberSinceMonth = string;
+
 /** Where a thing is, for a visitor: city and department only */
 export interface VisitorPlace {
     city: string;
@@ -97,7 +104,7 @@ export interface VisitorProfessional extends VisitorPlace {
     tradeIds: string[];
     services: string[];
     locationType: 'fixed' | 'mobile' | 'both';
-    memberSince: string;
+    memberSince: MemberSinceMonth;
     startingPrice?: number;      // Euros, whole amount
     avatar?: VisitorMedia;
     cover?: VisitorMedia;
@@ -112,7 +119,7 @@ export interface MemberProfessional extends MemberPlace {
     tradeIds: string[];
     services: string[];
     locationType: 'fixed' | 'mobile' | 'both';
-    memberSince: string;
+    memberSince: MemberSinceMonth;
     startingPrice?: number;
     avatar?: MemberMedia;
     cover?: MemberMedia;
@@ -197,14 +204,14 @@ interface RequestCommon {
 /** Author for a visitor: first name blurred (fixed 10-character fake), no initial */
 export interface VisitorRequestAuthor {
     firstName: Blurred;
-    memberSince: string;
+    memberSince: MemberSinceMonth;
 }
 
 /** Author for a member: "Sophie M." (never the last name) */
 export interface MemberRequestAuthor {
     firstName: string;
     lastNameInitial: string;
-    memberSince: string;
+    memberSince: MemberSinceMonth;
 }
 
 export interface VisitorRequest extends RequestCommon, VisitorPlace {

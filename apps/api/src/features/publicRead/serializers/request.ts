@@ -1,5 +1,5 @@
 import { getRequestStatus, type Audience, type MemberRequest, type PublicRequest, type VisitorRequest } from '@sialty/domain';
-import { assertMemberRow, blurred, toMemberMedia, toMemberPlace, toVisitorMedia, toVisitorPlace } from './common';
+import { assertMemberRow, blurred, toMemberMedia, toMemberPlace, toMemberSinceMonth, toVisitorMedia, toVisitorPlace } from './common';
 import type { MemberRequestRow, VisitorRequestRow } from './rows';
 
 // ============================================
@@ -40,7 +40,8 @@ export function serializeRequest(
         publishedAt: row.createdAt.toISOString(),
         expiresAt,
     };
-    const memberSince = row.authorMemberSince.toISOString();
+    // Month only ("YYYY-MM"): the exact timestamp would link all the requests of one person
+    const memberSince = toMemberSinceMonth(row.authorMemberSince);
 
     if (audience === 'member') {
         assertMemberRow(

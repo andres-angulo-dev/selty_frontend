@@ -17,11 +17,32 @@ const mediaUrl = (key: string): string => `/v1/media/${key}`;
 /** @returns the blurred photo only */
 export const toVisitorMedia = (row: VisitorMediaRow): VisitorMedia => ({ blurUrl: mediaUrl(row.blurKey) });
 
-/** @returns the clear 1080 px photo and its blurred version */
-export const toMemberMedia = (row: MemberMediaRow): MemberMedia => ({
-    url: mediaUrl(row.key1080),
-    blurUrl: mediaUrl(row.blurKey),
-});
+/**
+ * @returns the clear 1080 px photo and its blurred version
+ * @throws when the row has no 1080 key (a visitor media row given to a member answer: repository bug)
+ */
+export const toMemberMedia = (row: MemberMediaRow): MemberMedia => {
+    if (typeof row.key1080 !== 'string' || row.key1080 === '') {
+        throw new Error('media: member answer built from a row without key1080');
+    }
+    return { url: mediaUrl(row.key1080), blurUrl: mediaUrl(row.blurKey) };
+};
+
+// Month in French time: a member who joined on 31 March at 23:30 UTC joined in April for the app
+const MONTH_FORMAT = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit' });
+
+/**
+ * When a person joined, as a month only. The exact timestamp is a near-unique
+ * fingerprint: it would let anyone link all the requests of one individual.
+ * @param date profiles.member_since
+ * @returns "YYYY-MM", month in Europe/Paris time
+ */
+export const toMemberSinceMonth = (date: Date): string => {
+    const parts = MONTH_FORMAT.formatToParts(date);
+    const year = parts.find((part) => part.type === 'year')?.value;
+    const month = parts.find((part) => part.type === 'month')?.value;
+    return `${year}-${month}`;
+};
 
 /** @returns a text the visitor may not read, as filler of bucketed length */
 export const blurred = (length: number): Blurred => ({ blurred: true, placeholder: placeholderText(length) });
