@@ -56,6 +56,24 @@ npm run db:seed -w @sialty/api              # sample professionals, annonces, of
 
 Check from the phone: open `<tunnel address>/v1/health` in Safari, it must show `{"status":"ok","database":"ok"}`.
 
+## Public read API
+
+Every answer is shaped for its audience. Until sign-in exists, every caller is a **visitor**: names,
+descriptions, services and photos arrive blurred (fake text of a close length, server-made blurred
+photo), and there is never a phone number, a rating, coordinates or an exact address.
+
+| Route | Answer |
+|---|---|
+| `GET /v1/feed?lat=&lng=&radius=30\|100\|department&cursor=&limit=` | Annonces, live offers and open requests around a position, newest first, 20 per page (50 max). An empty first page gives `widenTo` (the next radius). The position is never written to the logs. |
+| `GET /v1/professionals/:id` | A validated professional, with their active annonces and live offers |
+| `GET /v1/annonces/:id`, `GET /v1/offers/:id` | 404 when unknown, 410 `Ended` when disabled or no longer live |
+| `GET /v1/requests/:id` | A request with its status (`open`, `fulfilled`, `expired`) |
+| `GET /v1/trades`, `GET /v1/categories` | Reference lists, shared with the app through `@sialty/domain` |
+| `GET /v1/media/<key>/blur.webp` | Blurred photos only (the sharp versions are not served yet) |
+
+Response types live in `packages/domain/src/api/publicTypes.ts`. Only professionals with the status
+`validated` appear anywhere. Photos are stored under `STORAGE_DIR` (`apps/api/storage`, git-ignored).
+
 ## Data sources
 
 See `apps/mobile/README.md` (French outlines: IGN, Licence Ouverte 2.0). French communes: geo.api.gouv.fr.
