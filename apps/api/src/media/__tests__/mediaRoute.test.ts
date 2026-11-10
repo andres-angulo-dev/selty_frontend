@@ -5,6 +5,7 @@ import path from 'node:path';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createApp } from '../../app';
+import { LIMITS } from '../../config/limits';
 import { media } from '../../db/schema';
 import { createTestDb } from '../../test/db';
 import { insertProfile, resetContent } from '../../test/factories';
@@ -81,6 +82,25 @@ describe('GET /v1/media/*key and the rate limit', () => {
             const api = await request(server).get('/v1/health');
             expect(api.status).toBe(200);
             expect(remaining(api)).toBe('299');
+        } finally {
+            server.close();
+        }
+    });
+
+    it('limits failed lookups per address: misses mean key probing', async () => {
+        const fresh = createApp({ storage: new LocalDiskStorage(root) });
+        const server = fresh.listen(0);
+        try {
+            for (let i = 0; i < LIMITS.mediaFailedLookupsPerWindow; i += 1) {
+                expect((await request(server).get('/v1/media/a/zzz/blur.webp')).status).toBe(404);
+            }
+            const blocked = await request(server).get('/v1/media/a/zzz/blur.webp');
+            expect(blocked.status).toBe(429);
+            expect(blocked.headers['content-type']).toMatch(/^application\/problem\+json/);
+            expect(blocked.body).toMatchObject({ title: 'Too many requests', status: 429 });
+
+            // Photo misses never touch the API quota
+            expect(remaining(await request(server).get('/v1/health'))).toBe('299');
         } finally {
             server.close();
         }

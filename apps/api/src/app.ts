@@ -12,6 +12,7 @@ import { referenceRoutes } from './features/reference/reference.routes';
 import { LocalDiskStorage, type ObjectStorage } from './media/objectStorage';
 import { mediaRoutes } from './media/media.routes';
 import { errorHandler, notFound } from './shared/http/errorHandler';
+import { HttpProblem } from './shared/http/problem';
 import { LOGGER_SERIALIZERS, withoutQueryParams, withoutQueryString } from './shared/logging/logSerializers';
 
 // ============================================
@@ -85,6 +86,20 @@ export const createApp = ({
     // immutable (cached a year by the client), unguessable and cheap to serve.
     // Security: only the blurred version is reachable here (media.routes.ts);
     // the clear photos of plan 4 go behind the session check AND the limit.
+    // Security: misses are limited per IP (successful answers are not counted),
+    // so key probing and disk reads for unknown keys stay bounded. Same key as
+    // the baseline (req.ip, through 'trust proxy'); 429 as a problem document.
+    app.use(
+        '/v1/media',
+        rateLimit({
+            windowMs: LIMITS.rateLimitWindowMs,
+            limit: LIMITS.mediaFailedLookupsPerWindow,
+            skipSuccessfulRequests: true,
+            standardHeaders: false,
+            legacyHeaders: false,
+            handler: (_req, _res, next) => next(new HttpProblem(429, 'Too many requests')),
+        }),
+    );
     app.use(mediaRoutes(storage));
 
     // 4. Baseline limit per IP; answers 429 with standard RateLimit headers
