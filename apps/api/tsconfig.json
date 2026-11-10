@@ -11,6 +11,8 @@
     "noEmit": true,
     "isolatedModules": true,
     "skipLibCheck": true,
+    // Test fixtures are JSON files
+    "resolveJsonModule": true,
     "types": ["node"]
   },
   "include": ["src", "scripts", "drizzle.config.ts", "vitest.config.ts"]

@@ -1,0 +1,42 @@
+[
+  {
+    "code": "77288",
+    "nom": "Melun",
+    "centre": { "type": "Point", "coordinates": [2.6552, 48.5421] },
+    "surface": 800.45,
+    "codeDepartement": "77",
+    "codeRegion": "11"
+  },
+  {
+    "code": "93063",
+    "nom": "Romainville",
+    "centre": { "type": "Point", "coordinates": [2.4391, 48.8849] },
+    "surface": 344.17,
+    "codeDepartement": "93",
+    "codeRegion": "11"
+  },
+  {
+    "code": "75056",
+    "nom": "Paris",
+    "centre": { "type": "Point", "coordinates": [2.347, 48.8589] },
+    "surface": 10536.03,
+    "codeDepartement": "75",
+    "codeRegion": "11"
+  },
+  {
+    "code": "13055",
+    "nom": "Marseille",
+    "centre": { "type": "Point", "coordinates": [5.3806, 43.2803] },
+    "surface": 23793.28,
+    "codeDepartement": "13",
+    "codeRegion": "93"
+  },
+  {
+    "code": "97701",
+    "nom": "Saint-Barthélemy",
+    "centre": { "type": "Point", "coordinates": [-62.8601, 17.9204] },
+    "surface": 2048.52,
+    "codeDepartement": "977",
+    "codeRegion": "977"
+  }
+]
