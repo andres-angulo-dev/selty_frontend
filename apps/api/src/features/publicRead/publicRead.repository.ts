@@ -1,5 +1,5 @@
 import type { Audience } from '@sialty/domain';
-import { and, desc, eq, sql, type SQL } from 'drizzle-orm';
+import { and, desc, eq, inArray, sql, type SQL } from 'drizzle-orm';
 import { alias, type AnyPgColumn, type SelectedFields } from 'drizzle-orm/pg-core';
 import type { Database } from '../../db/client';
 import {
@@ -78,6 +78,12 @@ const PARIS_TOMORROW_START = sql`((date_trunc('day', now() at time zone 'Europe/
 export const offerIsLive = sql<boolean>`(${offers.isActive}
     and (${offers.expiresAt} is null or ${offers.expiresAt} >= ${PARIS_TODAY_START})
     and (${offers.startsAt} is null or ${offers.startsAt} < ${PARIS_TOMORROW_START}))`;
+
+/**
+ * SQL condition: the request still waits for a professional (mirrors getRequestStatus:
+ * 'expired' is computed from expires_at, never stored). Reused by the feed
+ */
+export const requestIsOpen = sql<boolean>`(${requests.status} = 'open' and ${requests.expiresAt} > now())`;
 
 // ============================================
 // SHARED FRAGMENTS
@@ -378,6 +384,24 @@ export async function listProfessionalAnnonces(
     return (await selectAnnonces(db, 'visitor', where, NESTED_LIST_MAX)).map(toVisitorAnnonceRow);
 }
 
+/**
+ * Active annonces of validated professionals among `ids` (the feed picks the
+ * ids, this function reads them with the same privacy rules as the detail).
+ * @returns the rows found, in no particular order (the caller orders them)
+ */
+export async function listAnnoncesByIds(
+    db: Database,
+    ids: string[],
+    audience: Audience,
+): Promise<(VisitorAnnonceRow | MemberAnnonceRow)[]> {
+    if (ids.length === 0) return [];
+    const where = and(inArray(annonces.id, ids), eq(annonces.isActive, true));
+    if (audience === 'member') {
+        return (await selectAnnonces(db, 'member', where, ids.length)).map(toMemberAnnonceRow);
+    }
+    return (await selectAnnonces(db, 'visitor', where, ids.length)).map(toVisitorAnnonceRow);
+}
+
 // ============================================
 // OFFERS (no commune of their own: placed at the professional's commune)
 // ============================================
@@ -505,6 +529,23 @@ export async function listProfessionalOffers(
         return (await selectOffers(db, 'member', where, NESTED_LIST_MAX)).map(toMemberOfferRow);
     }
     return (await selectOffers(db, 'visitor', where, NESTED_LIST_MAX)).map(toVisitorOfferRow);
+}
+
+/**
+ * Live offers of validated professionals among `ids` (read for the feed).
+ * @returns the rows found, in no particular order (the caller orders them)
+ */
+export async function listOffersByIds(
+    db: Database,
+    ids: string[],
+    audience: Audience,
+): Promise<(VisitorOfferRow | MemberOfferRow)[]> {
+    if (ids.length === 0) return [];
+    const where = and(inArray(offers.id, ids), offerIsLive);
+    if (audience === 'member') {
+        return (await selectOffers(db, 'member', where, ids.length)).map(toMemberOfferRow);
+    }
+    return (await selectOffers(db, 'visitor', where, ids.length)).map(toVisitorOfferRow);
 }
 
 // ============================================
@@ -667,10 +708,10 @@ const memberRequestFields = () => ({
     authorLastNameInitial: sql<string>`left(${profiles.lastName}, 1)`,
 });
 
-/** One request with its author (member since) and commune */
-function selectRequest(db: Database, audience: 'visitor', id: string): Promise<VisitorRequestRow[]>;
-function selectRequest(db: Database, audience: 'member', id: string): Promise<MemberRequestRow[]>;
-function selectRequest(db: Database, audience: Audience, id: string): Promise<unknown[]> {
+/** Requests matching `where`, with their author (member since) and commune */
+function selectRequests(db: Database, audience: 'visitor', where: SQL, limit: number): Promise<VisitorRequestRow[]>;
+function selectRequests(db: Database, audience: 'member', where: SQL, limit: number): Promise<MemberRequestRow[]>;
+function selectRequests(db: Database, audience: Audience, where: SQL, limit: number): Promise<unknown[]> {
     const fields: SelectedFields = audience === 'member' ? memberRequestFields() : visitorRequestFields();
     return db
         .select(fields)
@@ -678,8 +719,8 @@ function selectRequest(db: Database, audience: Audience, id: string): Promise<un
         .innerJoin(profiles, eq(profiles.id, requests.authorId))
         .innerJoin(trades, eq(trades.id, requests.tradeId))
         .innerJoin(communes, eq(communes.code, requests.communeCode))
-        .where(eq(requests.id, id))
-        .limit(1);
+        .where(where)
+        .limit(limit);
 }
 
 /**
@@ -700,6 +741,25 @@ export async function findRequest(
     audience: Audience,
 ): Promise<FindResult<VisitorRequestRow | MemberRequestRow>> {
     // The selected keys are exactly the row's keys: the result is the row as it is
-    const [row] = audience === 'member' ? await selectRequest(db, 'member', id) : await selectRequest(db, 'visitor', id);
+    const where = eq(requests.id, id);
+    const [row] = audience === 'member'
+        ? await selectRequests(db, 'member', where, 1)
+        : await selectRequests(db, 'visitor', where, 1);
     return row ? { state: 'found', row } : { state: 'missing' };
+}
+
+/**
+ * Open requests (status open, not expired) among `ids` (read for the feed).
+ * @returns the rows found, in no particular order (the caller orders them)
+ */
+export async function listOpenRequestsByIds(
+    db: Database,
+    ids: string[],
+    audience: Audience,
+): Promise<(VisitorRequestRow | MemberRequestRow)[]> {
+    if (ids.length === 0) return [];
+    const where = and(inArray(requests.id, ids), requestIsOpen)!;
+    return audience === 'member'
+        ? selectRequests(db, 'member', where, ids.length)
+        : selectRequests(db, 'visitor', where, ids.length);
 }

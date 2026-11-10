@@ -123,6 +123,19 @@ describe('logs', () => {
         expect(output).not.toContain('secret-token');
         expect(output).not.toContain('secret-cookie');
     });
+
+    it('logs never contain the feed position', async () => {
+        const lines: string[] = [];
+        const logger = pino({ level: 'info' }, { write: (line: string) => lines.push(line) });
+
+        // No database here: the route answers 404, but the request line is logged all the same
+        await request(createApp({ logger })).get('/v1/feed?lat=48.5421&lng=2.6553');
+
+        const output = lines.join('');
+        expect(output).toContain('"url":"/v1/feed"');
+        expect(output).not.toContain('48.5421');
+        expect(output).not.toContain('2.6553');
+    });
 });
 
 describe('rate limit behind the tunnel', () => {

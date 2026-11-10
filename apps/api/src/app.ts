@@ -5,6 +5,7 @@ import { pino, type Logger } from 'pino';
 import { pinoHttp } from 'pino-http';
 import { LIMITS } from './config/limits';
 import type { Database } from './db/client';
+import { feedRoutes } from './features/feed/feed.routes';
 import { healthRoutes } from './features/health/health.routes';
 import { publicReadRoutes } from './features/publicRead/publicRead.routes';
 import { referenceRoutes } from './features/reference/reference.routes';
@@ -41,6 +42,24 @@ const REDACTED_LOG_PATHS = [
     'res.headers["set-cookie"]',
 ];
 
+/** The standard serialized request of pino-http (only the keys handled here are typed) */
+interface SerializedRequest {
+    url?: string;
+    query?: unknown;
+    [key: string]: unknown;
+}
+
+/**
+ * Security / privacy: the logged request keeps its path but loses its query
+ * string, for every route. A query string can hold a position (the feed's
+ * ?lat=&lng= says where a person is) or other personal data; the path is
+ * enough to follow a request. The parsed `query` copy is dropped too.
+ */
+const withoutQueryString = (req: SerializedRequest): SerializedRequest => {
+    const { query: _query, ...rest } = req;
+    return { ...rest, url: req.url?.split('?')[0] };
+};
+
 /**
  * @returns The configured application. Middlewares run in this order.
  */
@@ -66,7 +85,7 @@ export const createApp = ({
     app.use(helmet());
 
     // 2. One log line per request, with an id reused by the error handler
-    app.use(pinoHttp({ logger, redact: REDACTED_LOG_PATHS }));
+    app.use(pinoHttp({ logger, redact: REDACTED_LOG_PATHS, serializers: { req: withoutQueryString } }));
 
     // 3. Baseline limit per IP; answers 429 with standard RateLimit headers
     app.use(
@@ -88,6 +107,7 @@ export const createApp = ({
     if (db) {
         app.use(referenceRoutes(db));
         app.use(publicReadRoutes(db));
+        app.use(feedRoutes(db));
     }
     if (extraRoutes) app.use(extraRoutes);
 
