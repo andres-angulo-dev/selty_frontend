@@ -35,6 +35,42 @@ describe('error serializer', () => {
         expect(line).not.toContain('sophie@example.fr');
     });
 
+    it('drops every bound value, even after a newline inside one of them', () => {
+        const err = new DrizzleQueryError('insert into requests (title, description) values ($1, $2)', [
+            'Fuite',
+            'Bonjour\nSECRET-MARKER rue des Lilas',
+        ], new Error('boom'));
+        const line = logLine(err);
+        expect(line).not.toContain('SECRET-MARKER');
+        expect(line).not.toContain('Lilas');
+        expect(JSON.parse(line).err.message).toContain('insert into requests');
+    });
+
+    it('logs only the class and the SQLSTATE of a database cause, never its message (it can echo input)', () => {
+        const cause = Object.assign(new Error('invalid input syntax for type uuid: "secret-input"'), { code: '22P02' });
+        const line = logLine(new DrizzleQueryError('select * from annonces where id = $1', ['secret-input'], cause));
+        const logged = JSON.parse(line).err;
+        expect(line).not.toContain('secret-input');
+        expect(logged.causeCode).toBe('22P02');
+        expect(logged.causeType).toBe('Error');
+    });
+
+    it('logs a database error met on its own as class and code only', () => {
+        const line = logLine(Object.assign(new Error('value "secret-input" out of range'), { code: '22003' }));
+        expect(line).not.toContain('secret-input');
+        expect(JSON.parse(line).err).toMatchObject({ code: '22003' });
+    });
+
+    it('does not throw on a self-referencing error', () => {
+        const err = new Error('outer') as Error & { inner?: unknown };
+        const inner = { message: 'inner', stack: 'inner stack', self: null as unknown };
+        inner.self = inner;
+        err.inner = inner;
+        (err as Error & { cause?: unknown }).cause = err;
+        expect(() => logLine(err)).not.toThrow();
+        expect(JSON.parse(logLine(err)).err.message).toContain('outer');
+    });
+
     it('leaves an ordinary error readable', () => {
         const logged = JSON.parse(logLine(new Error('plain failure'))).err;
         expect(logged.message).toBe('plain failure');
