@@ -42,6 +42,7 @@ sudo -u postgres psql -d sialty_test -c "create extension postgis;"
 cp apps/api/.env.example apps/api/.env
 npm run db:migrate -w @sialty/api           # create the tables
 npm run db:import-communes -w @sialty/api   # ~35 000 French communes (safe to run again)
+npm run db:seed -w @sialty/api              # sample professionals, annonces, offers and requests (EMPTIES the content tables, sialty_dev only)
 ```
 
 ### Each time: three terminals

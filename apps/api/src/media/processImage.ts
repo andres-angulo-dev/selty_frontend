@@ -50,7 +50,7 @@ export const processImage = async (input: Buffer): Promise<ProcessedImage> => {
 /**
  * Processes and stores a photo, then records it.
  * @param storage Where the files go
- * @param db Database
+ * @param db Database, or a transaction (only `insert` is used)
  * @param input Upload bytes
  * @param prefix Folder name in the keys (e.g. "annonce")
  * @param ownerProfileId The person who uploaded it
@@ -58,7 +58,7 @@ export const processImage = async (input: Buffer): Promise<ProcessedImage> => {
  */
 export const storeImage = async (
     storage: ObjectStorage,
-    db: Database,
+    db: Pick<Database, 'insert'>,
     input: Buffer,
     prefix: string,
     ownerProfileId: string,
