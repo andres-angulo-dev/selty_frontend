@@ -6,6 +6,8 @@ import { pinoHttp } from 'pino-http';
 import { LIMITS } from './config/limits';
 import type { Database } from './db/client';
 import { healthRoutes } from './features/health/health.routes';
+import { LocalDiskStorage, type ObjectStorage } from './media/objectStorage';
+import { mediaRoutes } from './media/media.routes';
 import { errorHandler, notFound } from './shared/http/errorHandler';
 
 // ============================================
@@ -25,6 +27,8 @@ export interface AppDeps {
      * load balancer). 0 = clients connect directly. See TRUST_PROXY_HOPS in env.ts.
      */
     trustProxyHops?: number;
+    /** Photo files; defaults to the `storage` folder of the current directory */
+    storage?: ObjectStorage;
 }
 
 // Security: request parts never written to the logs. A session token or a
@@ -43,6 +47,7 @@ export const createApp = ({
     logger = pino({ level: 'silent' }),
     extraRoutes,
     trustProxyHops = 0,
+    storage = new LocalDiskStorage('storage'),
 }: AppDeps = {}): Express => {
     const app = express();
 
@@ -76,6 +81,7 @@ export const createApp = ({
 
     // 5. Routes
     app.use(healthRoutes(db));
+    app.use(mediaRoutes(storage));
     if (extraRoutes) app.use(extraRoutes);
 
     // 6. Nothing matched, then every error as a problem document

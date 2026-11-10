@@ -15,6 +15,7 @@ describe('loadEnv', () => {
             DATABASE_URL,
             TRUST_PROXY_HOPS: 0,
             HOST: '127.0.0.1',
+            STORAGE_DIR: 'storage',
         });
     });
 

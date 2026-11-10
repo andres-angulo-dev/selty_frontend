@@ -1,7 +1,9 @@
+import path from 'node:path';
 import { pino } from 'pino';
 import { createApp } from './app';
 import { loadEnv } from './config/env';
 import { createDb } from './db/client';
+import { LocalDiskStorage } from './media/objectStorage';
 
 // ============================================
 // SERVER — reads the settings, opens the database, builds the app, listens.
@@ -12,7 +14,12 @@ const env = loadEnv(process.env);
 const logger = pino({ level: env.NODE_ENV === 'production' ? 'info' : 'debug' });
 const database = createDb(env.DATABASE_URL, logger);
 
-const app = createApp({ db: database.db, logger, trustProxyHops: env.TRUST_PROXY_HOPS });
+const app = createApp({
+    db: database.db,
+    logger,
+    trustProxyHops: env.TRUST_PROXY_HOPS,
+    storage: new LocalDiskStorage(path.resolve(env.STORAGE_DIR)),
+});
 const server = app.listen(env.PORT, env.HOST, () => {
     logger.info(`API listening on http://${env.HOST}:${env.PORT}`);
 });

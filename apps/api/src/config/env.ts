@@ -19,6 +19,8 @@ const envSchema = z.object({
     // Network interface to listen on. 127.0.0.1 = this machine only: the tunnel
     // (on this machine) still reaches it, but no device of the local network can
     // call the API directly with a forged X-Forwarded-For. A host sets 0.0.0.0.
+    // Folder of the photo files, relative to apps/api (the folder npm runs the server from)
+    STORAGE_DIR: z.string().min(1).default('storage'),
     HOST: z.string().min(1).default('127.0.0.1'),
 });
 
