@@ -36,7 +36,7 @@ import type {
 // ============================================
 // PUBLIC READ REPOSITORY — the SQL behind the detail routes.
 // Security (spec, visitor rule): a visitor query LISTS its columns and never
-// reads description, display_name, first_name, last_name or phone. The real
+// reads description, display_name, first_name, last_name, services or phone. The real
 // text is not even read from the database: the *_length generated columns are
 // enough for the fake text. Member queries add the clear columns on top of the
 // visitor ones. phone is read by no query at all (never in a response).
@@ -516,7 +516,12 @@ const visitorProfessionalFields = () => ({
     displayNameLength: professionalProfiles.displayNameLength,
     descriptionLength: professionalProfiles.descriptionLength,
     tradeIds: professionalTradeIds,
-    services: professionalProfiles.services,
+    // Free text: only the length of each service, in order (unnest is the one place the column appears)
+    serviceLengths: sql<number[]>`array(
+        select char_length(service.value)
+        from unnest(${professionalProfiles.services}) with ordinality as service(value, position)
+        order by service.position
+    )`,
     locationType: professionalProfiles.locationType,
     startingPrice: professionalProfiles.startingPrice,
     memberSince: profiles.memberSince,
@@ -531,6 +536,7 @@ const memberProfessionalFields = () => ({
     ...visitorProfessionalFields(),
     displayName: professionalProfiles.displayName,
     description: professionalProfiles.description,
+    services: professionalProfiles.services,
     communeCode: communes.code,
     latitude: latitudeOf(communes.center),
     longitude: longitudeOf(communes.center),
@@ -573,7 +579,7 @@ const toVisitorProfessionalRow = (row: VisitorProfessionalFlat): VisitorProfessi
     displayNameLength: row.displayNameLength,
     descriptionLength: row.descriptionLength,
     tradeIds: row.tradeIds,
-    services: row.services,
+    serviceLengths: row.serviceLengths,
     locationType: row.locationType,
     startingPrice: row.startingPrice,
     memberSince: row.memberSince,
@@ -588,6 +594,7 @@ const toMemberProfessionalRow = (row: MemberProfessionalFlat): MemberProfessiona
     ...toVisitorProfessionalRow(row),
     displayName: row.displayName,
     description: row.description,
+    services: row.services,
     communeCode: row.communeCode,
     latitude: row.latitude,
     longitude: row.longitude,

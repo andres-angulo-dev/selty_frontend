@@ -82,7 +82,8 @@ export interface MemberProfessionalSummaryRow extends VisitorProfessionalSummary
 /** Professional page, visitor (place = communes of professional_profiles.commune_code) */
 export interface VisitorProfessionalRow extends VisitorProfessionalSummaryRow, VisitorPlaceRow {
     descriptionLength: number; // professional_profiles.description_length
-    services: string[]; // professional_profiles.services
+    // char_length of each professional_profiles.services item, in order (free text: never read for a visitor)
+    serviceLengths: number[];
     locationType: 'fixed' | 'mobile' | 'both'; // professional_profiles.location_type
     memberSince: Date; // profiles.member_since of professional_profiles.profile_id
     startingPrice: number | null; // professional_profiles.starting_price
@@ -93,6 +94,7 @@ export interface VisitorProfessionalRow extends VisitorProfessionalSummaryRow, V
 export interface MemberProfessionalRow extends VisitorProfessionalRow, MemberPlaceRow {
     displayName: string;
     description: string; // professional_profiles.description
+    services: string[]; // professional_profiles.services
     avatar: MemberMediaRow | null;
     cover: MemberMediaRow | null;
     zones: MemberZoneRow[];

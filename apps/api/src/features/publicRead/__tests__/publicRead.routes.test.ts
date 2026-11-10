@@ -13,7 +13,14 @@ import {
     insertRequest,
     resetContent,
 } from '../../../test/factories';
-import { findAnnonce, findOffer, findProfessional, findRequest } from '../publicRead.repository';
+import {
+    findAnnonce,
+    findOffer,
+    findProfessional,
+    findRequest,
+    listProfessionalAnnonces,
+    listProfessionalOffers,
+} from '../publicRead.repository';
 
 // ============================================
 // Detail routes of the public read API: what a visitor gets for one
@@ -74,6 +81,7 @@ describe('GET /v1/professionals/:id', () => {
             communeCode: MELUN.code,
             phone: '0612345678',
             showPhone: true,
+            services: ['Ravalement de façade'],
             avatarMediaId,
             zones: [{ id: 'department-77', kind: 'department', departmentCode: '77' }],
         });
@@ -91,6 +99,8 @@ describe('GET /v1/professionals/:id', () => {
         expect(response.body.avatar.blurUrl).toMatch(/blur\.webp$/);
         expect(response.body.city).toBe(MELUN.name);
         expect(response.body.zones).toEqual([{ kind: 'department', code: '77', name: 'Seine-et-Marne' }]);
+        expect(response.body.services).toEqual([{ blurred: true, placeholder: expect.any(String) }]);
+        expect(response.text).not.toContain('Ravalement');
         expect(response.text).not.toContain('0612345678');
         expect(response.body).not.toHaveProperty('phone');
         expect(response.body).not.toHaveProperty('latitude');
@@ -266,6 +276,16 @@ describe('headers', () => {
 describe('repository', () => {
     // Column names the visitor query must never read (the *_length columns are allowed)
     const FORBIDDEN_COLUMNS = /"(description|display_name|first_name|last_name|phone)"/;
+    // services may only appear as the argument of unnest() (lengths of each item), never selected as a column
+    const SELECTED_SERVICES = /(?<!unnest\("professional_profiles"\.)"services"/;
+
+    /** Fails when a visitor SQL text reads a forbidden column */
+    const expectVisitorSafe = (texts: string[]) => {
+        for (const text of texts) {
+            expect(text).not.toMatch(FORBIDDEN_COLUMNS);
+            expect(text).not.toMatch(SELECTED_SERVICES);
+        }
+    };
 
     /** Runs `action` and returns the text of every SQL query sent to the pool meanwhile */
     const capturedSql = async (action: () => Promise<unknown>): Promise<string[]> => {
@@ -290,6 +310,7 @@ describe('repository', () => {
         const { professionalId } = await insertPro(db, {
             communeCode: MELUN.code,
             phone: '0612345678',
+            services: ['Ravalement de façade', 'Pose de papier peint'],
             avatarMediaId,
             coverMediaId: await insertMedia(db),
             zones: [
@@ -314,14 +335,20 @@ describe('repository', () => {
             expect((await findAnnonce(db, ids.annonceId, 'visitor')).state).toBe('found');
             expect((await findOffer(db, ids.offerId, 'visitor')).state).toBe('found');
             expect((await findRequest(db, ids.requestId, 'visitor')).state).toBe('found');
+            expect(await listProfessionalAnnonces(db, ids.professionalId, 'visitor')).toHaveLength(1);
+            expect(await listProfessionalOffers(db, ids.professionalId, 'visitor')).toHaveLength(1);
         });
-        expect(texts).toHaveLength(4);
-        for (const text of texts) expect(text).not.toMatch(FORBIDDEN_COLUMNS);
+        expect(texts).toHaveLength(6);
+        expectVisitorSafe(texts);
+        // The visitor professional query does read the service lengths, through unnest only
+        expect(texts[0]).toContain('unnest("professional_profiles"."services")');
     });
 
     it('the spy sees the columns a member query reads (proves the check above can fail)', async () => {
         const texts = await capturedSql(() => findAnnonce(db, ids.annonceId, 'member'));
         expect(texts.join('\n')).toMatch(FORBIDDEN_COLUMNS);
+        const proTexts = await capturedSql(() => findProfessional(db, ids.professionalId, 'member'));
+        expect(proTexts.join('\n')).toMatch(SELECTED_SERVICES);
     });
 
     it('member professional: clear texts, city zone with center and surface, never the phone', async () => {
@@ -352,6 +379,15 @@ describe('repository', () => {
             ]),
         );
         expect(row.memberSince).toBeInstanceOf(Date);
+    });
+
+    it('services: visitor row has only their lengths in order, member row the texts', async () => {
+        const visitor = await findProfessional(db, ids.professionalId, 'visitor');
+        const member = await findProfessional(db, ids.professionalId, 'member');
+        if (visitor.state !== 'found' || member.state !== 'found') throw new Error('not found');
+        expect(visitor.row.serviceLengths).toEqual(['Ravalement de façade'.length, 'Pose de papier peint'.length]);
+        expect(visitor.row).not.toHaveProperty('services');
+        expect(member.row.services).toEqual(['Ravalement de façade', 'Pose de papier peint']);
     });
 
     it('visitor professional zones carry no id and no coordinates', async () => {

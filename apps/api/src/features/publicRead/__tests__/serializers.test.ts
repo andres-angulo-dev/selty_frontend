@@ -56,6 +56,7 @@ const proRow = {
     descriptionLength: REAL_PRO_DESCRIPTION.length,
     tradeIds: ['trade-painter', 'trade-plasterer'],
     services: ['Peinture intérieure', 'Ravalement'],
+    serviceLengths: ['Peinture intérieure'.length, 'Ravalement'.length],
     city: 'Melun',
     departmentCode: '77',
     communeCode: '77288',
@@ -172,8 +173,12 @@ describe('serializeProfessional', () => {
     it('visitor: name and description blurred, photo blurred, no location, exact keys', () => {
         const answer = serializeProfessional(proRow, 'visitor');
 
-        expectNoVisitorLeak(answer, [REAL_PRO_DESCRIPTION]);
+        expectNoVisitorLeak(answer, [REAL_PRO_DESCRIPTION, 'Peinture intérieure', 'Ravalement']);
         expectNeverSent(answer);
+        expect(answer.services).toEqual([
+            { blurred: true, placeholder: expect.any(String) },
+            { blurred: true, placeholder: expect.any(String) },
+        ]);
         expect(sortedKeys(answer)).toEqual(
             [
                 'id',

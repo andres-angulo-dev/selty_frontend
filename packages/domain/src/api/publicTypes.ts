@@ -102,7 +102,7 @@ export interface VisitorProfessional extends VisitorPlace {
     displayName: Blurred;
     description: Blurred;
     tradeIds: string[];
-    services: string[];
+    services: Blurred[];         // Free text written by the pro: one placeholder per service
     locationType: 'fixed' | 'mobile' | 'both';
     memberSince: MemberSinceMonth;
     startingPrice?: number;      // Euros, whole amount

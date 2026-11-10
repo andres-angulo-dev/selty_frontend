@@ -129,7 +129,7 @@ export function serializeProfessionalSummary(
  * Professional page.
  * @param row      professional row (a member row is accepted for a visitor: only allowed keys are read)
  * @param audience who reads; 'member' requires a member row, or throws
- * @returns visitor: name / description blurred, photos blurred, no location; member: clear, commune center
+ * @returns visitor: name / description / services blurred, photos blurred, no location; member: clear, commune center
  */
 export function serializeProfessional(row: VisitorProfessionalRow, audience: 'visitor'): VisitorProfessional;
 export function serializeProfessional(row: MemberProfessionalRow, audience: 'member'): MemberProfessional;
@@ -142,7 +142,11 @@ export function serializeProfessional(
     audience: Audience,
 ): PublicProfessional {
     if (audience === 'member') {
-        assertMemberRow(row, ['displayName', 'description', 'latitude', 'longitude', 'communeCode'], 'professional');
+        assertMemberRow(
+            row,
+            ['displayName', 'description', 'services', 'latitude', 'longitude', 'communeCode'],
+            'professional',
+        );
         const member = row as MemberProfessionalRow;
         return {
             id: member.id,
@@ -164,7 +168,8 @@ export function serializeProfessional(
         displayName: blurred(row.displayNameLength),
         description: blurred(row.descriptionLength),
         tradeIds: [...row.tradeIds],
-        services: [...row.services],
+        // Services are free text written by the pro: blurred like the description
+        services: row.serviceLengths.map((length) => blurred(length)),
         ...toVisitorPlace(row),
         locationType: row.locationType,
         memberSince: toMemberSinceMonth(row.memberSince),
