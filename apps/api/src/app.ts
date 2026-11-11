@@ -9,12 +9,14 @@ import type { Auth } from './features/auth/auth';
 import { authRoutes } from './features/auth/auth.routes';
 import { loadViewer } from './features/auth/viewer';
 import { feedRoutes } from './features/feed/feed.routes';
+import { meRoutes } from './features/me/me.routes';
 import { healthRoutes } from './features/health/health.routes';
 import { publicReadRoutes } from './features/publicRead/publicRead.routes';
 import { referenceRoutes } from './features/reference/reference.routes';
 import { LocalDiskStorage, type ObjectStorage } from './media/objectStorage';
 import { mediaRoutes } from './media/media.routes';
 import { errorHandler, notFound } from './shared/http/errorHandler';
+import { memberReadLimit } from './shared/http/memberReadLimit';
 import { HttpProblem } from './shared/http/problem';
 import { LOGGER_SERIALIZERS, withoutQueryParams, withoutQueryString } from './shared/logging/logSerializers';
 
@@ -133,17 +135,26 @@ export const createApp = ({
     // database call. Without auth (tests that do not sign in) everyone is a visitor.
     if (auth && db) app.use(loadViewer(auth, db));
 
-    // 8. Routes
+    // 8. Read limit per member on the routes that answer in clear (the account
+    // route /v1/me is not counted). Visitors are skipped. After loadViewer: it
+    // needs req.viewer.
+    const memberReads = memberReadLimit(LIMITS.memberReadsPerHour);
+    for (const prefix of ['/v1/feed', '/v1/professionals', '/v1/annonces', '/v1/offers', '/v1/requests']) {
+        app.use(prefix, memberReads);
+    }
+
+    // 9. Routes
     app.use(healthRoutes(db));
     // Routes that read the database; absent in the tests of the bare skeleton
     if (db) {
         app.use(referenceRoutes(db));
         app.use(publicReadRoutes(db));
         app.use(feedRoutes(db));
+        app.use(meRoutes(db));
     }
     if (extraRoutes) app.use(extraRoutes);
 
-    // 9. Nothing matched, then every error as a problem document
+    // 10. Nothing matched, then every error as a problem document
     app.use(notFound);
     app.use(errorHandler);
 
