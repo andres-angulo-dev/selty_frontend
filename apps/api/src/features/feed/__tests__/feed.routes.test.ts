@@ -90,6 +90,7 @@ describe('GET /v1/feed: content', () => {
         expect(response.body).toMatchObject({ radius: '30', widenTo: null, nextCursor: null });
         expect(response.headers['cache-control']).toBe('public, max-age=60');
         expect(response.headers.vary).toMatch(/Authorization/);
+        expect(response.headers.vary).toMatch(/Cookie/);
     });
 
     it('excludes offers not live and requests not open', async () => {
@@ -242,6 +243,7 @@ describe('GET /v1/feed: pages', () => {
         expect(response.status).toBe(400);
         expect(response.body.title).toBe('Invalid cursor');
         expect(response.headers.vary).toMatch(/Authorization/);
+        expect(response.headers.vary).toMatch(/Cookie/);
     });
 
     it.each([

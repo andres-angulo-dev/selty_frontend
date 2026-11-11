@@ -4,7 +4,7 @@ import { z } from 'zod';
 import type { Database } from '../../db/client';
 import { HttpProblem } from '../../shared/http/problem';
 import { validate } from '../../shared/http/validate';
-import { resolveAudience } from '../publicRead/audience';
+import { cacheControlFor, markAudienceDependent, resolveAudience } from '../publicRead/audience';
 import { serializeAnnonce } from '../publicRead/serializers/annonce';
 import { serializeOffer } from '../publicRead/serializers/offer';
 import { serializeRequest } from '../publicRead/serializers/request';
@@ -20,7 +20,7 @@ import { findFeedPage, type FeedArea, type FeedEntry } from './feed.repository';
 // (see the req serializer in app.ts).
 // ============================================
 
-/** Same short shared cache as the detail routes */
+/** Same short shared cache as the detail routes, for visitors only (members: private) */
 const FEED_CACHE_CONTROL = 'public, max-age=60';
 
 /** Every radius in widening order: the distance steps, then the department */
@@ -81,9 +81,9 @@ const toFeedItem = (entry: FeedEntry, audience: Audience): FeedItem => {
 export const feedRoutes = (db: Database): Router => {
     const router = Router();
 
-    // Before validation: a 400 also depends on who asks (plan 3), shared caches must key on it
-    router.use('/v1/feed', (_req, res, next) => {
-        res.vary('Authorization');
+    // Before validation: a 400 also depends on who asks, shared caches must key on it
+    router.use('/v1/feed', (req, res, next) => {
+        markAudienceDependent(req, res);
         next();
     });
 
@@ -105,7 +105,7 @@ export const feedRoutes = (db: Database): Router => {
             radius: input.radius,
             widenTo: widenToFor(input.radius, cursor === null, nothingSelected),
         };
-        res.set('Cache-Control', FEED_CACHE_CONTROL).json(body);
+        res.set('Cache-Control', cacheControlFor(audience, FEED_CACHE_CONTROL)).json(body);
     });
 
     return router;

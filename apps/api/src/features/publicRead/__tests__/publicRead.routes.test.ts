@@ -264,12 +264,14 @@ describe('GET /v1/requests/:id', () => {
 });
 
 describe('headers', () => {
-    it('varies on Authorization, success or not', async () => {
+    it('varies on Authorization and Cookie, success or not', async () => {
         const { professionalId } = await insertPro(db, { communeCode: MELUN.code });
         const ok = await request(app).get(`/v1/professionals/${professionalId}`);
         const missing = await request(app).get(`/v1/annonces/${RANDOM_UUID}`);
         expect(ok.headers.vary).toMatch(/Authorization/);
+        expect(ok.headers.vary).toMatch(/Cookie/);
         expect(missing.headers.vary).toMatch(/Authorization/);
+        expect(missing.headers.vary).toMatch(/Cookie/);
     });
 });
 

@@ -7,6 +7,7 @@ import { LIMITS } from './config/limits';
 import type { Database } from './db/client';
 import type { Auth } from './features/auth/auth';
 import { authRoutes } from './features/auth/auth.routes';
+import { loadViewer } from './features/auth/viewer';
 import { feedRoutes } from './features/feed/feed.routes';
 import { healthRoutes } from './features/health/health.routes';
 import { publicReadRoutes } from './features/publicRead/publicRead.routes';
@@ -127,7 +128,12 @@ export const createApp = ({
     // 6. JSON bodies only, size capped
     app.use(express.json({ limit: LIMITS.jsonBodyMax }));
 
-    // 7. Routes
+    // 7. Who asks (viewer.ts): sets req.viewer for a signed-in member, so the
+    // public routes answer in clear and privately. No Cookie header = no
+    // database call. Without auth (tests that do not sign in) everyone is a visitor.
+    if (auth && db) app.use(loadViewer(auth, db));
+
+    // 8. Routes
     app.use(healthRoutes(db));
     // Routes that read the database; absent in the tests of the bare skeleton
     if (db) {
@@ -137,7 +143,7 @@ export const createApp = ({
     }
     if (extraRoutes) app.use(extraRoutes);
 
-    // 8. Nothing matched, then every error as a problem document
+    // 9. Nothing matched, then every error as a problem document
     app.use(notFound);
     app.use(errorHandler);
 
