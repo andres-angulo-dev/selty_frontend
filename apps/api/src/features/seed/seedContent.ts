@@ -1,4 +1,4 @@
-import { and, eq, like, sql } from 'drizzle-orm';
+import { and, eq, isNotNull, notInArray, sql } from 'drizzle-orm';
 import { TERMS_VERSION } from '../../config/authConfig';
 import type { Database } from '../../db/client';
 import {
@@ -130,8 +130,6 @@ export interface SeedCounts {
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const HOUR_MS = 60 * 60 * 1000;
-/** Every seeded account uses this domain, so the seed can replace exactly its own accounts */
-const TEST_EMAIL_SUFFIX = '@sialty.test';
 
 /**
  * Empties then fills the content tables, in ONE transaction: a failure (unknown
@@ -162,10 +160,11 @@ export const seedContent = async (
                 request_media, annonce_media, requests, offers, annonces,
                 professional_zones, professional_trades, professional_profiles, media, profiles
         `);
-        // Security: only addresses of the reserved test domain are deleted, never a real member.
-        // Done after the profiles are gone (profiles.user_id restricts the deletion);
-        // sessions and accounts of these users go with them (cascade).
-        await tx.delete(user).where(like(user.email, `%${TEST_EMAIL_SUFFIX}`));
+        // A user without a profile cannot use the app (sign-in works, /v1/me answers 401 forever):
+        // the seed resets people, so it resets their accounts too (sialty_dev only). Deletes every
+        // user left without a profile by the truncate (real accounts included) and the old seeded
+        // ones. Sessions and accounts go with them (cascade).
+        await tx.delete(user).where(notInArray(user.id, tx.select({ id: profiles.userId }).from(profiles).where(isNotNull(profiles.userId))));
 
         // Creates the Better Auth user of a seeded person. An `account` row is not needed:
         // sign-in by e-mail code only looks the user up by e-mail.

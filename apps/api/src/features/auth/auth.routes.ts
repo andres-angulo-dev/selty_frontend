@@ -62,12 +62,22 @@ const authAllowlist: RequestHandler = (req, _res, next) => {
 };
 
 /**
+ * Security: sign-in answers carry the session token in their body, so no
+ * cache (browser, proxy, tunnel) may keep any /v1/auth answer. Set before the
+ * guards so the 404 / 411 / 413 problems carry it too.
+ */
+const noStore: RequestHandler = (_req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store');
+    next();
+};
+
+/**
  * @param auth The Better Auth instance (createAuth)
- * @returns Router: body size guard, then the allowlist, then Better Auth
+ * @returns Router: no-store header, body size guard, then the allowlist, then Better Auth
  */
 export const authRoutes = (auth: Auth): Router => {
     const router = Router();
     // Express 5 wildcard syntax: "*splat" (a bare "*" is refused)
-    router.all('/v1/auth/*splat', authBodySizeGuard, authAllowlist, toNodeHandler(auth));
+    router.all('/v1/auth/*splat', noStore, authBodySizeGuard, authAllowlist, toNodeHandler(auth));
     return router;
 };

@@ -59,11 +59,28 @@ describe('loadEnv', () => {
         expect(() => loadEnv({ DATABASE_URL, BETTER_AUTH_SECRET, NODE_ENV: 'production' })).toThrow(/AUTH_ALLOWED_HOSTS/);
     });
 
+    it('refuses production without an explicit AUTH_IP_HEADERS, without echoing anything', () => {
+        expect(() =>
+            loadEnv({ DATABASE_URL, BETTER_AUTH_SECRET, NODE_ENV: 'production', AUTH_ALLOWED_HOSTS: 'api.sialty.test' }),
+        ).toThrow(/AUTH_IP_HEADERS/);
+    });
+
+    it('accepts an explicit AUTH_IP_HEADERS in production', () => {
+        const env = loadEnv({
+            DATABASE_URL,
+            BETTER_AUTH_SECRET,
+            NODE_ENV: 'production',
+            AUTH_ALLOWED_HOSTS: 'api.sialty.test',
+            AUTH_IP_HEADERS: 'x-real-ip',
+        });
+        expect(env.AUTH_IP_HEADERS).toEqual(['x-real-ip']);
+    });
+
     it('refuses a wildcard host in production, without echoing it', () => {
         const hosts = 'api.sialty.test,*.example-wild.test';
         let message = '';
         try {
-            loadEnv({ DATABASE_URL, BETTER_AUTH_SECRET, NODE_ENV: 'production', AUTH_ALLOWED_HOSTS: hosts });
+            loadEnv({ DATABASE_URL, BETTER_AUTH_SECRET, NODE_ENV: 'production', AUTH_ALLOWED_HOSTS: hosts, AUTH_IP_HEADERS: 'x-real-ip' });
         } catch (error) {
             message = (error as Error).message;
         }
@@ -77,6 +94,7 @@ describe('loadEnv', () => {
             BETTER_AUTH_SECRET,
             NODE_ENV: 'production',
             AUTH_ALLOWED_HOSTS: 'api.sialty.test',
+            AUTH_IP_HEADERS: 'x-real-ip',
         });
         expect(env.AUTH_ALLOWED_HOSTS).toEqual(['api.sialty.test']);
     });

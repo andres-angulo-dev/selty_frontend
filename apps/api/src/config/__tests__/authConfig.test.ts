@@ -15,7 +15,7 @@ describe('authConfigFromEnv', () => {
     it('trusts exp:// in development and test only', () => {
         expect(authConfigFromEnv(loadEnv({ ...baseEnv, NODE_ENV: 'development' })).trustedOrigins).toEqual(['sialty://', 'exp://']);
         expect(authConfigFromEnv(loadEnv({ ...baseEnv, NODE_ENV: 'test' })).trustedOrigins).toEqual(['sialty://', 'exp://']);
-        expect(authConfigFromEnv(loadEnv({ ...baseEnv, NODE_ENV: 'production', AUTH_ALLOWED_HOSTS: 'api.sialty.test' })).trustedOrigins).toEqual(['sialty://']);
+        expect(authConfigFromEnv(loadEnv({ ...baseEnv, NODE_ENV: 'production', AUTH_ALLOWED_HOSTS: 'api.sialty.test', AUTH_IP_HEADERS: 'x-real-ip' })).trustedOrigins).toEqual(['sialty://']);
     });
 
     it('maps the env keys to the auth settings', () => {

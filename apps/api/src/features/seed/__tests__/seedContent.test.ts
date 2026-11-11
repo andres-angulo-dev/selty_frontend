@@ -1,4 +1,4 @@
-import { count, eq } from 'drizzle-orm';
+import { count, eq, isNull } from 'drizzle-orm';
 import sharp from 'sharp';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import {
@@ -208,5 +208,32 @@ describe('seedContent', () => {
         const emails = (await db.select({ email: user.email }).from(user)).map((row) => row.email);
         expect(emails).toHaveLength(3);
         expect(new Set(emails).size).toBe(3);
+    });
+
+    it('a real account outside @sialty.test is removed with its profile by a re-seed, never left without profile', async () => {
+        const [real] = await db
+            .insert(user)
+            .values({ id: crypto.randomUUID(), name: 'Real', email: 'real@example.com', emailVerified: true })
+            .returning({ id: user.id });
+        await db.insert(profiles).values({ firstName: 'Real', userId: real.id });
+
+        await seedContent(db, memoryStorage(), smallData(), fakeFetchImage);
+
+        const emails = (await db.select({ email: user.email }).from(user)).map((row) => row.email);
+        expect(emails).not.toContain('real@example.com');
+        const orphans = await db
+            .select({ id: user.id })
+            .from(user)
+            .leftJoin(profiles, eq(profiles.userId, user.id))
+            .where(isNull(profiles.id));
+        expect(orphans).toHaveLength(0);
+    });
+
+    it('every seeded profile is linked after a second run', async () => {
+        await seedContent(db, memoryStorage(), smallData(), fakeFetchImage);
+        await seedContent(db, memoryStorage(), smallData(), fakeFetchImage);
+        const rows = await db.select({ userId: profiles.userId }).from(profiles);
+        expect(rows).toHaveLength(3);
+        expect(rows.every((row) => row.userId !== null)).toBe(true);
     });
 });

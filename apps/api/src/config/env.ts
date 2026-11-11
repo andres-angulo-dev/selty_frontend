@@ -81,6 +81,15 @@ export const loadEnv = (source: NodeJS.ProcessEnv): Env => {
         } else if (raw.includes('*')) {
             problems.push('AUTH_ALLOWED_HOSTS: must not contain a wildcard in production');
         }
+
+        // Security: the header carrying the client address must be named explicitly. Without
+        // it Better Auth cannot read an address and its limiter would put every client in one
+        // bucket (one abuser locks everybody out); a default header (cf-connecting-ip) behind
+        // another proxy is chosen by the client itself, so it could dodge the limit.
+        const ipHeaders = source.AUTH_IP_HEADERS;
+        if (ipHeaders === undefined || ipHeaders.trim() === '') {
+            problems.push('AUTH_IP_HEADERS: must be set explicitly in production');
+        }
     }
 
     if (result.success && problems.length === 0) return result.data;

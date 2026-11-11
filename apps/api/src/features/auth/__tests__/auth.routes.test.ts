@@ -196,6 +196,24 @@ describe('sign-up by e-mail code', () => {
     });
 });
 
+describe('cache headers', () => {
+    it('every /v1/auth answer carries Cache-Control: no-store (sign-in body holds the token)', async () => {
+        const ip = nextTestIp();
+        const otp = await codeFor('cache@example.fr', ip);
+        const signIn = await submitCode(
+            app,
+            { email: 'cache@example.fr', otp, name: 'Cam', acceptTerms: true },
+            ip,
+        );
+        expect(signIn.status).toBe(200);
+        expect(signIn.headers['cache-control']).toBe('no-store');
+
+        const refused = await request(app).get('/v1/auth/account-info').set('cf-connecting-ip', ip);
+        expect(refused.status).toBe(404);
+        expect(refused.headers['cache-control']).toBe('no-store');
+    });
+});
+
 describe('codes', () => {
     it('refuses after 5 wrong codes: 403 TOO_MANY_ATTEMPTS', async () => {
         const otp = await codeFor('eve@example.fr', nextTestIp());
