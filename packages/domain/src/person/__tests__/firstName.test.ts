@@ -38,4 +38,19 @@ describe('createFirstNameSchema', () => {
         expect(firstError('06 12 34 56 78')).toBe('BAD');
         expect(firstError('jean@mail.fr')).toBe('BAD');
     });
+
+    it('refuses emoji and punctuation-only values with "invalid"', () => {
+        for (const value of ['😀', 'Anna😀', '!!!', "'", '-']) {
+            expect(firstError(value)).toBe('BAD');
+        }
+    });
+
+    it('accepts a decomposed accent', () => {
+        expect(schema.parse('Zoé')).toBe('Zoé');
+    });
+
+    it('counts characters, not UTF-16 units', () => {
+        expect(schema.safeParse('ä'.repeat(50)).success).toBe(true);
+        expect(firstError('ä'.repeat(51))).toBe('LONG');
+    });
 });
