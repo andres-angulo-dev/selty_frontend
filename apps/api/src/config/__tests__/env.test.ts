@@ -55,6 +55,32 @@ describe('loadEnv', () => {
         expect(env.AUTH_IP_HEADERS).toEqual(['x-real-ip', 'cf-connecting-ip']);
     });
 
+    it('refuses production without an explicit AUTH_ALLOWED_HOSTS', () => {
+        expect(() => loadEnv({ DATABASE_URL, BETTER_AUTH_SECRET, NODE_ENV: 'production' })).toThrow(/AUTH_ALLOWED_HOSTS/);
+    });
+
+    it('refuses a wildcard host in production, without echoing it', () => {
+        const hosts = 'api.sialty.test,*.example-wild.test';
+        let message = '';
+        try {
+            loadEnv({ DATABASE_URL, BETTER_AUTH_SECRET, NODE_ENV: 'production', AUTH_ALLOWED_HOSTS: hosts });
+        } catch (error) {
+            message = (error as Error).message;
+        }
+        expect(message).toMatch(/AUTH_ALLOWED_HOSTS/);
+        expect(message).not.toContain('example-wild');
+    });
+
+    it('accepts explicit hosts in production', () => {
+        const env = loadEnv({
+            DATABASE_URL,
+            BETTER_AUTH_SECRET,
+            NODE_ENV: 'production',
+            AUTH_ALLOWED_HOSTS: 'api.sialty.test',
+        });
+        expect(env.AUTH_ALLOWED_HOSTS).toEqual(['api.sialty.test']);
+    });
+
     it('applies the SMTP defaults', () => {
         const env = loadEnv({ DATABASE_URL, BETTER_AUTH_SECRET });
         expect(env.SMTP_HOST).toBe('127.0.0.1');

@@ -64,9 +64,25 @@ export type Env = z.infer<typeof envSchema>;
  */
 export const loadEnv = (source: NodeJS.ProcessEnv): Env => {
     const result = envSchema.safeParse(source);
-    if (result.success) return result.data;
 
     // One line per problem: "DATABASE_URL: must start with postgres://"
-    const problems = result.error.issues.map((issue) => `${issue.path.join('.')}: ${issue.message}`);
+    const problems = result.success
+        ? []
+        : result.error.issues.map((issue) => `${issue.path.join('.')}: ${issue.message}`);
+
+    // Security: in production the allowed hosts must be listed explicitly and never
+    // use a wildcard. The development default (*.trycloudflare.com) would let any
+    // tunnel host set Better Auth's base URL. Checked on the raw source because the
+    // schema default hides whether the variable was set. Values never appear.
+    if (source.NODE_ENV === 'production') {
+        const raw = source.AUTH_ALLOWED_HOSTS;
+        if (raw === undefined || raw.trim() === '') {
+            problems.push('AUTH_ALLOWED_HOSTS: must be set explicitly in production');
+        } else if (raw.includes('*')) {
+            problems.push('AUTH_ALLOWED_HOSTS: must not contain a wildcard in production');
+        }
+    }
+
+    if (result.success && problems.length === 0) return result.data;
     throw new Error(`Invalid environment:\n${problems.join('\n')}`);
 };
