@@ -1,4 +1,5 @@
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq, like, sql } from 'drizzle-orm';
+import { TERMS_VERSION } from '../../config/authConfig';
 import type { Database } from '../../db/client';
 import {
     annonceMedia,
@@ -11,6 +12,7 @@ import {
     profiles,
     requestMedia,
     requests,
+    user,
     type AnnonceRow,
     type OfferRow,
     type RequestRow,
@@ -44,6 +46,8 @@ export interface SeedProfessional {
     ref: string;
     firstName: string;
     lastName: string;
+    /** Sign-in e-mail of the test account: lower-case, ends with @sialty.test */
+    email: string;
     description: string;
     services: string[];
     place: SeedPlace;
@@ -86,7 +90,7 @@ export interface SeedOffer {
 }
 
 export interface SeedRequest {
-    author: { firstName: string; lastName: string; memberSinceDaysAgo: number };
+    author: { firstName: string; lastName: string; email: string; memberSinceDaysAgo: number };
     tradeId: string;
     title: string;
     description: string;
@@ -99,10 +103,18 @@ export interface SeedRequest {
     expiresInDays: number;
 }
 
+/** An individual with an account and no content (to test the individual mode) */
+export interface SeedIndividual {
+    firstName: string;
+    email: string;
+    memberSinceDaysAgo: number;
+}
+
 export interface SeedData {
     professionals: SeedProfessional[];
     annonces: SeedAnnonce[];
     offers: SeedOffer[];
+    individuals: SeedIndividual[];
     requests: SeedRequest[];
 }
 
@@ -112,10 +124,14 @@ export interface SeedCounts {
     offers: number;
     requests: number;
     photos: number;
+    /** Sign-in accounts created (one per seeded person) */
+    accounts: number;
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const HOUR_MS = 60 * 60 * 1000;
+/** Every seeded account uses this domain, so the seed can replace exactly its own accounts */
+const TEST_EMAIL_SUFFIX = '@sialty.test';
 
 /**
  * Empties then fills the content tables, in ONE transaction: a failure (unknown
@@ -146,6 +162,28 @@ export const seedContent = async (
                 request_media, annonce_media, requests, offers, annonces,
                 professional_zones, professional_trades, professional_profiles, media, profiles
         `);
+        // Security: only addresses of the reserved test domain are deleted, never a real member.
+        // Done after the profiles are gone (profiles.user_id restricts the deletion);
+        // sessions and accounts of these users go with them (cascade).
+        await tx.delete(user).where(like(user.email, `%${TEST_EMAIL_SUFFIX}`));
+
+        // Creates the Better Auth user of a seeded person. An `account` row is not needed:
+        // sign-in by e-mail code only looks the user up by e-mail.
+        let accountCount = 0;
+        const createAccount = async (email: string, name: string, createdAt: Date): Promise<string> => {
+            const [row] = await tx
+                .insert(user)
+                .values({ id: crypto.randomUUID(), name, email, emailVerified: true, createdAt, updatedAt: createdAt })
+                .returning({ id: user.id });
+            accountCount += 1;
+            return row.id;
+        };
+        /** Link + terms columns of a profile whose person has an account */
+        const accountColumns = async (email: string, name: string, since: Date) => ({
+            userId: await createAccount(email, name, since),
+            termsAcceptedAt: new Date(now),
+            termsVersion: TERMS_VERSION,
+        });
 
         // --- Communes: every place is resolved first, so a typo fails before any download ---
         const communeCodes = new Map<string, string>();
@@ -198,6 +236,7 @@ export const seedContent = async (
                     firstName: pro.firstName,
                     lastName: pro.lastName,
                     memberSince: daysFromNow(-pro.memberSinceDaysAgo),
+                    ...(await accountColumns(pro.email, pro.firstName, daysFromNow(-pro.memberSinceDaysAgo))),
                 })
                 .returning({ id: profiles.id });
 
@@ -321,6 +360,7 @@ export const seedContent = async (
                         firstName: author.firstName,
                         lastName: author.lastName,
                         memberSince: daysFromNow(-author.memberSinceDaysAgo),
+                        ...(await accountColumns(author.email, author.firstName, daysFromNow(-author.memberSinceDaysAgo))),
                     })
                     .returning({ id: profiles.id });
                 authorId = person.id;
@@ -346,12 +386,26 @@ export const seedContent = async (
             }
         }
 
+        // --- Individuals with an account and no content ---
+        for (const individual of data.individuals) {
+            await tx.insert(profiles).values({
+                firstName: individual.firstName,
+                memberSince: daysFromNow(-individual.memberSinceDaysAgo),
+                ...(await accountColumns(
+                    individual.email,
+                    individual.firstName,
+                    daysFromNow(-individual.memberSinceDaysAgo),
+                )),
+            });
+        }
+
         return {
             professionals: data.professionals.length,
             annonces: data.annonces.length,
             offers: data.offers.length,
             requests: data.requests.length,
             photos: photoCount,
+            accounts: accountCount,
         };
     });
 };

@@ -20,6 +20,7 @@ export const seedData: SeedData = {
             ref: 'pro-1',
             firstName: 'Jean',
             lastName: 'Dupont',
+            email: 'jean.dupont@sialty.test',
             description: 'Plombier expérimenté depuis 15 ans. Intervention rapide et devis gratuit.',
             services: ['Plomberie', 'Chauffage', 'Sanitaire'],
             place: MELUN,
@@ -39,6 +40,7 @@ export const seedData: SeedData = {
             ref: 'pro-2',
             firstName: 'Marie',
             lastName: 'Martin',
+            email: 'marie.martin@sialty.test',
             description: 'Coiffeuse à domicile. Spécialiste coloration et coiffure événementielle.',
             services: ['Coupe', 'Coloration', 'Coiffure mariage'],
             place: PONTAULT,
@@ -54,6 +56,7 @@ export const seedData: SeedData = {
             ref: 'pro-3',
             firstName: 'Paul',
             lastName: 'Leblanc',
+            email: 'paul.leblanc@sialty.test',
             description: 'Avocat spécialisé en droit immobilier et droit des affaires.',
             services: ['Droit immobilier', 'Droit des affaires', 'Conseil juridique'],
             place: TORCY,
@@ -69,6 +72,7 @@ export const seedData: SeedData = {
             ref: 'pro-4',
             firstName: 'Sophie',
             lastName: 'Durand',
+            email: 'sophie.durand@sialty.test',
             description: 'Coach sportif. Remise en forme, perte de poids, préparation physique.',
             services: ['Coaching individuel', 'Cours collectifs', 'Programme nutrition'],
             place: CHELLES,
@@ -84,6 +88,7 @@ export const seedData: SeedData = {
             ref: 'pro-5',
             firstName: 'Lucas',
             lastName: 'Bernard',
+            email: 'lucas.bernard@sialty.test',
             description: 'Électricien qualifié. Installation, dépannage et mise aux normes.',
             services: ['Installation électrique', 'Dépannage', 'Mise aux normes'],
             place: LAGNY,
@@ -241,9 +246,12 @@ export const seedData: SeedData = {
         },
     ],
 
+    // An individual account with no content, to test the individual mode
+    individuals: [{ firstName: 'Camille', email: 'particulier@sialty.test', memberSinceDaysAgo: 120 }],
+
     requests: [
         {
-            author: { firstName: 'Sophie', lastName: 'M', memberSinceDaysAgo: 610 },
+            author: { firstName: 'Sophie', lastName: 'M', email: 'sophie.m@sialty.test', memberSinceDaysAgo: 610 },
             tradeId: 'trade-painter',
             title: "Peinture d'un salon de 20 m²",
             description:
@@ -256,7 +264,7 @@ export const seedData: SeedData = {
             expiresInDays: 29.9,
         },
         {
-            author: { firstName: 'Karim', lastName: 'B', memberSinceDaysAgo: 526 },
+            author: { firstName: 'Karim', lastName: 'B', email: 'karim.b@sialty.test', memberSinceDaysAgo: 526 },
             tradeId: 'trade-plumber',
             title: "Fuite sous l'évier de la cuisine",
             description:
@@ -270,7 +278,7 @@ export const seedData: SeedData = {
         },
         {
             // Current mock user: shows "J'ai trouvé un pro" on this request
-            author: { firstName: 'Alex', lastName: 'M', memberSinceDaysAgo: 664 },
+            author: { firstName: 'Alex', lastName: 'M', email: 'alex.m@sialty.test', memberSinceDaysAgo: 664 },
             tradeId: 'trade-tutor',
             title: 'Soutien scolaire en maths (niveau 3e)',
             description:
@@ -284,7 +292,7 @@ export const seedData: SeedData = {
         },
         {
             // Test case: the author found a pro
-            author: { firstName: 'Alex', lastName: 'M', memberSinceDaysAgo: 664 },
+            author: { firstName: 'Alex', lastName: 'M', email: 'alex.m@sialty.test', memberSinceDaysAgo: 664 },
             tradeId: 'trade-electrician',
             title: 'Installation de 3 prises dans un garage',
             description: "Ajout de trois prises et d'un éclairage dans un garage attenant à la maison.",
@@ -297,7 +305,7 @@ export const seedData: SeedData = {
         },
         {
             // Test case: expired (30 days passed without being fulfilled)
-            author: { firstName: 'Alex', lastName: 'M', memberSinceDaysAgo: 664 },
+            author: { firstName: 'Alex', lastName: 'M', email: 'alex.m@sialty.test', memberSinceDaysAgo: 664 },
             tradeId: 'trade-gardener',
             title: 'Taille de haies (30 mètres)',
             description: 'Taille de haies de thuyas, environ 30 mètres linéaires, évacuation des déchets comprise.',
@@ -310,7 +318,7 @@ export const seedData: SeedData = {
         },
         {
             // Test case: right trade for the plumber, but far outside their zone
-            author: { firstName: 'Inès', lastName: 'T', memberSinceDaysAgo: 547 },
+            author: { firstName: 'Inès', lastName: 'T', email: 'ines.t@sialty.test', memberSinceDaysAgo: 547 },
             tradeId: 'trade-plumber',
             title: "Remplacement d'un chauffe-eau",
             description: 'Chauffe-eau de 200 litres à remplacer dans un appartement, ancien appareil à évacuer.',

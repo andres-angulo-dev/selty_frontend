@@ -6,11 +6,14 @@ import {
     annonces,
     professionalProfiles,
     professionalZones,
+    profiles,
     requests,
+    user,
 } from '../../../db/schema';
 import type { ObjectStorage } from '../../../media/objectStorage';
 import { createTestDb } from '../../../test/db';
 import { insertCommune, resetContent } from '../../../test/factories';
+import { TERMS_VERSION } from '../../../config/authConfig';
 import { seedContent, type SeedData } from '../seedContent';
 
 // ============================================
@@ -47,6 +50,7 @@ const smallData = (city = 'Melun', department = '77'): SeedData => ({
             ref: 'pro-a',
             firstName: 'Jean',
             lastName: 'Dupont',
+            email: 'jean.dupont@sialty.test',
             description: 'Plombier expérimenté depuis 15 ans.',
             services: ['Plomberie'],
             place: { city, department },
@@ -75,9 +79,10 @@ const smallData = (city = 'Melun', department = '77'): SeedData => ({
         },
     ],
     offers: [],
+    individuals: [{ firstName: 'Camille', email: 'particulier@sialty.test', memberSinceDaysAgo: 100 }],
     requests: [
         {
-            author: { firstName: 'Sophie', lastName: 'M', memberSinceDaysAgo: 300 },
+            author: { firstName: 'Sophie', lastName: 'M', email: 'sophie.m@sialty.test', memberSinceDaysAgo: 300 },
             tradeId: 'trade-painter',
             title: 'Peinture salon',
             description: 'Repeindre un salon de 20 m².',
@@ -114,7 +119,7 @@ describe('seedContent', () => {
     it('inserts the data and returns the counts', async () => {
         const result = await seedContent(db, memoryStorage(), smallData(), fakeFetchImage);
         // 2 annonce photos + 1 cover
-        expect(result).toEqual({ professionals: 1, annonces: 1, offers: 0, requests: 1, photos: 3 });
+        expect(result).toEqual({ professionals: 1, annonces: 1, offers: 0, requests: 1, photos: 3, accounts: 3 });
 
         const [annonce] = await db.select().from(annonces);
         const photos = await db.select().from(annonceMedia).where(eq(annonceMedia.annonceId, annonce.id));
@@ -153,7 +158,7 @@ describe('seedContent', () => {
     it('leaves the same counts when run twice', async () => {
         await seedContent(db, memoryStorage(), smallData(), fakeFetchImage);
         const second = await seedContent(db, memoryStorage(), smallData(), fakeFetchImage);
-        expect(second).toEqual({ professionals: 1, annonces: 1, offers: 0, requests: 1, photos: 3 });
+        expect(second).toEqual({ professionals: 1, annonces: 1, offers: 0, requests: 1, photos: 3, accounts: 3 });
         expect(await countRows(professionalProfiles)).toBe(1);
         expect(await countRows(annonces)).toBe(1);
         expect(await countRows(requests)).toBe(1);
@@ -167,5 +172,41 @@ describe('seedContent', () => {
         // The first seed is still there: the truncate was rolled back
         expect(await countRows(professionalProfiles)).toBe(1);
         expect(await countRows(annonces)).toBe(1);
+    });
+
+    it('creates one linked account per seeded person', async () => {
+        const result = await seedContent(db, memoryStorage(), smallData(), fakeFetchImage);
+        expect(result.accounts).toBe(3);
+
+        const rows = await db
+            .select({
+                email: user.email,
+                verified: user.emailVerified,
+                firstName: profiles.firstName,
+                lastName: profiles.lastName,
+                termsAcceptedAt: profiles.termsAcceptedAt,
+                termsVersion: profiles.termsVersion,
+            })
+            .from(profiles)
+            .innerJoin(user, eq(profiles.userId, user.id));
+        expect(rows.map((row) => row.email).sort()).toEqual([
+            'jean.dupont@sialty.test',
+            'particulier@sialty.test',
+            'sophie.m@sialty.test',
+        ]);
+        expect(rows.every((row) => row.verified && row.termsAcceptedAt && row.termsVersion === TERMS_VERSION)).toBe(true);
+
+        // The extra individual has a first name only and no content
+        const camille = rows.find((row) => row.email === 'particulier@sialty.test');
+        expect(camille?.firstName).toBe('Camille');
+        expect(camille?.lastName).toBeNull();
+    });
+
+    it('running the seed twice keeps one account per e-mail', async () => {
+        await seedContent(db, memoryStorage(), smallData(), fakeFetchImage);
+        await seedContent(db, memoryStorage(), smallData(), fakeFetchImage);
+        const emails = (await db.select({ email: user.email }).from(user)).map((row) => row.email);
+        expect(emails).toHaveLength(3);
+        expect(new Set(emails).size).toBe(3);
     });
 });

@@ -46,8 +46,17 @@ try {
     const storage = new LocalDiskStorage(path.resolve(env.STORAGE_DIR));
     const counts = await seedContent(db, storage, seedData, fetchImage);
     console.log(
-        `Seed: ${counts.professionals} professionals, ${counts.annonces} annonces, ${counts.offers} offers, ${counts.requests} requests, ${counts.photos} photos`,
+        `Seed: ${counts.professionals} professionals, ${counts.annonces} annonces, ${counts.offers} offers, ${counts.requests} requests, ${counts.photos} photos, ${counts.accounts} accounts`,
     );
+    // Sign-in accounts: e-mail and role only (the code arrives in Mailpit)
+    const accounts = [
+        ...seedData.professionals.map(({ email }) => ({ email, role: 'pro' })),
+        ...seedData.requests.map(({ author }) => ({ email: author.email, role: 'particulier' })),
+        ...seedData.individuals.map(({ email }) => ({ email, role: 'particulier' })),
+    ];
+    for (const { email, role } of new Map(accounts.map((account) => [account.email, account])).values()) {
+        console.log(`  ${email} (${role})`);
+    }
 } finally {
     await close();
 }
