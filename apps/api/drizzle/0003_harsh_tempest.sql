@@ -1,0 +1,2 @@
+ALTER TABLE "user" ADD CONSTRAINT "user_email_lowercase" CHECK ("user"."email" = lower("user"."email"));--> statement-breakpoint
+ALTER TABLE "profiles" ADD CONSTRAINT "profiles_terms_pair" CHECK (("profiles"."terms_accepted_at" is null) = ("profiles"."terms_version" is null));

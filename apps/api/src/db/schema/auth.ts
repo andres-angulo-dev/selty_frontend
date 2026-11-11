@@ -1,4 +1,5 @@
-import { boolean, index, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+import { boolean, check, index, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
 
 // ============================================
 // ACCOUNT TABLES — the four tables Better Auth reads and writes (user, session,
@@ -10,18 +11,23 @@ import { boolean, index, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
 // ============================================
 
 /** The login identity: one e-mail address, one row */
-export const user = pgTable('user', {
-    id: text('id').primaryKey(),
-    name: text('name').notNull(),
-    email: text('email').notNull().unique(),
-    emailVerified: boolean('email_verified').default(false).notNull(),
-    image: text('image'),
-    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-    updatedAt: timestamp('updated_at', { withTimezone: true })
-        .defaultNow()
-        .$onUpdate(() => new Date())
-        .notNull(),
-});
+export const user = pgTable(
+    'user',
+    {
+        id: text('id').primaryKey(),
+        name: text('name').notNull(),
+        email: text('email').notNull().unique(),
+        emailVerified: boolean('email_verified').default(false).notNull(),
+        image: text('image'),
+        createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+        updatedAt: timestamp('updated_at', { withTimezone: true })
+            .defaultNow()
+            .$onUpdate(() => new Date())
+            .notNull(),
+    },
+    // Security: Better Auth lower-cases e-mails, this keeps a script or a manual write honest too
+    (table) => [check('user_email_lowercase', sql`${table.email} = lower(${table.email})`)],
+);
 
 /** An open sign-in (30 days, extended by use); deleted with its user */
 export const session = pgTable(

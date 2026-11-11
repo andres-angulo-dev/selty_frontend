@@ -31,12 +31,17 @@ const insertUser = async (id: string, email: string): Promise<string> => {
  * @returns the PostgreSQL error code (SQLSTATE) of the failure
  */
 const sqlStateOf = async (action: () => Promise<unknown>): Promise<string> => {
+    return (await failureOf(action)).code;
+};
+
+/** Like sqlStateOf, also returns the name of the constraint that refused the statement */
+const failureOf = async (action: () => Promise<unknown>): Promise<{ code: string; constraint?: string }> => {
     try {
         await action();
     } catch (error) {
         // Drizzle wraps the driver error: the SQLSTATE sits on the cause
-        const cause = (error as { cause?: { code?: string } }).cause;
-        return cause?.code ?? (error as { code?: string }).code ?? 'unknown';
+        const cause = ((error as { cause?: unknown }).cause ?? error) as { code?: string; constraint?: string };
+        return { code: cause.code ?? 'unknown', constraint: cause.constraint };
     }
     throw new Error('the statement was accepted, a constraint was expected to refuse it');
 };
@@ -87,5 +92,30 @@ describe('profiles.user_id', () => {
         expect(row.lastName).toBeNull();
         expect(row.termsAcceptedAt).toBeNull();
         expect(row.termsVersion).toBeNull();
+    });
+});
+
+describe('check constraints', () => {
+    it('refuses an upper-case e-mail', async () => {
+        const failure = await failureOf(() => insertUser('u3', 'Upper@Example.com'));
+        expect(failure).toEqual({ code: '23514', constraint: 'user_email_lowercase' });
+    });
+
+    it('refuses terms date without version and version without date', async () => {
+        const withDate = await failureOf(() =>
+            db.insert(profiles).values({ firstName: 'Sophie', termsAcceptedAt: new Date() }),
+        );
+        expect(withDate).toEqual({ code: '23514', constraint: 'profiles_terms_pair' });
+        const withVersion = await failureOf(() =>
+            db.insert(profiles).values({ firstName: 'Sophie', termsVersion: '2026-11' }),
+        );
+        expect(withVersion).toEqual({ code: '23514', constraint: 'profiles_terms_pair' });
+    });
+
+    it('accepts both or neither', async () => {
+        await db.insert(profiles).values({ firstName: 'Sophie' });
+        await db.insert(profiles).values({ firstName: 'Karim', termsAcceptedAt: new Date(), termsVersion: '2026-11' });
+        const rows = await db.select().from(profiles);
+        expect(rows).toHaveLength(2);
     });
 });

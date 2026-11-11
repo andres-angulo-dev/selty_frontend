@@ -405,6 +405,11 @@ describe('serializeRequest', () => {
 });
 
 describe('request author without last name', () => {
+    it('an empty last name gives no initial', () => {
+        const answer = serializeRequest({ ...requestRow, authorLastNameInitial: '' }, 'member', NOW);
+        expect(answer.author).toMatchObject({ lastNameInitial: null });
+    });
+
     it('a member request author without last name has no initial', () => {
         const answer = serializeRequest({ ...requestRow, authorLastNameInitial: null }, 'member', NOW);
         expect(answer.author).toEqual({
