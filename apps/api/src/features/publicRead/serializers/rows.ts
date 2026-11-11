@@ -172,5 +172,5 @@ export interface MemberRequestRow extends VisitorRequestRow, MemberPlaceRow {
     photos: MemberMediaRow[];
     authorFirstName: string; // profiles.first_name
     // left(profiles.last_name, 1): select only the initial, the last name never leaves the database
-    authorLastNameInitial: string;
+    authorLastNameInitial: string | null; // null when the last name is not known yet
 }

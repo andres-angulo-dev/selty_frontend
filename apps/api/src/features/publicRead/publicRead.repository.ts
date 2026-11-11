@@ -739,7 +739,7 @@ const memberRequestFields = () => ({
     photos: requestPhotos('member').mapWith((value: MemberMediaRow[]) => value),
     authorFirstName: profiles.firstName,
     // Only the initial leaves the database, never the last name
-    authorLastNameInitial: sql<string>`left(${profiles.lastName}, 1)`,
+    authorLastNameInitial: sql<string | null>`left(${profiles.lastName}, 1)`,
 });
 
 /** Requests matching `where`, with their author (member since) and commune */

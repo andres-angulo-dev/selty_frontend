@@ -58,7 +58,7 @@ export function serializeRequest(
             author: {
                 firstName: member.authorFirstName,
                 // Defensive: keep one character even if the repository sent more
-                lastNameInitial: member.authorLastNameInitial.slice(0, 1),
+                lastNameInitial: member.authorLastNameInitial?.slice(0, 1) ?? null,
                 memberSince,
             },
         };

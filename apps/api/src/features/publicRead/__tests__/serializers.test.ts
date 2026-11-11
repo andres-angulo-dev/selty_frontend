@@ -404,6 +404,17 @@ describe('serializeRequest', () => {
     });
 });
 
+describe('request author without last name', () => {
+    it('a member request author without last name has no initial', () => {
+        const answer = serializeRequest({ ...requestRow, authorLastNameInitial: null }, 'member', NOW);
+        expect(answer.author).toEqual({
+            firstName: REAL_FIRST_NAME,
+            lastNameInitial: null,
+            memberSince: '2026-01',
+        });
+    });
+});
+
 describe('memberSince is the month only, in French time, for every audience', () => {
     // 23:30 UTC on 31 March = 01:30 on 1 April in Paris
     const lateInMonth = new Date('2025-03-31T23:30:00Z');

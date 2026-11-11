@@ -210,7 +210,7 @@ export interface VisitorRequestAuthor {
 /** Author for a member: "Sophie M." (never the last name) */
 export interface MemberRequestAuthor {
     firstName: string;
-    lastNameInitial: string;
+    lastNameInitial: string | null; // null while the member has not given a last name
     memberSince: MemberSinceMonth;
 }
 

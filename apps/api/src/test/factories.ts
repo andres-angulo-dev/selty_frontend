@@ -245,6 +245,7 @@ export const resetContent = async (db: Database): Promise<void> => {
     await db.execute(sql`
         truncate table
             request_media, annonce_media, requests, offers, annonces,
-            professional_zones, professional_trades, professional_profiles, media, profiles
+            professional_zones, professional_trades, professional_profiles, media, profiles,
+            verification, session, account, "user"
     `);
 };
