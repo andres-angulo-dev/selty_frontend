@@ -276,3 +276,21 @@ export type FeedPage = {
     radius: FeedRadius;
     widenTo: FeedRadius | null;
 };
+
+/**
+ * Answer of GET /v1/me: the signed-in member, with the optional professional
+ * profile. Member-only (never cached: `Cache-Control: private, no-store`).
+ * `memberSince` is "YYYY-MM" in Paris time, like the public types.
+ */
+export interface MeResponse {
+    profileId: string;
+    email: string;
+    firstName: string;
+    lastInitial: string | null;
+    memberSince: MemberSinceMonth;
+    professional: {
+        id: string;
+        status: 'pending' | 'validated' | 'refused';
+        displayName: string;
+    } | null;
+}

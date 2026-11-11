@@ -27,6 +27,9 @@ export * from './forms/offerSchema';
 // Moderation of published texts
 export * from './moderation/contactFilter';
 
+// Person rules
+export * from './person/firstName';
+
 // Reference data (trades, categories)
 export * from './reference/trades';
 export * from './reference/categories';

@@ -1,0 +1,37 @@
+import { z } from 'zod';
+import { findContactInfo } from '../moderation/contactFilter';
+
+// ============================================
+// FIRST-NAME RULE
+// One rule for the server sign-up guard and the app sign-up form.
+//
+// Security: the first name is shown to other members (first name + initial),
+// so it must not carry a phone number, an e-mail, a website or a social
+// handle. The app check is for comfort; the server validates again.
+// ============================================
+
+export const PERSON_LIMITS = {
+    firstNameMax: 50,
+} as const;
+
+/** Texts shown for each first-name rule (passed in by the caller) */
+export interface FirstNameMessages {
+    required: string;
+    tooLong: string;
+    invalid: string;
+}
+
+/**
+ * Builds the first-name schema.
+ * Trims the value, then refuses: empty, more than 50 characters, any digit,
+ * and anything the contact filter recognises (phone, e-mail, URL, handle).
+ * @param messages - texts for each refusal
+ * @returns a Zod schema producing the trimmed first name
+ */
+export const createFirstNameSchema = (messages: FirstNameMessages): z.ZodType<string> =>
+    z
+        .string()
+        .trim()
+        .min(1, messages.required)
+        .max(PERSON_LIMITS.firstNameMax, messages.tooLong)
+        .refine((value) => !/\d/.test(value) && findContactInfo(value) === null, messages.invalid);
