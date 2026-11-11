@@ -1,9 +1,12 @@
 import path from 'node:path';
 import { pino } from 'pino';
 import { createApp } from './app';
+import { authConfigFromEnv } from './config/authConfig';
 import { loadEnv } from './config/env';
 import { createDb } from './db/client';
+import { createAuth } from './features/auth/auth';
 import { LocalDiskStorage } from './media/objectStorage';
+import { SmtpEmailSender } from './shared/email/smtpEmailSender';
 import { LOGGER_SERIALIZERS } from './shared/logging/logSerializers';
 
 // ============================================
@@ -16,11 +19,16 @@ const env = loadEnv(process.env);
 const logger = pino({ level: env.NODE_ENV === 'production' ? 'info' : 'debug', serializers: LOGGER_SERIALIZERS });
 const database = createDb(env.DATABASE_URL, logger);
 
+// Sign-in codes go out by SMTP (Mailpit in development, see apps/api/.env.example)
+const emailSender = new SmtpEmailSender({ host: env.SMTP_HOST, port: env.SMTP_PORT, from: env.MAIL_FROM });
+const auth = createAuth({ db: database.db, emailSender, config: authConfigFromEnv(env), logger });
+
 const app = createApp({
     db: database.db,
     logger,
     trustProxyHops: env.TRUST_PROXY_HOPS,
     storage: new LocalDiskStorage(path.resolve(env.STORAGE_DIR)),
+    auth,
 });
 const server = app.listen(env.PORT, env.HOST, () => {
     logger.info(`API listening on http://${env.HOST}:${env.PORT}`);

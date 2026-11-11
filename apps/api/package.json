@@ -13,7 +13,9 @@
     "db:seed": "tsx --env-file=.env scripts/seed/seed.ts"
   },
   "dependencies": {
+    "@better-auth/expo": "1.7.20",
     "@sialty/domain": "*",
+    "better-auth": "1.7.20",
     "drizzle-orm": "^0.45.4",
     "express": "^5.3.0",
     "express-rate-limit": "^8.7.4",

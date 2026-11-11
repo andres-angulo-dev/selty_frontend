@@ -5,6 +5,8 @@ import { pino, type Logger } from 'pino';
 import { pinoHttp } from 'pino-http';
 import { LIMITS } from './config/limits';
 import type { Database } from './db/client';
+import type { Auth } from './features/auth/auth';
+import { authRoutes } from './features/auth/auth.routes';
 import { feedRoutes } from './features/feed/feed.routes';
 import { healthRoutes } from './features/health/health.routes';
 import { publicReadRoutes } from './features/publicRead/publicRead.routes';
@@ -34,6 +36,8 @@ export interface AppDeps {
     trustProxyHops?: number;
     /** Photo files; defaults to the `storage` folder of the current directory */
     storage?: ObjectStorage;
+    /** Better Auth instance (createAuth); absent in the tests that do not sign in */
+    auth?: Auth;
 }
 
 // Security: request parts never written to the logs. A session token or a
@@ -53,6 +57,7 @@ export const createApp = ({
     extraRoutes,
     trustProxyHops = 0,
     storage = new LocalDiskStorage('storage'),
+    auth,
 }: AppDeps = {}): Express => {
     const app = express();
 
@@ -112,10 +117,17 @@ export const createApp = ({
         }),
     );
 
-    // 5. JSON bodies only, size capped
+    // 5. Sign-in routes (Better Auth), AFTER the baseline limit (it counts them
+    // too, on top of Better Auth's own per-address limits) and BEFORE
+    // express.json(): Better Auth reads the raw body itself.
+    // Security: Better Auth answers carry the session token in their JSON body;
+    // pino-http logs no body, and Set-Cookie is redacted above.
+    if (auth) app.use(authRoutes(auth));
+
+    // 6. JSON bodies only, size capped
     app.use(express.json({ limit: LIMITS.jsonBodyMax }));
 
-    // 6. Routes
+    // 7. Routes
     app.use(healthRoutes(db));
     // Routes that read the database; absent in the tests of the bare skeleton
     if (db) {
@@ -125,7 +137,7 @@ export const createApp = ({
     }
     if (extraRoutes) app.use(extraRoutes);
 
-    // 7. Nothing matched, then every error as a problem document
+    // 8. Nothing matched, then every error as a problem document
     app.use(notFound);
     app.use(errorHandler);
 
