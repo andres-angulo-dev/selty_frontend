@@ -15,8 +15,8 @@ export const PERSON_LIMITS = {
     firstNameMax: 50,
 } as const;
 
-/** Starts with a letter, then letters, combining marks, apostrophe, space, dot, hyphen (refuses emoji, digits, bare punctuation) */
-const FIRST_NAME_PATTERN = /^\p{L}[\p{L}\p{M}' .-]*$/u;
+/** Starts with a letter, then letters, combining marks, apostrophes (straight or U+2019, iOS smart punctuation), space, dot, hyphen (refuses emoji, digits, bare punctuation) */
+const FIRST_NAME_PATTERN = /^\p{L}[\p{L}\p{M}'\u2019 .-]*$/u;
 
 /** Texts shown for each first-name rule (passed in by the caller) */
 export interface FirstNameMessages {

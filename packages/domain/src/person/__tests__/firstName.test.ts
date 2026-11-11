@@ -45,8 +45,12 @@ describe('createFirstNameSchema', () => {
         }
     });
 
+    it('accepts the typographic apostrophe (iOS smart punctuation)', () => {
+        expect(schema.parse('N\u2019Golo')).toBe('N\u2019Golo');
+    });
+
     it('accepts a decomposed accent', () => {
-        expect(schema.parse('Zoé')).toBe('Zoé');
+        expect(schema.parse('Zoe\u0301')).toBe('Zoe\u0301');
     });
 
     it('counts characters, not UTF-16 units', () => {
