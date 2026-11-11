@@ -7,6 +7,19 @@ import { z } from 'zod';
 // Security: values never appear in the message (DATABASE_URL holds a password).
 // ============================================
 
+// Comma-separated text ("a, b,") to a clean list (["a", "b"])
+// The default is written as text and goes through the same cleaning.
+const commaList = (defaultText: string) =>
+    z
+        .string()
+        .default(defaultText)
+        .transform((text) =>
+            text
+                .split(',')
+                .map((item) => item.trim())
+                .filter((item) => item.length > 0),
+        );
+
 const envSchema = z.object({
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
     // From text ("3000") to a valid TCP port
@@ -22,6 +35,24 @@ const envSchema = z.object({
     // Folder of the photo files, relative to apps/api (the folder npm runs the server from)
     STORAGE_DIR: z.string().min(1).default('storage'),
     HOST: z.string().min(1).default('127.0.0.1'),
+
+    // --- Authentication (Better Auth) ---
+    // Security: required, NO default. A default secret could reach production and
+    // let anyone forge sessions. 32 characters minimum (openssl rand -base64 32).
+    BETTER_AUTH_SECRET: z.string().min(32, 'must be at least 32 characters'),
+    // Hosts the API may be reached on (the tunnel address changes at each start,
+    // hence the wildcard). Comma list, trimmed, empty items dropped.
+    AUTH_ALLOWED_HOSTS: commaList('localhost:4000,127.0.0.1:4000,*.trycloudflare.com'),
+    // Base URL used when the request host is not in the allowed list
+    AUTH_FALLBACK_URL: z.string().url().default('http://localhost:4000'),
+    // Headers read, in order, to find the client address (behind the tunnel)
+    AUTH_IP_HEADERS: commaList('cf-connecting-ip'),
+
+    // --- E-mail (sign-in codes) ---
+    // Local catcher by default (nothing leaves this machine in development)
+    SMTP_HOST: z.string().min(1).default('127.0.0.1'),
+    SMTP_PORT: z.coerce.number().int().min(1).max(65_535).default(1025),
+    MAIL_FROM: z.string().min(1).default('Sialty <no-reply@sialty.test>'),
 });
 
 export type Env = z.infer<typeof envSchema>;
