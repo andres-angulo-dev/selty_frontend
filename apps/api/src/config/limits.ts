@@ -12,6 +12,8 @@ export const LIMITS = {
     // FAILED lookups count, per IP, over the same window: a client asking for
     // keys that do not exist is probing (or broken), never browsing.
     mediaFailedLookupsPerWindow: 100,
-    // Largest JSON body accepted. Photos never go through JSON (direct upload, plan 4).
-    jsonBodyMax: '100kb',
+    // Largest JSON body accepted, in bytes (100 KiB, express's '100kb'). Photos
+    // never go through JSON (direct upload, plan 4). A number, not '100kb', so
+    // express.json and the /v1/auth guard (which runs before it) share one value.
+    jsonBodyMax: 100 * 1024,
 } as const;

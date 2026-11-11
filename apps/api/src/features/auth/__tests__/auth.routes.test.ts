@@ -1,3 +1,6 @@
+import { once } from 'node:events';
+import http from 'node:http';
+import type { AddressInfo } from 'node:net';
 import { eq } from 'drizzle-orm';
 import type { Express } from 'express';
 import { pino } from 'pino';
@@ -29,7 +32,9 @@ let mail: MemoryEmailSender;
 
 beforeEach(async () => {
     await resetContent(db);
-    // Fresh instance per test: its memory rate limiter starts empty
+    // Fresh instance and mailbox per test. Better Auth's memory limiter store is
+    // module-global (shared by every instance): tests stay independent because
+    // every call uses its own network address (nextTestIp)
     ({ app, mail } = createAuthTestApp(db));
 });
 
@@ -147,7 +152,7 @@ describe('sign-up by e-mail code', () => {
         expect(users[0].email).toBe('paul@x.fr');
     });
 
-    it('ignores client-chosen server fields (image, emailVerified, id)', async () => {
+    it('ignores client-chosen server fields (image, emailVerified, id, role)', async () => {
         const ip = nextTestIp();
         const otp = await codeFor('lea@example.fr', ip);
 
@@ -161,6 +166,7 @@ describe('sign-up by e-mail code', () => {
                 image: 'https://attacker.example/avatar.png',
                 emailVerified: false,
                 id: 'chosen-by-the-client',
+                role: 'admin',
             },
             ip,
         );
@@ -170,6 +176,10 @@ describe('sign-up by e-mail code', () => {
         expect(created.id).not.toBe('chosen-by-the-client');
         expect(created.image).toBeNull();
         expect(created.emailVerified).toBe(true);
+        // Nothing role-like stored, neither in the row nor in the answer
+        expect(Object.keys(created)).not.toContain('role');
+        expect(JSON.stringify(created)).not.toContain('admin');
+        expect(JSON.stringify(response.body.user)).not.toContain('admin');
     });
 
     it('removes the account when its profile cannot be created', async () => {
@@ -244,6 +254,111 @@ describe('sign-out', () => {
 
         expect(response.status).toBe(200);
         expect(await db.select().from(session)).toHaveLength(0);
+    });
+
+    it('refuses a sign-out from an untrusted origin (https://evil.example): the session stays', async () => {
+        const cookie = await signInForTest(app, mail, 'stay@example.fr');
+
+        const response = await request(app)
+            .post('/v1/auth/sign-out')
+            .set('cf-connecting-ip', nextTestIp())
+            .set('Origin', 'https://evil.example')
+            .set('Cookie', cookie)
+            .send({});
+
+        expect(response.status).toBe(403);
+        expect(response.body.code).toBe('INVALID_ORIGIN');
+        expect(await db.select().from(session)).toHaveLength(1);
+    });
+});
+
+describe('allowlist of Better Auth routes', () => {
+    it.each([
+        ['POST', '/v1/auth/update-user'],
+        ['POST', '/v1/auth/email-otp/reset-password'],
+        ['POST', '/v1/auth/forget-password/email-otp'],
+        ['POST', '/v1/auth/email-otp/check-verification-otp'],
+        ['POST', '/v1/auth/change-password'],
+        ['POST', '/v1/auth/sign-up/email'],
+        ['GET', '/v1/auth/list-accounts'],
+        // Variations of an allowed route are refused too, never guessed
+        ['GET', '/v1/auth/sign-in/email-otp'],
+        ['POST', '/v1/auth/Sign-Out'],
+        ['POST', '/v1/auth/sign-out/'],
+    ])('answers 404 (problem document) to %s %s, even signed in', async (method, path) => {
+        const cookie = await signInForTest(app, mail, 'list@example.fr', { firstName: 'Lise' });
+
+        const call = method === 'GET' ? request(app).get(path) : request(app).post(path).send({ name: 'Jean2' });
+        const response = await call
+            .set('cf-connecting-ip', nextTestIp())
+            .set('Origin', APP_ORIGIN)
+            .set('Cookie', cookie);
+
+        expect(response.status).toBe(404);
+        expect(response.headers['content-type']).toContain('application/problem+json');
+        const [row] = await userRows();
+        expect(row.name).toBe('Lise');
+    });
+
+    it('lets the session routes through: get-session reads the signed-in account', async () => {
+        const cookie = await signInForTest(app, mail, 'session@example.fr', { firstName: 'Sam' });
+
+        const response = await request(app)
+            .get('/v1/auth/get-session')
+            .set('cf-connecting-ip', nextTestIp())
+            .set('Cookie', cookie);
+
+        expect(response.status).toBe(200);
+        expect(response.body.user.name).toBe('Sam');
+    });
+});
+
+describe('body size of /v1/auth', () => {
+    it('answers 413 to a 200 kb body, before Better Auth reads it', async () => {
+        const response = await request(app)
+            .post('/v1/auth/sign-in/email-otp')
+            .set('cf-connecting-ip', nextTestIp())
+            .set('Content-Type', 'application/json')
+            .send(JSON.stringify({ email: 'big@example.fr', otp: '123456', name: 'x'.repeat(200 * 1024) }));
+
+        expect(response.status).toBe(413);
+        expect(response.headers['content-type']).toContain('application/problem+json');
+    });
+
+    it('answers 411 to a chunked body without Content-Length', async () => {
+        const server = app.listen(0, '127.0.0.1');
+        await once(server, 'listening');
+        try {
+            const { port } = server.address() as AddressInfo;
+            const status = await new Promise<number>((resolve, reject) => {
+                const outgoing = http.request(
+                    {
+                        host: '127.0.0.1',
+                        port,
+                        method: 'POST',
+                        path: '/v1/auth/email-otp/send-verification-otp',
+                        // No Content-Length: Node sends the body chunked
+                        headers: { 'content-type': 'application/json', 'cf-connecting-ip': nextTestIp() },
+                    },
+                    (incoming) => {
+                        incoming.resume();
+                        resolve(incoming.statusCode ?? 0);
+                    },
+                );
+                outgoing.on('error', reject);
+                outgoing.write('{"email":"chunk@example.fr",');
+                outgoing.end('"type":"sign-in"}');
+            });
+
+            expect(status).toBe(411);
+            expect(mail.sent).toHaveLength(0);
+        } finally {
+            server.close();
+        }
+    });
+
+    it('a normal sign-in is not affected', async () => {
+        await expect(signInForTest(app, mail, 'normal@example.fr')).resolves.toContain('session_token=');
     });
 });
 

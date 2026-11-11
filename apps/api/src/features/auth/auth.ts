@@ -70,6 +70,10 @@ export const createAuth = ({ db, emailSender, config, logger }: AuthDeps) => {
             // tunnel. Only trustworthy when the API is reached through that proxy
             // (HOST=127.0.0.1 keeps it so locally); used by the limits below.
             ipAddress: { ipAddressHeaders: config.ipAddressHeaders },
+            // Security: Better Auth 1.7.20 skips its Origin check (cookie requests
+            // from an untrusted origin) when it detects a test run. Forced on so
+            // the tests check what production does.
+            disableOriginCheck: false,
         },
         // Security: Better Auth turns its limiter off outside production; forced
         // on so dev and tests run the same limits (e-mail code plugin: 3 requests
